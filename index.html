@@ -563,12 +563,22 @@ if (key === 'coaching') {
   } else {
     body.innerHTML = rows.length
       ? rows.map(r => {
-          const safe = /^https?:\/\//i.test(r.link || '') ? esc(r.link) : '';
+          const safe = /^https?:\/\//i.test(r.meet_url || '') ? esc(r.meet_url) : '';
           return `<tr>
             <td class="p-4">${esc(r.topic)}</td>
             <td class="p-4">${esc(r.day)}</td>
             <td class="p-4 whitespace-nowrap">${fmtTime(r.time)}</td>
-            <td class="p-4">${safe ? `<a href="${safe}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline font-semibold">Join</a>` : '-'}</td>
+            
+<td class="p-4">
+  ${safe
+    ? `<a href="${safe}" target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-800 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-200 hover:shadow-md">
+        <span>🎥</span>
+        <span>Join Meeting</span>
+        <span>↗</span>
+      </a>`
+    : '<span class="text-sm text-slate-400">No link added</span>'}
+</td>
             <td class="p-4 text-right">${delBtn(key, r.id)}</td>
           </tr>`;
         }).join('')
