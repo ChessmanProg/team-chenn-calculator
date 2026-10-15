@@ -329,9 +329,11 @@
     <script>
         // Supabase Initialization
         const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0'; // Replace with your actual anon key from Supabase settings
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Expose globally for console testing & multi-device sync
+        window.supabase = supabase;
 
         // Live Clock
         function updateClock() {
