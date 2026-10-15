@@ -470,6 +470,17 @@ if (key === 'coaching') {
       }).join('')
     : empty(4, 'No coaching scheduled yet.');
 } else if (key === 'ic') {
+      const countByStatus = status =>
+      rows.filter(r => r.status === status).length;
+
+    document.getElementById('ic-reported-count').textContent =
+      countByStatus('Reported');
+
+    document.getElementById('ic-not-reported-count').textContent =
+      countByStatus('Not Reported');
+
+    document.getElementById('ic-willing-count').textContent =
+      countByStatus('Willing to extend');
     body.innerHTML = rows.length
       ? rows.map(r => `<tr>
           <td class="p-4 whitespace-nowrap">${fmtTime(r.time_logged)}</td>
