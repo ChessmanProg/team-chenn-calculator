@@ -20,180 +20,269 @@
                 <h1 class="text-xl font-bold tracking-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
                 <p class="text-xs text-slate-400">Operational Portal & Productivity Calculator</p>
             </div>
-            <div class="mt-2 sm:mt-0 flex gap-2">
+            <div class="mt-2 sm:mt-0 flex gap-2 items-center">
                 <span class="px-3 py-1 bg-emerald-600/30 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30">Shift Active</span>
                 <span id="live-clock" class="px-3 py-1 bg-slate-800 text-slate-300 text-xs font-mono rounded-full border border-slate-700"></span>
             </div>
         </div>
+        <!-- Tab Navigation Bar -->
+        <div class="max-w-7xl mx-auto px-4 flex gap-2 border-t border-slate-800 pt-2">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition">📊 Dashboard & Calculator</button>
+            <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition">📝 Today's IC Extension Record</button>
+        </div>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow">
 
-        <!-- Left Column: PPH & Exemption Calculator -->
-        <section class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        📊 PPH & Exemption Pace Calculator
-                    </h2>
-                    <span class="text-xs text-slate-500">Live Target Adjustment</span>
+        <!-- TAB 1: DASHBOARD -->
+        <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: PPH & Exemption Calculator -->
+            <section class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            📊 PPH & Exemption Pace Calculator
+                        </h2>
+                        <span class="text-xs text-slate-500">Live Target Adjustment</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Target PPH</label>
+                            <input type="number" id="target-pph" value="15" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Total Shift Hours</label>
+                            <input type="number" id="shift-hours" value="9" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Exemption Hours (Coaching/Break/Meetings)</label>
+                            <input type="number" id="exemption-hours" value="1.5" step="0.25" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Items Completed So Far</label>
+                            <input type="number" id="completed-items" value="65" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Calculated Results Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+                        <div>
+                            <p class="text-xs font-medium text-slate-500">Net Production Hours</p>
+                            <p id="net-hours" class="text-xl font-bold text-slate-900 mt-1">7.5 hrs</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-slate-500">Required Total Items</p>
+                            <p id="total-required" class="text-xl font-bold text-indigo-600 mt-1">113 items</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-slate-500">Pace Needed (Remaining)</p>
+                            <p id="remaining-pace" class="text-xl font-bold text-emerald-600 mt-1">12.8 / hr</p>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                            <span>Shift Progress to Target</span>
+                            <span id="progress-percent">58%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 58%;"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Target PPH</label>
-                        <input type="number" id="target-pph" value="15" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <!-- Coaching Schedules Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            📅 Coaching Schedules & Meet Links
+                        </h2>
+                        <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-1 rounded">1:1 Sessions</span>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Total Shift Hours</label>
-                        <input type="number" id="shift-hours" value="9" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Exemption Hours (Coaching/Break/Meetings)</label>
-                        <input type="number" id="exemption-hours" value="1.5" step="0.25" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Items Completed So Far</label>
-                        <input type="number" id="completed-items" value="65" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-2">Time Slot</th>
+                                    <th class="p-2">Agent Name</th>
+                                    <th class="p-2">Google Meet</th>
+                                    <th class="p-2">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr>
+                                    <td class="p-2 font-mono">12:00 – 12:30</td>
+                                    <td class="p-2 font-medium">Raphael Santiago Reyes</td>
+                                    <td class="p-2"><a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
+                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono">12:30 – 13:00</td>
+                                    <td class="p-2 font-medium">Maria Kristelle De Leon</td>
+                                    <td class="p-2"><a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
+                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono">13:30 – 14:00</td>
+                                    <td class="p-2 font-medium">Chito Canuto Delvo</td>
+                                    <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
+                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono">14:00 – 14:30</td>
+                                    <td class="p-2 font-medium">John Anthony Villaflores</td>
+                                    <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
+                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono">14:30 – 15:00</td>
+                                    <td class="p-2 font-medium">Bryson Blando Lasam</td>
+                                    <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
+                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono">17:00 – 17:30</td>
+                                    <td class="p-2 font-medium">Phoebe Regio Sarmiento</td>
+                                    <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
+                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </section>
 
-                <!-- Calculated Results Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
-                    <div>
-                        <p class="text-xs font-medium text-slate-500">Net Production Hours</p>
-                        <p id="net-hours" class="text-xl font-bold text-slate-900 mt-1">7.5 hrs</p>
+            <!-- Right Column: Tool Quick Links & InContact Extensions -->
+            <div class="space-y-6">
+                <!-- Quick Links -->
+                <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">🚀 Quick-Launch LOB Tools</h2>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">SNW Portal</a>
+                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Catalog Tool</a>
+                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Zoho Learn</a>
+                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Confluence</a>
                     </div>
-                    <div>
-                        <p class="text-xs font-medium text-slate-500">Required Total Items</p>
-                        <p id="total-required" class="text-xl font-bold text-indigo-600 mt-1">113 items</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium text-slate-500">Pace Needed (Remaining)</p>
-                        <p id="remaining-pace" class="text-xl font-bold text-emerald-600 mt-1">12.8 / hr</p>
-                    </div>
-                </div>
+                </section>
 
-                <!-- Progress Bar -->
-                <div>
-                    <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
-                        <span>Shift Progress to Target</span>
-                        <span id="progress-percent">58%</span>
+                <!-- InContact Extensions Directory -->
+                <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">📞 InContact Extensions</h2>
+                    <input type="text" id="ext-search" placeholder="Search agent or extension..." class="w-full px-3 py-2 mb-3 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <div id="ext-list" class="space-y-2 text-xs">
+                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="font-medium text-slate-700">Team Chenn Queue</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 4012</span>
+                        </div>
+                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="font-medium text-slate-700">BC AI Escalations</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 4015</span>
+                        </div>
+                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="font-medium text-slate-700">IT / Tech Support Desk</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 9110</span>
+                        </div>
+                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                            <span class="font-medium text-slate-700">Operations Floor Lead</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 4020</span>
+                        </div>
                     </div>
-                    <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
-                        <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 58%;"></div>
-                    </div>
-                </div>
+                </section>
             </div>
+        </div>
 
-            <!-- Coaching Schedules Section -->
+        <!-- TAB 2: TODAY'S IC EXTENSION RECORD -->
+        <div id="tab-ic-log" class="hidden space-y-6">
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        📅 Coaching Schedules & Meet Links
-                    </h2>
-                    <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-1 rounded">1:1 Sessions</span>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-slate-100 gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            📝 Today's InContact (IC) Extension Record
+                        </h2>
+                        <p class="text-xs text-slate-500">Log and track IC extension activities, calls, or transfers for today's shift.</p>
+                    </div>
+                    <button onclick="openIcModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1">
+                        + Add New IC Log
+                    </button>
                 </div>
+
+                <!-- IC Extension Log Table -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
                             <tr>
-                                <th class="p-2">Time Slot</th>
-                                <th class="p-2">Agent Name</th>
-                                <th class="p-2">Google Meet</th>
-                                <th class="p-2">Status</th>
+                                <th class="p-3">Time Logged</th>
+                                <th class="p-3">Agent Name</th>
+                                <th class="p-3">IC Extension / Queue</th>
+                                <th class="p-3">Call Type / Reason</th>
+                                <th class="p-3">Status / Remarks</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
                             <tr>
-                                <td class="p-2 font-mono">12:00 – 12:30</td>
-                                <td class="p-2 font-medium">Raphael Santiago Reyes</td>
-                                <td class="p-2"><a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                <td class="p-3 font-mono text-slate-500">10:15 PM</td>
+                                <td class="p-3 font-medium">Raphael Santiago Reyes</td>
+                                <td class="p-3 font-mono text-indigo-600">Ext. 4012</td>
+                                <td class="p-3">Queue Transfer / Escalation</td>
+                                <td class="p-3"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Resolved</span></td>
                             </tr>
                             <tr>
-                                <td class="p-2 font-mono">12:30 – 13:00</td>
-                                <td class="p-2 font-medium">Maria Kristelle De Leon</td>
-                                <td class="p-2"><a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2 font-mono">13:30 – 14:00</td>
-                                <td class="p-2 font-medium">Chito Canuto Delvo</td>
-                                <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2 font-mono">14:00 – 14:30</td>
-                                <td class="p-2 font-medium">John Anthony Villaflores</td>
-                                <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2 font-mono">14:30 – 15:00</td>
-                                <td class="p-2 font-medium">Bryson Blando Lasam</td>
-                                <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2 font-mono">17:00 – 17:30</td>
-                                <td class="p-2 font-medium">Phoebe Regio Sarmiento</td>
-                                <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                <td class="p-3 font-mono text-slate-500">11:30 PM</td>
+                                <td class="p-3 font-medium">Maria Kristelle De Leon</td>
+                                <td class="p-3 font-mono text-indigo-600">Ext. 4015</td>
+                                <td class="p-3">BC AI Item Review Inquiry</td>
+                                <td class="p-3"><span class="px-2 py-0.5 bg-amber-50 text-amber-600 rounded font-semibold">Pending Callback</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </section>
-
-        <!-- Right Column: Tool Quick Links & InContact Extensions -->
-        <div class="space-y-6">
-            <!-- Quick Links -->
-            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">🚀 Quick-Launch LOB Tools</h2>
-                <div class="grid grid-cols-2 gap-2">
-                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">SNW Portal</a>
-                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Catalog Tool</a>
-                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Zoho Learn</a>
-                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Confluence</a>
-                </div>
-            </section>
-
-            <!-- InContact Extensions Directory -->
-            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">📞 InContact Extensions</h2>
-                <input type="text" id="ext-search" placeholder="Search agent or extension..." class="w-full px-3 py-2 mb-3 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                <div id="ext-list" class="space-y-2 text-xs">
-                    <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                        <span class="font-medium text-slate-700">Team Chenn Queue</span>
-                        <span class="font-mono font-bold text-indigo-600">Ext. 4012</span>
-                    </div>
-                    <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                        <span class="font-medium text-slate-700">BC AI Escalations</span>
-                        <span class="font-mono font-bold text-indigo-600">Ext. 4015</span>
-                    </div>
-                    <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                        <span class="font-medium text-slate-700">IT / Tech Support Desk</span>
-                        <span class="font-mono font-bold text-indigo-600">Ext. 9110</span>
-                    </div>
-                    <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                        <span class="font-medium text-slate-700">Operations Floor Lead</span>
-                        <span class="font-mono font-bold text-indigo-600">Ext. 4020</span>
-                    </div>
-                </div>
-            </section>
         </div>
 
     </main>
 
+    <!-- Modal for Adding New IC Log -->
+    <div id="ic-modal" class="fixed inset-0 bg-slate-900/50 hidden flex justify-center items-center px-4 z-50">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <h3 class="text-base font-bold text-slate-900 border-b pb-2">Add New IC Extension Record</h3>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 mb-1">Agent Name</label>
+                    <input type="text" id="ic-agent" placeholder="e.g. John Doe" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 mb-1">IC Extension / Queue</label>
+                    <input type="text" id="ic-ext" placeholder="e.g. Ext. 4012" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 mb-1">Call Type / Reason</label>
+                    <input type="text" id="ic-reason" placeholder="e.g. Escalation / Inquiry" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 mb-1">Status</label>
+                    <select id="ic-status" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="Resolved">Resolved</option>
+                        <option value="Pending Callback">Pending Callback</option>
+                        <option value="Escalated to Lead">Escalated to Lead</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t">
+                <button onclick="closeIcModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg">Cancel</button>
+                <button onclick="saveIcLog()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg">Save Record</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
         Team Chenn Internal Portal &bull; Built for non-voice efficiency
     </footer>
 
-    <!-- JavaScript Calculation & Search Engine -->
+    <!-- JavaScript Navigation & Logic -->
     <script>
         // Live Clock
         function updateClock() {
@@ -202,6 +291,68 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        // Tab Switching Function
+        function switchTab(tabName) {
+            const dashTab = document.getElementById('tab-dashboard');
+            const icLogTab = document.getElementById('tab-ic-log');
+            const btnDash = document.getElementById('btn-dashboard');
+            const btnIcLog = document.getElementById('btn-ic-log');
+
+            if (tabName === 'dashboard') {
+                dashTab.classList.remove('hidden');
+                icLogTab.classList.add('hidden');
+                btnDash.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
+                btnIcLog.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
+            } else {
+                dashTab.classList.add('hidden');
+                icLogTab.classList.remove('hidden');
+                btnIcLog.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
+                btnDash.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
+            }
+        }
+
+        // Modal Controls
+        function openIcModal() {
+            document.getElementById('ic-modal').classList.remove('hidden');
+        }
+        function closeIcModal() {
+            document.getElementById('ic-modal').classList.add('hidden');
+        }
+
+        // Save New IC Log Entry
+        function saveIcLog() {
+            const agent = document.getElementById('ic-agent').value.trim();
+            const ext = document.getElementById('ic-ext').value.trim();
+            const reason = document.getElementById('ic-reason').value.trim();
+            const status = document.getElementById('ic-status').value;
+
+            if (!agent || !ext || !reason) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const tbody = document.getElementById('ic-table-body');
+
+            const badgeClass = status === 'Resolved' ? 'bg-emerald-50 text-emerald-600' : (status === 'Pending Callback' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600');
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="p-3 font-mono text-slate-500">${timeNow}</td>
+                <td class="p-3 font-medium">${agent}</td>
+                <td class="p-3 font-mono text-indigo-600">${ext}</td>
+                <td class="p-3">${reason}</td>
+                <td class="p-3"><span class="px-2 py-0.5 ${badgeClass} rounded font-semibold">${status}</span></td>
+            `;
+            tbody.prepend(newRow);
+
+            // Clear inputs and close modal
+            document.getElementById('ic-agent').value = '';
+            document.getElementById('ic-ext').value = '';
+            document.getElementById('ic-reason').value = '';
+            closeIcModal();
+        }
 
         // PPH Calculator Logic
         const targetPphInput = document.getElementById('target-pph');
@@ -236,27 +387,6 @@
         });
 
         calculatePph();
-
-        // InContact Extension Search Filter
-        const extensions = [
-            { name: "Team Chenn Queue", ext: "Ext. 4012" },
-            { name: "BC AI Escalations", ext: "Ext. 4015" },
-            { name: "IT / Tech Support Desk", ext: "Ext. 9110" },
-            { name: "Operations Floor Lead", ext: "Ext. 4020" }
-        ];
-
-        document.getElementById('ext-search').addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase();
-            const container = document.getElementById('ext-list');
-            const filtered = extensions.filter(item => item.name.toLowerCase().includes(query) || item.ext.toLowerCase().includes(query));
-            
-            container.innerHTML = filtered.map(item => `
-                <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                    <span class="font-medium text-slate-700">${item.name}</span>
-                    <span class="font-mono font-bold text-indigo-600">${item.ext}</span>
-                </div>
-            `).join('') || '<p class="text-slate-400 italic">No extension found.</p>';
-        });
     </script>
 </body>
 </html>
