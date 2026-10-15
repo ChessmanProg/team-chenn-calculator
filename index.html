@@ -791,21 +791,22 @@ if (key === 'coaching') {
     body.innerHTML = rows.length
       ? rows.map(r => {
           const safe = /^https?:\/\//i.test(r.meet_url || '') ? esc(r.meet_url) : '';
+          const infoUrl = /^https?:\/\//i.test(r.link_url || '') ? esc(r.link_url) : '';
+
           return `<tr>
             <td class="p-4">${esc(r.topic)}</td>
-            <td class="p-4">${esc(r.day)}</td>
-            <td class="p-4 whitespace-nowrap">${fmtTime(r.time)}</td>
-            
-<td class="p-4">
-  ${safe
-    ? `<a href="${safe}" target="_blank" rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-800 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-200 hover:shadow-md">
-        <span>🎥</span>
-        <span>Join Meeting</span>
-        <span>↗</span>
-      </a>`
-    : '<span class="text-sm text-slate-400">No link added</span>'}
-</td>
+            <td class="p-4">${esc(r.day || '—')}</td>
+            <td class="p-4 whitespace-nowrap">${r.time ? fmtTime(r.time) : '—'}</td>
+            <td class="p-4">
+              ${safe
+                ? `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="text-emerald-700 font-semibold hover:underline">🎥 Join Meeting ↗</a>`
+                : '<span class="text-sm text-slate-400">No link added</span>'}
+            </td>
+            <td class="p-4">
+              ${infoUrl
+                ? `<a href="${infoUrl}" target="_blank" rel="noopener noreferrer" class="text-indigo-700 font-semibold hover:underline">${esc(r.link_label || 'Open Information')} ↗</a>`
+                : '<span class="text-sm text-slate-400">No link added</span>'}
+            </td>
             <td class="p-4 text-right">${delBtn(key, r.id)}</td>
           </tr>`;
         }).join('')
