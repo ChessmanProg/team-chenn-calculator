@@ -195,3 +195,334 @@
                                 <th class="p-4">Time</th>
                                 <th class="p-4">GMeet Link</th>
                                 <th class="p-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="links-table-body" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Loaded dynamically from Supabase -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal for Adding New Coaching Schedule -->
+    <div id="add-meet-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add New Coaching Schedule</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Agent Name</label>
+                    <select id="meet-agent" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="" disabled selected>-- Select Agent --</option>
+                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
+                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
+                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
+                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
+                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
+                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
+                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
+                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
+                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
+                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
+                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
+                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
+                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
+                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
+                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Time Slot</label>
+                    <input type="text" id="meet-time" placeholder="e.g. 15:00 - 15:30" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Google Meet Link</label>
+                    <input type="url" id="meet-link" placeholder="https://meet.google.com/..." class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t">
+                <button onclick="toggleAddMeetModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
+                <button onclick="saveCoachingSchedule()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Add to Schedule</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding New IC Log -->
+    <div id="ic-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add New IC Extension Record</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Agent Name</label>
+                    <select id="ic-agent" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="" disabled selected>-- Select Agent --</option>
+                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
+                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
+                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
+                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
+                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
+                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
+                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
+                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
+                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
+                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
+                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
+                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
+                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
+                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
+                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">IC Extension / Queue</label>
+                    <input type="text" id="ic-ext" placeholder="e.g. Team Chenn Queue (Ext. 4012)" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Status</label>
+                    <input type="text" id="ic-status" placeholder="e.g. Resolved, Pending, Active" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t">
+                <button onclick="closeIcModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
+                <button onclick="saveIcLog()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Important Link -->
+    <div id="link-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add Important Link & Session</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Topic</label>
+                    <input type="text" id="link-topic" placeholder="e.g. Weekly Alignment & Calibration" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Day</label>
+                    <input type="text" id="link-day" placeholder="e.g. Every Monday / Oct 16" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Time</label>
+                    <input type="text" id="link-time" placeholder="e.g. 10:00 PM" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Google Meet Link</label>
+                    <input type="url" id="link-url" placeholder="https://meet.google.com/..." class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t">
+                <button onclick="closeLinkModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
+                <button onclick="saveImportantLink()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Save Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-sm text-slate-500 mt-auto">
+        Team Chenn Internal Portal &bull; Built for non-voice efficiency
+    </footer>
+
+    <!-- JavaScript & Supabase Integration -->
+    <script>
+        // Supabase Initialization
+        const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
+
+        let db = null;
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+            db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // Live Clock
+        function updateClock() {
+            const el = document.getElementById('live-clock');
+            if (el) el.innerText = new Date().toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Tab Switching Function
+        function switchTab(tabName) {
+            const dashTab = document.getElementById('tab-dashboard');
+            const icLogTab = document.getElementById('tab-ic-log');
+            const linksTab = document.getElementById('tab-important-links');
+
+            const btnDash = document.getElementById('btn-dashboard');
+            const btnIcLog = document.getElementById('btn-ic-log');
+            const btnLinks = document.getElementById('btn-important-links');
+
+            if (!dashTab || !icLogTab || !linksTab) return;
+
+            dashTab.style.display = 'none';
+            icLogTab.style.display = 'none';
+            linksTab.style.display = 'none';
+
+            if (btnDash) btnDash.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap";
+            if (btnIcLog) btnIcLog.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap";
+            if (btnLinks) btnLinks.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap";
+
+            if (tabName === 'dashboard') {
+                dashTab.style.display = 'grid';
+                if (btnDash) btnDash.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm whitespace-nowrap";
+            } else if (tabName === 'ic-log') {
+                icLogTab.style.display = 'grid';
+                if (btnIcLog) btnIcLog.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm whitespace-nowrap";
+            } else if (tabName === 'important-links') {
+                linksTab.style.display = 'grid';
+                if (btnLinks) btnLinks.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm whitespace-nowrap";
+            }
+        }
+
+        // --- FETCH DATA FROM SUPABASE ON LOAD ---
+        async function loadAllData() {
+            if (!db) return;
+            try {
+                // 1. Load Coaching
+                const { data: coachingData } = await db.from('coaching_schedules').select('*').order('id', { ascending: true });
+                const coachingTbody = document.getElementById('coaching-table-body');
+                if (coachingTbody && coachingData) {
+                    coachingTbody.innerHTML = '';
+                    coachingData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="p-4 font-mono text-sm">${item.time_slot}</td>
+                            <td class="p-4 font-medium">${item.agent_name}</td>
+                            <td class="p-4 text-right space-x-2">
+                                <a href="${item.meet_link}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join</a>
+                                <button onclick="deleteSupabaseRecord('coaching_schedules', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button>
+                            </td>
+                        `;
+                        coachingTbody.appendChild(row);
+                    });
+                }
+
+                // 2. Load IC Logs
+                const { data: icData } = await db.from('ic_logs').select('*').order('id', { ascending: false });
+                const icTbody = document.getElementById('ic-table-body');
+                if (icTbody && icData) {
+                    icTbody.innerHTML = '';
+                    icData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="p-4 font-mono text-sm text-slate-500">${item.time_logged}</td>
+                            <td class="p-4 font-medium">${item.agent_name}</td>
+                            <td class="p-4 font-mono text-sm text-indigo-600">${item.extension_queue}</td>
+                            <td class="p-4"><span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg font-semibold text-sm">${item.status}</span></td>
+                            <td class="p-4 text-right"><button onclick="deleteSupabaseRecord('ic_logs', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
+                        `;
+                        icTbody.appendChild(row);
+                    });
+                }
+
+                // 3. Load Important Links
+                const { data: linksData } = await db.from('important_links').select('*').order('id', { ascending: true });
+                const linksTbody = document.getElementById('links-table-body');
+                if (linksTbody && linksData) {
+                    linksTbody.innerHTML = '';
+                    linksData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="p-4 font-medium text-slate-900">${item.topic}</td>
+                            <td class="p-4 text-sm">${item.day || 'N/A'}</td>
+                            <td class="p-4 font-mono text-sm">${item.time || 'N/A'}</td>
+                            <td class="p-4"><a href="${item.meet_url}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join Meet</a></td>
+                            <td class="p-4 text-right"><button onclick="deleteSupabaseRecord('important_links', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
+                        `;
+                        linksTbody.appendChild(row);
+                    });
+                }
+            } catch (err) {
+                console.error("Error loading data from Supabase:", err);
+            }
+        }
+
+        // --- SAVE COACHING SCHEDULE ---
+        async function saveCoachingSchedule() {
+            if (!db) { alert('Supabase client not initialized.'); return; }
+            const agent = document.getElementById('meet-agent').value;
+            const time = document.getElementById('meet-time').value.trim();
+            const link = document.getElementById('meet-link').value.trim();
+
+            if (!agent) { alert('Please select an Agent Name.'); return; }
+            if (!time || !link) { alert('Please fill in both Time Slot and Google Meet Link.'); return; }
+
+            const { error } = await db.from('coaching_schedules').insert([{ agent_name: agent, time_slot: time, meet_link: link }]);
+            if (error) { alert('Error saving: ' + error.message); return; }
+
+            document.getElementById('meet-agent').selectedIndex = 0;
+            document.getElementById('meet-time').value = '';
+            document.getElementById('meet-link').value = '';
+            toggleAddMeetModal();
+            loadAllData();
+        }
+
+        // --- SAVE IC LOG ---
+        async function saveIcLog() {
+            if (!db) { alert('Supabase client not initialized.'); return; }
+            const agent = document.getElementById('ic-agent').value;
+            const ext = document.getElementById('ic-ext').value.trim();
+            const status = document.getElementById('ic-status').value.trim();
+
+            if (!agent) { alert('Please select an Agent Name.'); return; }
+            if (!ext) { alert('Please enter an IC Extension / Queue.'); return; }
+
+            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const statusText = status || 'Logged';
+
+            const { error } = await db.from('ic_logs').insert([{ time_logged: timeNow, agent_name: agent, extension_queue: ext, status: statusText }]);
+            if (error) { alert('Error saving: ' + error.message); return; }
+
+            document.getElementById('ic-agent').selectedIndex = 0;
+            document.getElementById('ic-ext').value = '';
+            document.getElementById('ic-status').value = '';
+            closeIcModal();
+            loadAllData();
+        }
+
+        // --- SAVE IMPORTANT LINK ---
+        async function saveImportantLink() {
+            if (!db) { alert('Supabase client not initialized.'); return; }
+            const topic = document.getElementById('link-topic').value.trim();
+            const day = document.getElementById('link-day').value.trim();
+            const time = document.getElementById('link-time').value.trim();
+            const linkUrl = document.getElementById('link-url').value.trim();
+
+            if (!topic || !linkUrl) { alert('Please fill in at least the Topic and Google Meet Link.'); return; }
+
+            const { error } = await db.from('important_links').insert([{ topic: topic, day: day, time: time, meet_url: linkUrl }]);
+            if (error) { alert('Error saving: ' + error.message); return; }
+
+            document.getElementById('link-topic').value = '';
+            document.getElementById('link-day').value = '';
+            document.getElementById('link-time').value = '';
+            document.getElementById('link-url').value = '';
+            closeLinkModal();
+            loadAllData();
+        }
+
+        // --- DELETE RECORD FROM SUPABASE ---
+        async function deleteSupabaseRecord(tableName, id, button) {
+            if (!db) return;
+            const { error } = await db.from(tableName).delete().eq('id', id);
+            if (error) {
+                alert('Error deleting: ' + error.message);
+                return;
+            }
+            button.closest('tr').remove();
+        }
+
+        // Modal Controls
+        function toggleAddMeetModal() {
+            const modal = document.getElementById('add-meet-modal');
+            if (modal) {
+                modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+            }
+        }
+        function openIcModal() { 
+            const m = document.getElementById('ic-modal'); 
+            if (m) m.style.display = 'flex'; 
+        }
+        function close
