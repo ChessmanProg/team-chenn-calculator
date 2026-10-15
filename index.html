@@ -1,528 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Chenn - BPO Operational & PPH Calculator</title>
-    <!-- Browser Tab Favicon (Headset Icon) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎧</text></svg>">
-    <!-- Tailwind CSS for modern, clean UI -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase JS Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Chenn - BPO Operational & PPH Calculator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎧</text></svg>">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Inter',sans-serif}</style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-base">
 
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center">
-            <!-- Brand / Logo Header -->
-            <div class="flex items-center gap-4">
-                <!-- Tech Logo Badge -->
-                <div class="w-12 h-12 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-2xl text-indigo-400 shadow-inner">
-                    🎧
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold tracking-tight leading-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
-                    <p class="text-sm text-slate-400">Operational Portal & Productivity Calculator</p>
-                </div>
-            </div>
-            <div class="mt-3 sm:mt-0 flex gap-3 items-center">
-                <span class="px-4 py-1.5 bg-emerald-600/30 text-emerald-400 text-sm font-semibold rounded-full border border-emerald-500/30">Shift Active</span>
-                <span id="live-clock" class="px-4 py-1.5 bg-slate-800 text-slate-200 text-sm font-mono rounded-full border border-slate-700"></span>
-            </div>
-        </div>
-        <!-- Tab Navigation Bar -->
-        <div class="max-w-7xl mx-auto px-6 flex gap-3 border-t border-slate-800 pt-3 overflow-x-auto">
-            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm whitespace-nowrap">📊 Dashboard & Calculator</button>
-            <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap">📝 Today's IC Extension Record</button>
-            <button onclick="switchTab('important-links')" id="btn-important-links" class="px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap">🔗 Important Links</button>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="max-w-7xl w-full mx-auto px-6 py-8 flex-grow">
-
-        <!-- TAB 1: DASHBOARD -->
-        <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column: PPH & Exemption Calculator -->
-            <section class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                            📊 PPH & Exemption Pace Calculator
-                        </h2>
-                        <span class="text-sm text-slate-500">Live Target Adjustment</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Target PPH</label>
-                            <input type="number" id="target-pph" value="15" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Shift Hours</label>
-                            <input type="number" id="shift-hours" value="9" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Exemption Hours (Coaching/Break/Meetings)</label>
-                            <input type="number" id="exemption-hours" value="1.5" step="0.25" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Items Completed So Far</label>
-                            <input type="number" id="completed-items" value="65" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        </div>
-                    </div>
-
-                    <!-- Calculated Results Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-6">
-                        <div>
-                            <p class="text-sm font-medium text-slate-500">Net Production Hours</p>
-                            <p id="net-hours" class="text-2xl font-bold text-slate-900 mt-1">7.5 hrs</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-slate-500">Required Total Items</p>
-                            <p id="total-required" class="text-2xl font-bold text-indigo-600 mt-1">113 items</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-slate-500">Pace Needed (Remaining)</p>
-                            <p id="remaining-pace" class="text-2xl font-bold text-emerald-600 mt-1">12.8 / hr</p>
-                        </div>
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div>
-                        <div class="flex justify-between text-sm font-semibold text-slate-600 mb-2">
-                            <span>Shift Progress to Target</span>
-                            <span id="progress-percent">58%</span>
-                        </div>
-                        <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden">
-                            <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 58%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Right Column: Coaching Schedules -->
-            <div class="space-y-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            📅 Coaching Schedules
-                        </h2>
-                        <button onclick="toggleAddMeetModal()" class="text-sm text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1 cursor-pointer">
-                            + Add Schedule
-                        </button>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-base">
-                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
-                                <tr>
-                                    <th class="p-3">Time</th>
-                                    <th class="p-3">Agent</th>
-                                    <th class="p-3 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="coaching-table-body" class="divide-y divide-slate-100 text-slate-700">
-                                <!-- Loaded dynamically from Supabase -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: TODAY'S IC EXTENSION RECORD -->
-        <div id="tab-ic-log" style="display: none;" class="grid-cols-1 gap-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                            📝 Today's InContact (IC) Extension Record
-                        </h2>
-                        <p class="text-sm text-slate-500">Log and track IC extension activities for today's shift.</p>
-                    </div>
-                    <button onclick="openIcModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-xl shadow transition flex items-center gap-1 cursor-pointer">
-                        + Add New IC Log
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-base">
-                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
-                            <tr>
-                                <th class="p-4">Time Logged</th>
-                                <th class="p-4">Agent Name</th>
-                                <th class="p-4">IC Extension / Queue</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
-                            <!-- Loaded dynamically from Supabase -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: IMPORTANT LINKS -->
-        <div id="tab-important-links" style="display: none;" class="grid-cols-1 gap-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                            🔗 Important Links & Sessions
-                        </h2>
-                        <p class="text-sm text-slate-500">Access and manage recurrent meetings, huddles, and important team links.</p>
-                    </div>
-                    <button onclick="openLinkModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-xl shadow transition flex items-center gap-1 cursor-pointer">
-                        + Add Important Link
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-base">
-                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
-                            <tr>
-                                <th class="p-4">Topic</th>
-                                <th class="p-4">Day</th>
-                                <th class="p-4">Time</th>
-                                <th class="p-4">GMeet Link</th>
-                                <th class="p-4 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="links-table-body" class="divide-y divide-slate-100 text-slate-700">
-                            <!-- Loaded dynamically from Supabase -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Modal for Adding New Coaching Schedule -->
-    <div id="add-meet-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
-            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add New Coaching Schedule</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Agent Name</label>
-                    <select id="meet-agent" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="" disabled selected>-- Select Agent --</option>
-                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
-                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
-                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
-                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
-                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
-                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
-                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
-                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
-                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
-                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
-                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
-                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
-                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
-                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
-                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Time Slot</label>
-                    <input type="text" id="meet-time" placeholder="e.g. 15:00 - 15:30" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Google Meet Link</label>
-                    <input type="url" id="meet-link" placeholder="https://meet.google.com/..." class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-            </div>
-            <div class="flex justify-end gap-3 pt-4 border-t">
-                <button onclick="toggleAddMeetModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
-                <button onclick="saveCoachingSchedule()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Add to Schedule</button>
-            </div>
-        </div>
+<header class="bg-slate-900 text-white shadow-md">
+  <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-2xl text-indigo-400 shadow-inner">🎧</div>
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight leading-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
+        <p class="text-sm text-slate-400">Operational Portal & Productivity Calculator</p>
+      </div>
     </div>
-
-    <!-- Modal for Adding New IC Log -->
-    <div id="ic-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
-            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add New IC Extension Record</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Agent Name</label>
-                    <select id="ic-agent" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="" disabled selected>-- Select Agent --</option>
-                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
-                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
-                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
-                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
-                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
-                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
-                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
-                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
-                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
-                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
-                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
-                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
-                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
-                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
-                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">IC Extension / Queue</label>
-                    <input type="text" id="ic-ext" placeholder="e.g. Team Chenn Queue (Ext. 4012)" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Status</label>
-                    <input type="text" id="ic-status" placeholder="e.g. Resolved, Pending, Active" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-            </div>
-            <div class="flex justify-end gap-3 pt-4 border-t">
-                <button onclick="closeIcModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
-                <button onclick="saveIcLog()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Save Record</button>
-            </div>
-        </div>
+    <div class="mt-3 sm:mt-0 flex gap-3 items-center">
+      <span class="px-4 py-1.5 bg-emerald-600/30 text-emerald-400 text-sm font-semibold rounded-full border border-emerald-500/30">Shift Active</span>
+      <span id="live-clock" class="px-4 py-1.5 bg-slate-800 text-slate-200 text-sm font-mono rounded-full border border-slate-700"></span>
     </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-6 flex gap-3 border-t border-slate-800 pt-3 overflow-x-auto">
+    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap">📊 Dashboard & Calculator</button>
+    <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap">📝 Today's IC Extension Record</button>
+    <button onclick="switchTab('important-links')" id="btn-important-links" class="px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap">🔗 Important Links</button>
+  </div>
+</header>
 
-    <!-- Modal for Adding Important Link -->
-    <div id="link-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
-            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add Important Link & Session</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Topic</label>
-                    <input type="text" id="link-topic" placeholder="e.g. Weekly Alignment & Calibration" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Day</label>
-                    <input type="text" id="link-day" placeholder="e.g. Every Monday / Oct 16" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Time</label>
-                    <input type="text" id="link-time" placeholder="e.g. 10:00 PM" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Google Meet Link</label>
-                    <input type="url" id="link-url" placeholder="https://meet.google.com/..." class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-            </div>
-            <div class="flex justify-end gap-3 pt-4 border-t">
-                <button onclick="closeLinkModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
-                <button onclick="saveImportantLink()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Save Link</button>
-            </div>
+<main class="max-w-7xl w-full mx-auto px-6 py-8 flex-grow">
+  <div id="db-banner" class="hidden mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm"></div>
+
+  <!-- TAB 1 -->
+  <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <section class="lg:col-span-2 space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+          <h2 class="text-xl font-bold text-slate-900">📊 PPH & Exemption Pace Calculator</h2>
+          <span class="text-sm text-slate-500">Live Target Adjustment</span>
         </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Target PPH</label>
+            <input type="number" id="target-pph" value="15" min="0" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Shift Hours</label>
+            <input type="number" id="shift-hours" value="9" min="0" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Exemption Hours (Coaching/Break/Meetings)</label>
+            <input type="number" id="exemption-hours" value="1.5" min="0" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Items Completed So Far</label>
+            <input type="number" id="completed-items" value="65" min="0" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+          <div class="sm:col-span-2"><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Production Hours Worked So Far</label>
+            <input type="number" id="hours-worked" value="3.75" min="0" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-6">
+          <div><p class="text-sm font-medium text-slate-500">Net Production Hours</p><p id="net-hours" class="text-2xl font-bold text-slate-900 mt-1">7.5 hrs</p></div>
+          <div><p class="text-sm font-medium text-slate-500">Required Total Items</p><p id="total-required" class="text-2xl font-bold text-indigo-600 mt-1">113 items</p></div>
+          <div><p class="text-sm font-medium text-slate-500">Pace Needed (Remaining)</p><p id="remaining-pace" class="text-2xl font-bold text-emerald-600 mt-1">12.8 / hr</p></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm font-semibold text-slate-600 mb-2"><span>Shift Progress to Target</span><span id="progress-percent">58%</span></div>
+          <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden"><div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width:58%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+          <h2 class="text-lg font-bold text-slate-900">📅 Coaching Schedules</h2>
+          <button onclick="openModal('coaching')" class="text-sm text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition shadow-sm">+ Add Schedule</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
+              <tr><th class="p-3">Time</th><th class="p-3">Agent</th><th class="p-3 text-right">Action</th></tr>
+            </thead>
+            <tbody id="coaching-table-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 text-center text-sm text-slate-500 mt-auto">
-        Team Chenn Internal Portal &bull; Built for non-voice efficiency
-    </footer>
+  <!-- TAB 2 -->
+  <div id="tab-ic-log" class="hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">📝 Today's InContact (IC) Extension Record</h2>
+          <p class="text-sm text-slate-500">Log and track IC extension activities for today's shift.</p>
+        </div>
+        <button onclick="openModal('ic')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow transition">+ Add New IC Log</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
+            <tr><th class="p-4">Time Logged</th><th class="p-4">Agent Name</th><th class="p-4">IC Extension / Queue</th><th class="p-4">Status</th><th class="p-4 text-right">Action</th></tr>
+          </thead>
+          <tbody id="ic-table-body" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    <!-- JavaScript & Supabase Integration -->
-    <script>
-        // Supabase Initialization
-        const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
+  <!-- TAB 3 -->
+  <div id="tab-important-links" class="hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">🔗 Important Links & Sessions</h2>
+          <p class="text-sm text-slate-500">Access and manage recurrent meetings, huddles, and important team links.</p>
+        </div>
+        <button onclick="openModal('link')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow transition">+ Add Important Link</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
+            <tr><th class="p-4">Topic</th><th class="p-4">Day</th><th class="p-4">Time</th><th class="p-4">GMeet Link</th><th class="p-4 text-right">Action</th></tr>
+          </thead>
+          <tbody id="link-table-body" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
 
-        let db = null;
-        if (window.supabase && typeof window.supabase.createClient === 'function') {
-            db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
+<!-- Shared modal -->
+<div id="modal" class="hidden fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+    <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-4"></h3>
+    <div id="modal-fields" class="space-y-4"></div>
+    <p id="modal-error" class="text-sm text-red-600 mt-3 hidden"></p>
+    <div class="flex justify-end gap-3 mt-6">
+      <button onclick="closeModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50">Cancel</button>
+      <button onclick="saveModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold">Save</button>
+    </div>
+  </div>
+</div>
 
-        // Live Clock
-        function updateClock() {
-            const el = document.getElementById('live-clock');
-            if (el) el.innerText = new Date().toLocaleTimeString();
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+<script>
+/* ============ 1. SUPABASE SETUP ============
+   Paste your own values from Supabase > Project Settings > API.
+   Leave them as-is to run in "local mode" (data saved in this browser only). */
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const useDb = !SUPABASE_URL.startsWith('YOUR_') && window.supabase;
+const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-        // Tab Switching Function
-        function switchTab(tabName) {
-            const dashTab = document.getElementById('tab-dashboard');
-            const icLogTab = document.getElementById('tab-ic-log');
-            const linksTab = document.getElementById('tab-important-links');
+/* Table + column names (create these in Supabase, see notes):
+   coaching_schedules(id, time, agent)
+   ic_logs(id, time_logged, agent_name, queue, status)
+   important_links(id, topic, day, time, link) */
+const TABLES = {
+  coaching: { name: 'coaching_schedules', body: 'coaching-table-body', title: 'Add Coaching Schedule',
+    fields: [['time','Time','time'],['agent','Agent','text']] },
+  ic: { name: 'ic_logs', body: 'ic-table-body', title: 'Add IC Extension Log',
+    fields: [['time_logged','Time Logged','time'],['agent_name','Agent Name','text'],['queue','IC Extension / Queue','text'],['status','Status','select']] },
+  link: { name: 'important_links', body: 'link-table-body', title: 'Add Important Link',
+    fields: [['topic','Topic','text'],['day','Day','text'],['time','Time','time'],['link','GMeet Link','url']] }
+};
+const STATUSES = ['Pending','Active','Done'];
 
-            const btnDash = document.getElementById('btn-dashboard');
-            const btnIcLog = document.getElementById('btn-ic-log');
-            const btnLinks = document.getElementById('btn-important-links');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtTime = t => { if(!t) return ''; const [h,m] = t.split(':'); const hh = +h; return `${hh%12||12}:${m} ${hh>=12?'PM':'AM'}`; };
 
-            if (!dashTab || !icLogTab || !linksTab) return;
+/* ============ 2. DATA LAYER ============ */
+async function loadRows(key) {
+  const t = TABLES[key].name;
+  if (db) {
+    const { data, error } = await db.from(t).select('*').order('id');
+    if (error) { showBanner('Could not load ' + t + ': ' + error.message); return []; }
+    return data;
+  }
+  try { return JSON.parse(localStorage.getItem(t) || '[]'); } catch { return []; }
+}
+async function insertRow(key, row) {
+  const t = TABLES[key].name;
+  if (db) { const { error } = await db.from(t).insert(row); return error; }
+  const rows = await loadRows(key);
+  rows.push({ id: Date.now(), ...row });
+  try { localStorage.setItem(t, JSON.stringify(rows)); } catch {}
+  return null;
+}
+async function deleteRow(key, id) {
+  const t = TABLES[key].name;
+  if (db) { const { error } = await db.from(t).delete().eq('id', id); if (error) showBanner('Delete failed: ' + error.message); }
+  else { const rows = (await loadRows(key)).filter(r => String(r.id) !== String(id));
+    try { localStorage.setItem(t, JSON.stringify(rows)); } catch {} }
+  render(key);
+}
+function showBanner(msg) { const b = document.getElementById('db-banner'); b.textContent = msg; b.classList.remove('hidden'); }
 
-            dashTab.style.display = 'none';
-            icLogTab.style.display = 'none';
-            linksTab.style.display = 'none';
+/* ============ 3. RENDERING ============ */
+const delBtn = (key, id) => `<button onclick="deleteRow('${key}','${esc(id)}')" class="text-sm text-red-600 hover:text-red-800 font-semibold">Delete</button>`;
+const empty = (cols, msg) => `<tr><td colspan="${cols}" class="p-4 text-slate-500 text-center">${msg}</td></tr>`;
+const badge = s => `<span class="px-3 py-1 rounded-full text-sm font-semibold ${s==='Done'?'bg-emerald-100 text-emerald-700':s==='Active'?'bg-indigo-100 text-indigo-700':'bg-amber-100 text-amber-700'}">${esc(s)}</span>`;
 
-            if (btnDash) btnDash.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap";
-            if (btnIcLog) btnIcLog.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap";
-            if (btnLinks) btnLinks.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition whitespace-nowrap";
+async function render(key) {
+  const rows = await loadRows(key);
+  const body = document.getElementById(TABLES[key].body);
+  if (key === 'coaching') {
+    rows.sort((a,b) => (a.time||'').localeCompare(b.time||''));
+    body.innerHTML = rows.length ? rows.map(r => `<tr><td class="p-3 whitespace-nowrap">${fmtTime(r.time)}</td><td class="p-3">${esc(r.agent)}</td><td class="p-3 text-right">${delBtn(key,r.id)}</td></tr>`).join('') : empty(3,'No coaching scheduled yet.');
+  } else if (key === 'ic') {
+    body.innerHTML = rows.length ? rows.map(r => `<tr><td class="p-4 whitespace-nowrap">${fmtTime(r.time_logged)}</td><td class="p-4">${esc(r.agent_name)}</td><td class="p-4">${esc(r.queue)}</td><td class="p-4">${badge(r.status)}</td><td class="p-4 text-right">${delBtn(key,r.id)}</td></tr>`).join('') : empty(5,'No IC logs yet. Select "Add New IC Log" to start.');
+  } else {
+    body.innerHTML = rows.length ? rows.map(r => {
+      const safe = /^https?:\/\//i.test(r.link || '') ? esc(r.link) : '';
+      return `<tr><td class="p-4">${esc(r.topic)}</td><td class="p-4">${esc(r.day)}</td><td class="p-4 whitespace-nowrap">${fmtTime(r.time)}</td><td class="p-4">${safe ? `<a href="${safe}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline font-semibold">Join</a>` : '-'}</td><td class="p-4 text-right">${delBtn(key,r.id)}</td></tr>`;
+    }).join('') : empty(5,'No links yet. Select "Add Important Link" to start.');
+  }
+}
 
-            if (tabName === 'dashboard') {
-                dashTab.style.display = 'grid';
-                if (btnDash) btnDash.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm whitespace-nowrap";
-            } else if (tabName === 'ic-log') {
-                icLogTab.style.display = 'grid';
-                if (btnIcLog) btnIcLog.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm whitespace-nowrap";
-            } else if (tabName === 'important-links') {
-                linksTab.style.display = 'grid';
-                if (btnLinks) btnLinks.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm whitespace-nowrap";
-            }
-        }
+/* ============ 4. MODAL ============ */
+let currentKey = null;
+const inputCls = 'w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none';
+function openModal(key) {
+  currentKey = key;
+  const cfg = TABLES[key];
+  document.getElementById('modal-title').textContent = cfg.title;
+  document.getElementById('modal-error').classList.add('hidden');
+  document.getElementById('modal-fields').innerHTML = cfg.fields.map(([id,label,type]) => {
+    const input = type === 'select'
+      ? `<select id="f-${id}" class="${inputCls}">${STATUSES.map(s=>`<option>${s}</option>`).join('')}</select>`
+      : `<input id="f-${id}" type="${type}" ${type==='url'?'placeholder="https://meet.google.com/..."':''} class="${inputCls}">`;
+    return `<div><label class="block text-sm font-semibold text-slate-600 mb-1">${label}</label>${input}</div>`;
+  }).join('');
+  document.getElementById('modal').classList.remove('hidden');
+  const first = document.querySelector('#modal-fields input, #modal-fields select');
+  if (first) first.focus();
+}
+function closeModal() { document.getElementById('modal').classList.add('hidden'); currentKey = null; }
+async function saveModal() {
+  const cfg = TABLES[currentKey], row = {};
+  cfg.fields.forEach(([id]) => row[id] = document.getElementById('f-' + id).value.trim());
+  const err = document.getElementById('modal-error');
+  if (cfg.fields.some(([id,,type]) => type !== 'select' && !row[id])) { err.textContent = 'Please fill in every field.'; err.classList.remove('hidden'); return; }
+  if (row.link && !/^https?:\/\//i.test(row.link)) { err.textContent = 'The link must start with http:// or https://'; err.classList.remove('hidden'); return; }
+  const key = currentKey;
+  const error = await insertRow(key, row);
+  if (error) { err.textContent = 'Could not save: ' + error.message; err.classList.remove('hidden'); return; }
+  closeModal(); render(key);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 
-        // --- FETCH DATA FROM SUPABASE ON LOAD ---
-        async function loadAllData() {
-            if (!db) return;
-            try {
-                // 1. Load Coaching
-                const { data: coachingData } = await db.from('coaching_schedules').select('*').order('id', { ascending: true });
-                const coachingTbody = document.getElementById('coaching-table-body');
-                if (coachingTbody && coachingData) {
-                    coachingTbody.innerHTML = '';
-                    coachingData.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="p-4 font-mono text-sm">${item.time_slot}</td>
-                            <td class="p-4 font-medium">${item.agent_name}</td>
-                            <td class="p-4 text-right space-x-2">
-                                <a href="${item.meet_link}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join</a>
-                                <button onclick="deleteSupabaseRecord('coaching_schedules', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button>
-                            </td>
-                        `;
-                        coachingTbody.appendChild(row);
-                    });
-                }
+/* ============ 5. TABS ============ */
+const TABS = ['dashboard','ic-log','important-links'];
+function switchTab(name) {
+  TABS.forEach(t => {
+    const on = t === name;
+    document.getElementById('tab-' + t).classList.toggle('hidden', !on);
+    document.getElementById('btn-' + t).className = 'px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap transition ' +
+      (on ? 'bg-white text-slate-900 shadow-sm' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white');
+  });
+}
 
-                // 2. Load IC Logs
-                const { data: icData } = await db.from('ic_logs').select('*').order('id', { ascending: false });
-                const icTbody = document.getElementById('ic-table-body');
-                if (icTbody && icData) {
-                    icTbody.innerHTML = '';
-                    icData.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="p-4 font-mono text-sm text-slate-500">${item.time_logged}</td>
-                            <td class="p-4 font-medium">${item.agent_name}</td>
-                            <td class="p-4 font-mono text-sm text-indigo-600">${item.extension_queue}</td>
-                            <td class="p-4"><span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg font-semibold text-sm">${item.status}</span></td>
-                            <td class="p-4 text-right"><button onclick="deleteSupabaseRecord('ic_logs', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
-                        `;
-                        icTbody.appendChild(row);
-                    });
-                }
+/* ============ 6. CALCULATOR ============ */
+const num = id => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
+function calculate() {
+  const target = num('target-pph'), shift = num('shift-hours'), exempt = num('exemption-hours');
+  const done = num('completed-items'), worked = num('hours-worked');
+  const net = Math.max(0, shift - exempt);
+  const required = Math.ceil(target * net);
+  const itemsLeft = Math.max(0, required - done);
+  const hoursLeft = Math.max(0, net - worked);
+  const pace = itemsLeft === 0 ? 0 : hoursLeft > 0 ? itemsLeft / hoursLeft : null;
+  const pct = required > 0 ? Math.min(100, Math.round(done / required * 100)) : 0;
+  document.getElementById('net-hours').textContent = (+net.toFixed(2)) + ' hrs';
+  document.getElementById('total-required').textContent = required + ' items';
+  document.getElementById('remaining-pace').textContent = pace === null ? 'No time left' : itemsLeft === 0 ? 'Target met' : pace.toFixed(1) + ' / hr';
+  document.getElementById('progress-percent').textContent = pct + '%';
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+document.querySelectorAll('.calc').forEach(el => el.addEventListener('input', calculate));
 
-                // 3. Load Important Links
-                const { data: linksData } = await db.from('important_links').select('*').order('id', { ascending: true });
-                const linksTbody = document.getElementById('links-table-body');
-                if (linksTbody && linksData) {
-                    linksTbody.innerHTML = '';
-                    linksData.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="p-4 font-medium text-slate-900">${item.topic}</td>
-                            <td class="p-4 text-sm">${item.day || 'N/A'}</td>
-                            <td class="p-4 font-mono text-sm">${item.time || 'N/A'}</td>
-                            <td class="p-4"><a href="${item.meet_url}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join Meet</a></td>
-                            <td class="p-4 text-right"><button onclick="deleteSupabaseRecord('important_links', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
-                        `;
-                        linksTbody.appendChild(row);
-                    });
-                }
-            } catch (err) {
-                console.error("Error loading data from Supabase:", err);
-            }
-        }
+/* ============ 7. CLOCK ============ */
+function tick() { document.getElementById('live-clock').textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'}); }
+setInterval(tick, 1000); tick();
 
-        // --- SAVE COACHING SCHEDULE ---
-        async function saveCoachingSchedule() {
-            if (!db) { alert('Supabase client not initialized.'); return; }
-            const agent = document.getElementById('meet-agent').value;
-            const time = document.getElementById('meet-time').value.trim();
-            const link = document.getElementById('meet-link').value.trim();
-
-            if (!agent) { alert('Please select an Agent Name.'); return; }
-            if (!time || !link) { alert('Please fill in both Time Slot and Google Meet Link.'); return; }
-
-            const { error } = await db.from('coaching_schedules').insert([{ agent_name: agent, time_slot: time, meet_link: link }]);
-            if (error) { alert('Error saving: ' + error.message); return; }
-
-            document.getElementById('meet-agent').selectedIndex = 0;
-            document.getElementById('meet-time').value = '';
-            document.getElementById('meet-link').value = '';
-            toggleAddMeetModal();
-            loadAllData();
-        }
-
-        // --- SAVE IC LOG ---
-        async function saveIcLog() {
-            if (!db) { alert('Supabase client not initialized.'); return; }
-            const agent = document.getElementById('ic-agent').value;
-            const ext = document.getElementById('ic-ext').value.trim();
-            const status = document.getElementById('ic-status').value.trim();
-
-            if (!agent) { alert('Please select an Agent Name.'); return; }
-            if (!ext) { alert('Please enter an IC Extension / Queue.'); return; }
-
-            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const statusText = status || 'Logged';
-
-            const { error } = await db.from('ic_logs').insert([{ time_logged: timeNow, agent_name: agent, extension_queue: ext, status: statusText }]);
-            if (error) { alert('Error saving: ' + error.message); return; }
-
-            document.getElementById('ic-agent').selectedIndex = 0;
-            document.getElementById('ic-ext').value = '';
-            document.getElementById('ic-status').value = '';
-            closeIcModal();
-            loadAllData();
-        }
-
-        // --- SAVE IMPORTANT LINK ---
-        async function saveImportantLink() {
-            if (!db) { alert('Supabase client not initialized.'); return; }
-            const topic = document.getElementById('link-topic').value.trim();
-            const day = document.getElementById('link-day').value.trim();
-            const time = document.getElementById('link-time').value.trim();
-            const linkUrl = document.getElementById('link-url').value.trim();
-
-            if (!topic || !linkUrl) { alert('Please fill in at least the Topic and Google Meet Link.'); return; }
-
-            const { error } = await db.from('important_links').insert([{ topic: topic, day: day, time: time, meet_url: linkUrl }]);
-            if (error) { alert('Error saving: ' + error.message); return; }
-
-            document.getElementById('link-topic').value = '';
-            document.getElementById('link-day').value = '';
-            document.getElementById('link-time').value = '';
-            document.getElementById('link-url').value = '';
-            closeLinkModal();
-            loadAllData();
-        }
-
-        // --- DELETE RECORD FROM SUPABASE ---
-        async function deleteSupabaseRecord(tableName, id, button) {
-            if (!db) return;
-            const { error } = await db.from(tableName).delete().eq('id', id);
-            if (error) {
-                alert('Error deleting: ' + error.message);
-                return;
-            }
-            button.closest('tr').remove();
-        }
-
-        // Modal Controls
-        function toggleAddMeetModal() {
-            const modal = document.getElementById('add-meet-modal');
-            if (modal) {
-                modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
-            }
-        }
-        function openIcModal() { 
-            const m = document.getElementById('ic-modal'); 
-            if (m) m.style.display = 'flex'; 
-        }
-        function close
+/* ============ 8. START ============ */
+if (!useDb) showBanner('Local mode: entries are saved in this browser only. Add your Supabase URL and key near the top of the script to share data with the team.');
+switchTab('dashboard'); calculate();
+['coaching','ic','link'].forEach(render);
+</script>
+</body>
+</html>
