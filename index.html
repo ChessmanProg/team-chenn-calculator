@@ -196,8 +196,8 @@
                                 <th class="p-3">Time Logged</th>
                                 <th class="p-3">Agent Name</th>
                                 <th class="p-3">IC Extension / Queue</th>
-                                <th class="p-3">Call Type / Reason</th>
                                 <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
@@ -205,15 +205,15 @@
                                 <td class="p-3 font-mono text-xs text-slate-500">10:15 PM</td>
                                 <td class="p-3 font-medium">Raphael Santiago Reyes</td>
                                 <td class="p-3 font-mono text-xs text-indigo-600">Team Chenn Queue (Ext. 4012)</td>
-                                <td class="p-3">Queue Transfer / Escalation</td>
                                 <td class="p-3"><span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded font-semibold text-xs">Resolved</span></td>
+                                <td class="p-3 text-right"><button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button></td>
                             </tr>
                             <tr>
                                 <td class="p-3 font-mono text-xs text-slate-500">11:30 PM</td>
                                 <td class="p-3 font-medium">Maria Kristelle Cambronero De Leon</td>
                                 <td class="p-3 font-mono text-xs text-indigo-600">BC AI Escalations (Ext. 4015)</td>
-                                <td class="p-3">BC AI Item Review Inquiry</td>
                                 <td class="p-3"><span class="px-2.5 py-1 bg-amber-50 text-amber-600 rounded font-semibold text-xs">Pending Callback</span></td>
+                                <td class="p-3 text-right"><button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -297,10 +297,6 @@
                         <option value="IT / Tech Support Desk (Ext. 9110)">IT / Tech Support Desk (Ext. 9110)</option>
                         <option value="Operations Floor Lead (Ext. 4020)">Operations Floor Lead (Ext. 4020)</option>
                     </select>
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Call Type / Reason</label>
-                    <input type="text" id="ic-reason" placeholder="e.g. Escalation / Inquiry" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div>
                     <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Status</label>
@@ -387,7 +383,7 @@
             toggleAddMeetModal();
         }
 
-        // Delete Coaching Schedule Row
+        // Delete Row Function (shared for both tables)
         function deleteRow(button) {
             const row = button.closest('tr');
             row.remove();
@@ -405,13 +401,7 @@
         function saveIcLog() {
             const agent = document.getElementById('ic-agent').value;
             const ext = document.getElementById('ic-ext').value;
-            const reason = document.getElementById('ic-reason').value.trim();
             const status = document.getElementById('ic-status').value;
-
-            if (!reason) {
-                alert('Please fill in the Call Type / Reason.');
-                return;
-            }
 
             const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const tbody = document.getElementById('ic-table-body');
@@ -423,12 +413,11 @@
                 <td class="p-3 font-mono text-xs text-slate-500">${timeNow}</td>
                 <td class="p-3 font-medium">${agent}</td>
                 <td class="p-3 font-mono text-xs text-indigo-600">${ext}</td>
-                <td class="p-3">${reason}</td>
                 <td class="p-3"><span class="px-2.5 py-1 ${badgeClass} rounded font-semibold text-xs">${status}</span></td>
+                <td class="p-3 text-right"><button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button></td>
             `;
             tbody.prepend(newRow);
 
-            document.getElementById('ic-reason').value = '';
             closeIcModal();
         }
 
