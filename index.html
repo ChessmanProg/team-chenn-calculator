@@ -11,7 +11,7 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-sm">
 
     <!-- Header -->
     <header class="bg-slate-900 text-white shadow-md">
@@ -27,8 +27,8 @@
         </div>
         <!-- Tab Navigation Bar -->
         <div class="max-w-7xl mx-auto px-4 flex gap-2 border-t border-slate-800 pt-2">
-            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm">📊 Dashboard & Calculator</button>
-            <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition">📝 Today's IC Extension Record</button>
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm">📊 Dashboard & Calculator</button>
+            <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition">📝 Today's IC Extension Record</button>
         </div>
     </header>
 
@@ -102,279 +102,62 @@
                         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                             📅 Coaching Schedules
                         </h2>
-                        <button onclick="toggleAddMeetModal()" class="text-xs text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-2.5 py-1 rounded-lg transition shadow-sm flex items-center gap-1">
+                        <button onclick="toggleAddMeetModal()" class="text-xs text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1">
                             + Add Schedule
                         </button>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-xs">
                                 <tr>
-                                    <th class="p-2">Time</th>
-                                    <th class="p-2">Agent</th>
-                                    <th class="p-2">Meet</th>
+                                    <th class="p-2.5">Time</th>
+                                    <th class="p-2.5">Agent</th>
+                                    <th class="p-2.5 text-right">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="coaching-table-body" class="divide-y divide-slate-100 text-slate-700">
                                 <tr>
-                                    <td class="p-2 font-mono">12:00</td>
-                                    <td class="p-2 font-medium">Raphael Santiago Reyes</td>
-                                    <td class="p-2"><a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+                                    <td class="p-2.5 font-mono text-xs">12:00</td>
+                                    <td class="p-2.5 font-medium">Raphael Santiago Reyes</td>
+                                    <td class="p-2.5 text-right space-x-1">
+                                        <a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
+                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs">✕</button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">12:30</td>
-                                    <td class="p-2 font-medium">Maria Kristelle Cambronero De Leon</td>
-                                    <td class="p-2"><a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+                                    <td class="p-2.5 font-mono text-xs">12:30</td>
+                                    <td class="p-2.5 font-medium">Maria Kristelle Cambronero De Leon</td>
+                                    <td class="p-2.5 text-right space-x-1">
+                                        <a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
+                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs">✕</button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">13:30</td>
-                                    <td class="p-2 font-medium">Chito Canuto Quintela Delvo</td>
-                                    <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+                                    <td class="p-2.5 font-mono text-xs">13:30</td>
+                                    <td class="p-2.5 font-medium">Chito Canuto Quintela Delvo</td>
+                                    <td class="p-2.5 text-right space-x-1">
+                                        <a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
+                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs">✕</button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">14:00</td>
-                                    <td class="p-2 font-medium">John Anthony Reyes Villaflores</td>
-                                    <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+                                    <td class="p-2.5 font-mono text-xs">14:00</td>
+                                    <td class="p-2.5 font-medium">John Anthony Reyes Villaflores</td>
+                                    <td class="p-2.5 text-right space-x-1">
+                                        <a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
+                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs">✕</button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">14:30</td>
-                                    <td class="p-2 font-medium">Bryson Blando Lasam</td>
-                                    <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+                                    <td class="p-2.5 font-mono text-xs">14:30</td>
+                                    <td class="p-2.5 font-medium">Bryson Blando Lasam</td>
+                                    <td class="p-2.5 text-right space-x-1">
+                                        <a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
+                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs">✕</button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">17:00</td>
-                                    <td class="p-2 font-medium">Phoebe Regio Sarmiento</td>
-                                    <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: TODAY'S IC EXTENSION RECORD -->
-        <div id="tab-ic-log" class="hidden grid grid-cols-1 gap-6">
-            <!-- Extension Record Table -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            📝 Today's InContact (IC) Extension Record
-                        </h2>
-                        <p class="text-xs text-slate-500">Log and track IC extension activities for today's shift.</p>
-                    </div>
-                    <button onclick="openIcModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1">
-                        + Add New IC Log
-                    </button>
-                </div>
-
-                <!-- IC Extension Log Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
-                            <tr>
-                                <th class="p-3">Time Logged</th>
-                                <th class="p-3">Agent Name</th>
-                                <th class="p-3">IC Extension / Queue</th>
-                                <th class="p-3">Call Type / Reason</th>
-                                <th class="p-3">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
-                            <tr>
-                                <td class="p-3 font-mono text-slate-500">10:15 PM</td>
-                                <td class="p-3 font-medium">Raphael Santiago Reyes</td>
-                                <td class="p-3 font-mono text-indigo-600">Team Chenn Queue (Ext. 4012)</td>
-                                <td class="p-3">Queue Transfer / Escalation</td>
-                                <td class="p-3"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Resolved</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-mono text-slate-500">11:30 PM</td>
-                                <td class="p-3 font-medium">Maria Kristelle Cambronero De Leon</td>
-                                <td class="p-3 font-mono text-indigo-600">BC AI Escalations (Ext. 4015)</td>
-                                <td class="p-3">BC AI Item Review Inquiry</td>
-                                <td class="p-3"><span class="px-2 py-0.5 bg-amber-50 text-amber-600 rounded font-semibold">Pending Callback</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Modal for Adding New Coaching Schedule -->
-    <div id="add-meet-modal" class="fixed inset-0 bg-slate-900/50 hidden flex justify-center items-center px-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 class="text-base font-bold text-slate-900 border-b pb-2">Add New Coaching Schedule</h3>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 mb-1">Agent Name</label>
-                    <select id="meet-agent" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
-                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
-                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
-                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
-                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
-                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
-                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
-                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
-                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
-                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
-                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
-                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
-                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
-                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
-                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 mb-1">Time Slot</label>
-                    <input type="text" id="meet-time" placeholder="e.g. 15:00 - 15:30" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 mb-1">Google Meet Link</label>
-                    <input type="url" id="meet-link" placeholder="https://meet.google.com/..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 pt-3 border-t">
-                <button onclick="toggleAddMeetModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg">Cancel</button>
-                <button onclick="saveCoachingSchedule()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg">Add to Schedule</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Adding New IC Log -->
-    <div id="ic-modal" class="fixed inset-0 bg-slate-900/50 hidden flex justify-center items-center px-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 class="text-base font-bold text-slate-900 border-b pb-2">Add New IC Extension Record</h3>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 mb-1">Agent Name</label>
-                    <select id="ic-agent" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
-                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
-                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
-                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
-                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
-                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
-                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
-                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
-                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
-                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
-                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
-                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
-                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
-                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
-                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 mb-1">IC Extension / Queue</label>
-                    <select id="ic-ext" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="Team Chenn Queue (Ext. 4012)">Team Chenn Queue (Ext. 4012)</option>
-                        <option value="BC AI Escalations (Ext. 4015)">BC AI Escalations (Ext. 4015)</option>
-                        <option value="IT / Tech Support Desk (Ext. 9110)">IT / Tech Support Desk (Ext. 9110)</option>
-                        <option value="Operations Floor Lead (Ext. 4020)">Operations Floor Lead (Ext. 4020)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 mb-1">Call Type / Reason</label>
-                    <input type="text" id="ic-reason" placeholder="e.g. Escalation / Inquiry" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold uppercase text-slate-600 mb-1">Status</label>
-                    <select id="ic-status" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="Resolved">Resolved</option>
-                        <option value="Pending Callback">Pending Callback</option>
-                        <option value="Escalated to Lead">Escalated to Lead</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 pt-3 border-t">
-                <button onclick="closeIcModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg">Cancel</button>
-                <button onclick="saveIcLog()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg">Save Record</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
-        Team Chenn Internal Portal &bull; Built for non-voice efficiency
-    </footer>
-
-    <!-- JavaScript Navigation & Logic -->
-    <script>
-        // Live Clock
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleTimeString();
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // Tab Switching Function
-        function switchTab(tabName) {
-            const dashTab = document.getElementById('tab-dashboard');
-            const icLogTab = document.getElementById('tab-ic-log');
-            const btnDash = document.getElementById('btn-dashboard');
-            const btnIcLog = document.getElementById('btn-ic-log');
-
-            if (tabName === 'dashboard') {
-                dashTab.classList.remove('hidden');
-                icLogTab.classList.add('hidden');
-                btnDash.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
-                btnIcLog.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
-            } else {
-                dashTab.classList.add('hidden');
-                icLogTab.classList.remove('hidden');
-                btnIcLog.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
-                btnDash.className = "px-4 py-2 text-xs font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
-            }
-        }
-
-        // Toggle Coaching Add Modal
-        function toggleAddMeetModal() {
-            document.getElementById('add-meet-modal').classList.toggle('hidden');
-        }
-
-        // Add New Coaching Schedule Row
-        function saveCoachingSchedule() {
-            const agent = document.getElementById('meet-agent').value;
-            const time = document.getElementById('meet-time').value.trim();
-            const link = document.getElementById('meet-link').value.trim();
-
-            if (!time || !link) {
-                alert('Please fill in both Time Slot and Google Meet Link.');
-                return;
-            }
-
-            const tbody = document.getElementById('coaching-table-body');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td class="p-2 font-mono">${time}</td>
-                <td class="p-2 font-medium">${agent}</td>
-                <td class="p-2"><a href="${link}" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
-            `;
-            tbody.appendChild(newRow);
-
-            // Reset inputs & close modal
-            document.getElementById('meet-time').value = '';
-            document.getElementById('meet-link').value = '';
-            toggleAddMeetModal();
-        }
-
-        // IC Extension Modal Controls
-        function openIcModal() {
-            document.getElementById('ic-modal').classList.remove('hidden');
-        }
-        function closeIcModal() {
-            document.getElementById('ic-modal').classList.add('hidden');
-        }
-
-        // Save New IC Log Entry
-        function saveIcLog() {
-            const agent = document.getElementById('ic-agent').value;
-            const ext = document.getElementById('ic-ext').value
+                                    <td class="p-2.5 font-mono text-xs">17:00</td>
+                                    <td class="p-2.5 font-medium">Phoebe Regio Sarmiento</td>
+                                    <td class="p-2.5 text
