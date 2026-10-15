@@ -1051,7 +1051,8 @@ if (!useDb) {
   showBanner('Database connection is unavailable. Check the Supabase URL and public key in the script.');
 }
 loadThemeSettings();
-switchTab('dashboard');
+const savedTab = localStorage.getItem('teamChennActiveTab');
+switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
 calculate();
 ['coaching', 'ic', 'link'].forEach(render);
 refreshAuthState().then(handlePasswordRecovery);
