@@ -13,91 +13,91 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-sm">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-base">
 
     <!-- Header -->
     <header class="bg-slate-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center">
             <!-- Brand / Logo Header -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-4">
                 <!-- Tech Logo Badge -->
-                <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-xl text-indigo-400 shadow-inner">
+                <div class="w-12 h-12 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-2xl text-indigo-400 shadow-inner">
                     🎧
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight leading-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
-                    <p class="text-xs text-slate-400">Operational Portal & Productivity Calculator</p>
+                    <h1 class="text-2xl font-bold tracking-tight leading-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
+                    <p class="text-sm text-slate-400">Operational Portal & Productivity Calculator</p>
                 </div>
             </div>
-            <div class="mt-2 sm:mt-0 flex gap-2 items-center">
-                <span class="px-3 py-1 bg-emerald-600/30 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30">Shift Active</span>
-                <span id="live-clock" class="px-3 py-1 bg-slate-800 text-slate-300 text-xs font-mono rounded-full border border-slate-700"></span>
+            <div class="mt-3 sm:mt-0 flex gap-3 items-center">
+                <span class="px-4 py-1.5 bg-emerald-600/30 text-emerald-400 text-sm font-semibold rounded-full border border-emerald-500/30">Shift Active</span>
+                <span id="live-clock" class="px-4 py-1.5 bg-slate-800 text-slate-200 text-sm font-mono rounded-full border border-slate-700"></span>
             </div>
         </div>
         <!-- Tab Navigation Bar -->
-        <div class="max-w-7xl mx-auto px-4 flex gap-2 border-t border-slate-800 pt-2">
-            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm">📊 Dashboard & Calculator</button>
-            <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition">📝 Today's IC Extension Record</button>
+        <div class="max-w-7xl mx-auto px-6 flex gap-3 border-t border-slate-800 pt-3">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm">📊 Dashboard & Calculator</button>
+            <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition">📝 Today's IC Extension Record</button>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow">
+    <main class="max-w-7xl w-full mx-auto px-6 py-8 flex-grow">
 
         <!-- TAB 1: DASHBOARD -->
-        <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Column: PPH & Exemption Calculator -->
             <section class="lg:col-span-2 space-y-6">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                             📊 PPH & Exemption Pace Calculator
                         </h2>
-                        <span class="text-xs text-slate-500">Live Target Adjustment</span>
+                        <span class="text-sm text-slate-500">Live Target Adjustment</span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Target PPH</label>
-                            <input type="number" id="target-pph" value="15" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Target PPH</label>
+                            <input type="number" id="target-pph" value="15" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Total Shift Hours</label>
-                            <input type="number" id="shift-hours" value="9" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Shift Hours</label>
+                            <input type="number" id="shift-hours" value="9" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Exemption Hours (Coaching/Break/Meetings)</label>
-                            <input type="number" id="exemption-hours" value="1.5" step="0.25" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Exemption Hours (Coaching/Break/Meetings)</label>
+                            <input type="number" id="exemption-hours" value="1.5" step="0.25" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Items Completed So Far</label>
-                            <input type="number" id="completed-items" value="65" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Items Completed So Far</label>
+                            <input type="number" id="completed-items" value="65" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         </div>
                     </div>
 
                     <!-- Calculated Results Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-6">
                         <div>
-                            <p class="text-xs font-medium text-slate-500">Net Production Hours</p>
-                            <p id="net-hours" class="text-xl font-bold text-slate-900 mt-1">7.5 hrs</p>
+                            <p class="text-sm font-medium text-slate-500">Net Production Hours</p>
+                            <p id="net-hours" class="text-2xl font-bold text-slate-900 mt-1">7.5 hrs</p>
                         </div>
                         <div>
-                            <p class="text-xs font-medium text-slate-500">Required Total Items</p>
-                            <p id="total-required" class="text-xl font-bold text-indigo-600 mt-1">113 items</p>
+                            <p class="text-sm font-medium text-slate-500">Required Total Items</p>
+                            <p id="total-required" class="text-2xl font-bold text-indigo-600 mt-1">113 items</p>
                         </div>
                         <div>
-                            <p class="text-xs font-medium text-slate-500">Pace Needed (Remaining)</p>
-                            <p id="remaining-pace" class="text-xl font-bold text-emerald-600 mt-1">12.8 / hr</p>
+                            <p class="text-sm font-medium text-slate-500">Pace Needed (Remaining)</p>
+                            <p id="remaining-pace" class="text-2xl font-bold text-emerald-600 mt-1">12.8 / hr</p>
                         </div>
                     </div>
 
                     <!-- Progress Bar -->
                     <div>
-                        <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                        <div class="flex justify-between text-sm font-semibold text-slate-600 mb-2">
                             <span>Shift Progress to Target</span>
                             <span id="progress-percent">58%</span>
                         </div>
-                        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                        <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden">
                             <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 58%;"></div>
                         </div>
                     </div>
@@ -106,23 +106,23 @@
 
             <!-- Right Column: Coaching Schedules -->
             <div class="space-y-6">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             📅 Coaching Schedules
                         </h2>
-                        <button onclick="toggleAddMeetModal()" class="text-xs text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 cursor-pointer">
+                        <button onclick="toggleAddMeetModal()" class="text-sm text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1 cursor-pointer">
                             + Add Schedule
                         </button>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-xs">
+                        <table class="w-full text-left text-base">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
                                 <tr>
-                                    <th class="p-2.5">Time</th>
-                                    <th class="p-2.5">Agent</th>
-                                    <th class="p-2.5 text-right">Action</th>
+                                    <th class="p-3">Time</th>
+                                    <th class="p-3">Agent</th>
+                                    <th class="p-3 text-right">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="coaching-table-body" class="divide-y divide-slate-100 text-slate-700">
@@ -137,29 +137,29 @@
         <!-- TAB 2: TODAY'S IC EXTENSION RECORD -->
         <div id="tab-ic-log" style="display: none;" class="grid-cols-1 gap-6">
             <!-- Extension Record Table -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
                     <div>
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                             📝 Today's InContact (IC) Extension Record
                         </h2>
-                        <p class="text-xs text-slate-500">Log and track IC extension activities for today's shift.</p>
+                        <p class="text-sm text-slate-500">Log and track IC extension activities for today's shift.</p>
                     </div>
-                    <button onclick="openIcModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition flex items-center gap-1 cursor-pointer">
+                    <button onclick="openIcModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-xl shadow transition flex items-center gap-1 cursor-pointer">
                         + Add New IC Log
                     </button>
                 </div>
 
                 <!-- IC Extension Log Table -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-xs">
+                    <table class="w-full text-left text-base">
+                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
                             <tr>
-                                <th class="p-3">Time Logged</th>
-                                <th class="p-3">Agent Name</th>
-                                <th class="p-3">IC Extension / Queue</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3 text-right">Action</th>
+                                <th class="p-4">Time Logged</th>
+                                <th class="p-4">Agent Name</th>
+                                <th class="p-4">IC Extension / Queue</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
@@ -174,12 +174,12 @@
 
     <!-- Modal for Adding New Coaching Schedule -->
     <div id="add-meet-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4 text-sm">
-            <h3 class="text-base font-bold text-slate-900 border-b pb-2">Add New Coaching Schedule</h3>
-            <div class="space-y-3">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add New Coaching Schedule</h3>
+            <div class="space-y-4">
                 <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Agent Name</label>
-                    <select id="meet-agent" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Agent Name</label>
+                    <select id="meet-agent" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         <option value="" disabled selected>-- Select Agent --</option>
                         <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
                         <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
@@ -199,29 +199,29 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Time Slot</label>
-                    <input type="text" id="meet-time" placeholder="e.g. 15:00 - 15:30" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Time Slot</label>
+                    <input type="text" id="meet-time" placeholder="e.g. 15:00 - 15:30" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Google Meet Link</label>
-                    <input type="url" id="meet-link" placeholder="https://meet.google.com/..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Google Meet Link</label>
+                    <input type="url" id="meet-link" placeholder="https://meet.google.com/..." class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t">
-                <button onclick="toggleAddMeetModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg cursor-pointer">Cancel</button>
-                <button onclick="saveCoachingSchedule()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg cursor-pointer">Add to Schedule</button>
+            <div class="flex justify-end gap-3 pt-4 border-t">
+                <button onclick="toggleAddMeetModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
+                <button onclick="saveCoachingSchedule()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Add to Schedule</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Adding New IC Log (Free text inputs for Extension & Status) -->
+    <!-- Modal for Adding New IC Log -->
     <div id="ic-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4 text-sm">
-            <h3 class="text-base font-bold text-slate-900 border-b pb-2">Add New IC Extension Record</h3>
-            <div class="space-y-3">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-5 text-base">
+            <h3 class="text-lg font-bold text-slate-900 border-b pb-3">Add New IC Extension Record</h3>
+            <div class="space-y-4">
                 <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Agent Name</label>
-                    <select id="ic-agent" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Agent Name</label>
+                    <select id="ic-agent" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                         <option value="" disabled selected>-- Select Agent --</option>
                         <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
                         <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
@@ -241,23 +241,23 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">IC Extension / Queue</label>
-                    <input type="text" id="ic-ext" placeholder="e.g. Team Chenn Queue (Ext. 4012)" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">IC Extension / Queue</label>
+                    <input type="text" id="ic-ext" placeholder="e.g. Team Chenn Queue (Ext. 4012)" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Status</label>
-                    <input type="text" id="ic-status" placeholder="e.g. Resolved, Pending, Active" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block font-semibold uppercase text-slate-600 text-sm mb-2">Status</label>
+                    <input type="text" id="ic-status" placeholder="e.g. Resolved, Pending, Active" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t">
-                <button onclick="closeIcModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg cursor-pointer">Cancel</button>
-                <button onclick="saveIcLog()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg cursor-pointer">Save Record</button>
+            <div class="flex justify-end gap-3 pt-4 border-t">
+                <button onclick="closeIcModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">Cancel</button>
+                <button onclick="saveIcLog()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Save Record</button>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-sm text-slate-500 mt-auto">
         Team Chenn Internal Portal &bull; Built for non-voice efficiency
     </footer>
 
@@ -281,13 +281,13 @@
             if (tabName === 'dashboard') {
                 dashTab.style.display = 'grid';
                 icLogTab.style.display = 'none';
-                btnDash.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
-                btnIcLog.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
+                btnDash.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
+                btnIcLog.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
             } else {
                 dashTab.style.display = 'none';
                 icLogTab.style.display = 'grid';
-                btnIcLog.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
-                btnDash.className = "px-4 py-2 text-sm font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
+                btnIcLog.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm";
+                btnDash.className = "px-5 py-2.5 text-base font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition";
             }
         }
 
@@ -316,11 +316,11 @@
             const tbody = document.getElementById('coaching-table-body');
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
-                <td class="p-2.5 font-mono text-xs">${time}</td>
-                <td class="p-2.5 font-medium">${agent}</td>
-                <td class="p-2.5 text-right space-x-1">
-                    <a href="${link}" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
-                    <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button>
+                <td class="p-4 font-mono text-sm">${time}</td>
+                <td class="p-4 font-medium">${agent}</td>
+                <td class="p-4 text-right space-x-2">
+                    <a href="${link}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join</a>
+                    <button onclick="deleteRow(this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button>
                 </td>
             `;
             tbody.appendChild(newRow);
@@ -368,11 +368,11 @@
 
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
-                <td class="p-3 font-mono text-xs text-slate-500">${timeNow}</td>
-                <td class="p-3 font-medium">${agent}</td>
-                <td class="p-3 font-mono text-xs text-indigo-600">${ext}</td>
-                <td class="p-3"><span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded font-semibold text-xs">${statusText}</span></td>
-                <td class="p-3 text-right"><button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button></td>
+                <td class="p-4 font-mono text-sm text-slate-500">${timeNow}</td>
+                <td class="p-4 font-medium">${agent}</td>
+                <td class="p-4 font-mono text-sm text-indigo-600">${ext}</td>
+                <td class="p-4"><span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg font-semibold text-sm">${statusText}</span></td>
+                <td class="p-4 text-right"><button onclick="deleteRow(this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
             `;
             tbody.prepend(newRow);
 
