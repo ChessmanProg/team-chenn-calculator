@@ -8,6 +8,8 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎧</text></svg>">
     <!-- Tailwind CSS for modern, clean UI -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -127,7 +129,7 @@
                                 </tr>
                             </thead>
                             <tbody id="coaching-table-body" class="divide-y divide-slate-100 text-slate-700">
-                                <!-- Clean empty starting state -->
+                                <!-- Loaded dynamically from Supabase -->
                             </tbody>
                         </table>
                     </div>
@@ -162,7 +164,7 @@
                             </tr>
                         </thead>
                         <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
-                            <!-- Clean empty starting state -->
+                            <!-- Loaded dynamically from Supabase -->
                         </tbody>
                     </table>
                 </div>
@@ -196,7 +198,7 @@
                             </tr>
                         </thead>
                         <tbody id="links-table-body" class="divide-y divide-slate-100 text-slate-700">
-                            <!-- Clean empty starting state -->
+                            <!-- Loaded dynamically from Supabase -->
                         </tbody>
                     </table>
                 </div>
@@ -323,8 +325,14 @@
         Team Chenn Internal Portal &bull; Built for non-voice efficiency
     </footer>
 
-    <!-- JavaScript Navigation & Logic -->
+    <!-- JavaScript & Supabase Integration -->
     <script>
+        // Supabase Initialization
+        const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0'; // Replace with your actual anon key from Supabase settings
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // Live Clock
         function updateClock() {
             const now = new Date();
@@ -343,7 +351,6 @@
             const btnIcLog = document.getElementById('btn-ic-log');
             const btnLinks = document.getElementById('btn-important-links');
 
-            // Reset all tabs and buttons
             dashTab.style.display = 'none';
             icLogTab.style.display = 'none';
             linksTab.style.display = 'none';
@@ -364,134 +371,148 @@
             }
         }
 
-        // Toggle Coaching Add Modal
-        function toggleAddMeetModal() {
-            const modal = document.getElementById('add-meet-modal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        // --- FETCH DATA FROM SUPABASE ON LOAD ---
+        async function loadAllData() {
+            try {
+                // 1. Load Coaching
+                const { data: coachingData } = await supabase.from('coaching_schedules').select('*').order('id', { ascending: true });
+                const coachingTbody = document.getElementById('coaching-table-body');
+                coachingTbody.innerHTML = '';
+                if (coachingData) {
+                    coachingData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="p-4 font-mono text-sm">${item.time_slot}</td>
+                            <td class="p-4 font-medium">${item.agent_name}</td>
+                            <td class="p-4 text-right space-x-2">
+                                <a href="${item.meet_link}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join</a>
+                                <button onclick="deleteSupabaseRecord('coaching_schedules', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button>
+                            </td>
+                        `;
+                        coachingTbody.appendChild(row);
+                    });
+                }
+
+                // 2. Load IC Logs
+                const { data: icData } = await supabase.from('ic_logs').select('*').order('id', { ascending: false });
+                const icTbody = document.getElementById('ic-table-body');
+                icTbody.innerHTML = '';
+                if (icData) {
+                    icData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="p-4 font-mono text-sm text-slate-500">${item.time_logged}</td>
+                            <td class="p-4 font-medium">${item.agent_name}</td>
+                            <td class="p-4 font-mono text-sm text-indigo-600">${item.extension_queue}</td>
+                            <td class="p-4"><span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg font-semibold text-sm">${item.status}</span></td>
+                            <td class="p-4 text-right"><button onclick="deleteSupabaseRecord('ic_logs', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
+                        `;
+                        icTbody.appendChild(row);
+                    });
+                }
+
+                // 3. Load Important Links
+                const { data: linksData } = await supabase.from('important_links').select('*').order('id', { ascending: true });
+                const linksTbody = document.getElementById('links-table-body');
+                linksTbody.innerHTML = '';
+                if (linksData) {
+                    linksData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="p-4 font-medium text-slate-900">${item.topic}</td>
+                            <td class="p-4 text-sm">${item.day || 'N/A'}</td>
+                            <td class="p-4 font-mono text-sm">${item.time || 'N/A'}</td>
+                            <td class="p-4"><a href="${item.meet_url}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join Meet</a></td>
+                            <td class="p-4 text-right"><button onclick="deleteSupabaseRecord('important_links', ${item.id}, this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
+                        `;
+                        linksTbody.appendChild(row);
+                    });
+                }
+            } catch (err) {
+                console.error("Error loading data from Supabase:", err);
+            }
         }
 
-        // Add New Coaching Schedule Row
-        function saveCoachingSchedule() {
+        // --- SAVE COACHING SCHEDULE ---
+        async function saveCoachingSchedule() {
             const agent = document.getElementById('meet-agent').value;
             const time = document.getElementById('meet-time').value.trim();
             const link = document.getElementById('meet-link').value.trim();
 
-            if (!agent) {
-                alert('Please select an Agent Name.');
-                return;
-            }
+            if (!agent) { alert('Please select an Agent Name.'); return; }
+            if (!time || !link) { alert('Please fill in both Time Slot and Google Meet Link.'); return; }
 
-            if (!time || !link) {
-                alert('Please fill in both Time Slot and Google Meet Link.');
-                return;
-            }
-
-            const tbody = document.getElementById('coaching-table-body');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td class="p-4 font-mono text-sm">${time}</td>
-                <td class="p-4 font-medium">${agent}</td>
-                <td class="p-4 text-right space-x-2">
-                    <a href="${link}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join</a>
-                    <button onclick="deleteRow(this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button>
-                </td>
-            `;
-            tbody.appendChild(newRow);
+            const { error } = await supabase.from('coaching_schedules').insert([{ agent_name: agent, time_slot: time, meet_link: link }]);
+            if (error) { alert('Error saving: ' + error.message); return; }
 
             document.getElementById('meet-agent').selectedIndex = 0;
             document.getElementById('meet-time').value = '';
             document.getElementById('meet-link').value = '';
             toggleAddMeetModal();
+            loadAllData();
         }
 
-        // Delete Row Function
-        function deleteRow(button) {
-            const row = button.closest('tr');
-            row.remove();
-        }
-
-        // IC Extension Modal Controls
-        function openIcModal() {
-            document.getElementById('ic-modal').style.display = 'flex';
-        }
-        function closeIcModal() {
-            document.getElementById('ic-modal').style.display = 'none';
-        }
-
-        // Save New IC Log Entry
-        function saveIcLog() {
+        // --- SAVE IC LOG ---
+        async function saveIcLog() {
             const agent = document.getElementById('ic-agent').value;
             const ext = document.getElementById('ic-ext').value.trim();
             const status = document.getElementById('ic-status').value.trim();
 
-            if (!agent) {
-                alert('Please select an Agent Name.');
-                return;
-            }
-
-            if (!ext) {
-                alert('Please enter an IC Extension / Queue.');
-                return;
-            }
+            if (!agent) { alert('Please select an Agent Name.'); return; }
+            if (!ext) { alert('Please enter an IC Extension / Queue.'); return; }
 
             const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const tbody = document.getElementById('ic-table-body');
-
             const statusText = status || 'Logged';
 
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td class="p-4 font-mono text-sm text-slate-500">${timeNow}</td>
-                <td class="p-4 font-medium">${agent}</td>
-                <td class="p-4 font-mono text-sm text-indigo-600">${ext}</td>
-                <td class="p-4"><span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg font-semibold text-sm">${statusText}</span></td>
-                <td class="p-4 text-right"><button onclick="deleteRow(this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
-            `;
-            tbody.prepend(newRow);
+            const { error } = await supabase.from('ic_logs').insert([{ time_logged: timeNow, agent_name: agent, extension_queue: ext, status: statusText }]);
+            if (error) { alert('Error saving: ' + error.message); return; }
 
             document.getElementById('ic-agent').selectedIndex = 0;
             document.getElementById('ic-ext').value = '';
             document.getElementById('ic-status').value = '';
             closeIcModal();
+            loadAllData();
         }
 
-        // Important Links Modal Controls
-        function openLinkModal() {
-            document.getElementById('link-modal').style.display = 'flex';
-        }
-        function closeLinkModal() {
-            document.getElementById('link-modal').style.display = 'none';
-        }
-
-        // Save Important Link Entry
-        function saveImportantLink() {
+        // --- SAVE IMPORTANT LINK ---
+        async function saveImportantLink() {
             const topic = document.getElementById('link-topic').value.trim();
             const day = document.getElementById('link-day').value.trim();
             const time = document.getElementById('link-time').value.trim();
             const linkUrl = document.getElementById('link-url').value.trim();
 
-            if (!topic || !linkUrl) {
-                alert('Please fill in at least the Topic and Google Meet Link.');
-                return;
-            }
+            if (!topic || !linkUrl) { alert('Please fill in at least the Topic and Google Meet Link.'); return; }
 
-            const tbody = document.getElementById('links-table-body');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td class="p-4 font-medium text-slate-900">${topic}</td>
-                <td class="p-4 text-sm">${day || 'N/A'}</td>
-                <td class="p-4 font-mono text-sm">${time || 'N/A'}</td>
-                <td class="p-4"><a href="${linkUrl}" target="_blank" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-100 transition text-sm">Join Meet</a></td>
-                <td class="p-4 text-right"><button onclick="deleteRow(this)" class="px-2.5 py-1.5 bg-rose-50 text-rose-600 font-semibold rounded-lg hover:bg-rose-100 transition text-sm cursor-pointer">✕</button></td>
-            `;
-            tbody.appendChild(newRow);
+            const { error } = await supabase.from('important_links').insert([{ topic: topic, day: day, time: time, meet_url: linkUrl }]);
+            if (error) { alert('Error saving: ' + error.message); return; }
 
             document.getElementById('link-topic').value = '';
             document.getElementById('link-day').value = '';
             document.getElementById('link-time').value = '';
             document.getElementById('link-url').value = '';
             closeLinkModal();
+            loadAllData();
         }
+
+        // --- DELETE RECORD FROM SUPABASE ---
+        async function deleteSupabaseRecord(tableName, id, button) {
+            const { error } = await supabase.from(tableName).delete().eq('id', id);
+            if (error) {
+                alert('Error deleting: ' + error.message);
+                return;
+            }
+            button.closest('tr').remove();
+        }
+
+        // Modal Controls
+        function toggleAddMeetModal() {
+            const modal = document.getElementById('add-meet-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+        function openIcModal() { document.getElementById('ic-modal').style.display = 'flex'; }
+        function closeIcModal() { document.getElementById('ic-modal').style.display = 'none'; }
+        function openLinkModal() { document.getElementById('link-modal').style.display = 'flex'; }
+        function closeLinkModal() { document.getElementById('link-modal').style.display = 'none'; }
 
         // PPH Calculator Logic
         const targetPphInput = document.getElementById('target-pph');
@@ -526,6 +547,9 @@
         });
 
         calculatePph();
+
+        // Load data on page startup
+        window.addEventListener('DOMContentLoaded', loadAllData);
     </script>
 </body>
 </html>
