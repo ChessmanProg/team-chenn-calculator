@@ -143,15 +143,13 @@
 </div>
 
 <script>
-/* ============ 1. SUPABASE SETUP ============
-   Paste your own values from Supabase > Project Settings > API.
-   Leave them as-is to run in "local mode" (data saved in this browser only). */
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+/* ============ 1. SUPABASE SETUP ============ */
+const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
 const useDb = !SUPABASE_URL.startsWith('YOUR_') && window.supabase;
 const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-/* Table + column names (create these in Supabase, see notes):
+/* Tables (each also needs an auto-generated id column):
    coaching_schedules(id, time, agent)
    ic_logs(id, time_logged, agent_name, queue, status)
    important_links(id, topic, day, time, link) */
