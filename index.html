@@ -422,16 +422,34 @@ async function render(key) {
   const rows = await loadRows(key);
   const body = document.getElementById(TABLES[key].body);
 
-  if (key === 'coaching') {
-    rows.sort((a, b) => (a.time_slot || '').localeCompare(b.time_slot || ''));
-    body.innerHTML = rows.length
-      ? rows.map(r => `<tr>
-<td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
-<td class="p-3">${esc(r.agent_name)}</td>
+ 
+if (key === 'coaching') {
+  rows.sort((a, b) => (a.time_slot || '').localeCompare(b.time_slot || ''));
+
+  body.innerHTML = rows.length
+    ? rows.map(r => {
+        const meetLink = /^https?:\/\//i.test(r.meet_link || '')
+          ? esc(r.meet_link)
+          : '';
+
+        return `<tr>
+          <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
+          <td class="p-3">${esc(r.agent_name)}</td>
+          <td class="p-3">
+            ${meetLink
+              ? `<a href="${meetLink}" target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-800 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-200 hover:shadow-md">
+                  <span>🎥</span>
+                  <span>Join Meeting</span>
+                  <span>↗</span>
+                </a>`
+              : '<span class="text-sm text-slate-400">No link added</span>'}
+          </td>
           <td class="p-3 text-right">${delBtn(key, r.id)}</td>
-        </tr>`).join('')
-      : empty(3, 'No coaching scheduled yet.');
-  } else if (key === 'ic') {
+        </tr>`;
+      }).join('')
+    : empty(4, 'No coaching scheduled yet.');
+} else if (key === 'ic') {
     body.innerHTML = rows.length
       ? rows.map(r => `<tr>
           <td class="p-4 whitespace-nowrap">${fmtTime(r.time_logged)}</td>
