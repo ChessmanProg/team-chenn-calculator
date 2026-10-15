@@ -562,6 +562,10 @@ async function saveModal() {
   config.fields.forEach(([id]) => {
     row[id] = document.getElementById('f-' + id).value.trim();
   });
+  
+  if (currentKey === 'ic') {
+  row.time_logged = new Date().toTimeString().slice(0, 5);
+}
 
   const errorBox = document.getElementById('modal-error');
 
