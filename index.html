@@ -430,9 +430,12 @@ const delBtn = (key, id) => isTeamChennAdmin
 const empty = (cols, msg) => `<tr><td colspan="${cols}" class="p-4 text-slate-500 text-center">${msg}</td></tr>`;
 
 const badge = s => `<span class="px-3 py-1 rounded-full text-sm font-semibold ${
+  s === 'Reported' ? 'bg-emerald-100 text-emerald-700' :
+  s === 'Not Reported' ? 'bg-amber-100 text-amber-800' :
+  s === 'Willing to extend' ? 'bg-sky-100 text-sky-700' :
   s === 'Done' ? 'bg-emerald-100 text-emerald-700' :
   s === 'Active' ? 'bg-indigo-100 text-indigo-700' :
-  'bg-amber-100 text-amber-700'
+  'bg-slate-100 text-slate-700'
 }">${esc(s)}</span>`;
 
 async function render(key) {
