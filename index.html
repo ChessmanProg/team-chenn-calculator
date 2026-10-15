@@ -95,7 +95,7 @@
                 </div>
             </section>
 
-            <!-- Right Column: Coaching Schedules -->
+            <!-- Right Column: Coaching Schedules (Empty Start) -->
             <div class="space-y-6">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
@@ -117,54 +117,7 @@
                                 </tr>
                             </thead>
                             <tbody id="coaching-table-body" class="divide-y divide-slate-100 text-slate-700">
-                                <tr>
-                                    <td class="p-2.5 font-mono text-xs">12:00</td>
-                                    <td class="p-2.5 font-medium">Raphael Santiago Reyes</td>
-                                    <td class="p-2.5 text-right space-x-1">
-                                        <a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
-                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 font-mono text-xs">12:30</td>
-                                    <td class="p-2.5 font-medium">Maria Kristelle Cambronero De Leon</td>
-                                    <td class="p-2.5 text-right space-x-1">
-                                        <a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
-                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 font-mono text-xs">13:30</td>
-                                    <td class="p-2.5 font-medium">Chito Canuto Quintela Delvo</td>
-                                    <td class="p-2.5 text-right space-x-1">
-                                        <a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
-                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 font-mono text-xs">14:00</td>
-                                    <td class="p-2.5 font-medium">John Anthony Reyes Villaflores</td>
-                                    <td class="p-2.5 text-right space-x-1">
-                                        <a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
-                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 font-mono text-xs">14:30</td>
-                                    <td class="p-2.5 font-medium">Bryson Blando Lasam</td>
-                                    <td class="p-2.5 text-right space-x-1">
-                                        <a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
-                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2.5 font-mono text-xs">17:00</td>
-                                    <td class="p-2.5 font-medium">Phoebe Regio Sarmiento</td>
-                                    <td class="p-2.5 text-right space-x-1">
-                                        <a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition text-xs">Join</a>
-                                        <button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button>
-                                    </td>
-                                </tr>
+                                <!-- Empty starting state -->
                             </tbody>
                         </table>
                     </div>
@@ -174,7 +127,7 @@
 
         <!-- TAB 2: TODAY'S IC EXTENSION RECORD -->
         <div id="tab-ic-log" style="display: none;" class="grid-cols-1 gap-6">
-            <!-- Extension Record Table -->
+            <!-- Extension Record Table (Empty Start) -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
                     <div>
@@ -201,20 +154,7 @@
                             </tr>
                         </thead>
                         <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
-                            <tr>
-                                <td class="p-3 font-mono text-xs text-slate-500">10:15 PM</td>
-                                <td class="p-3 font-medium">Raphael Santiago Reyes</td>
-                                <td class="p-3 font-mono text-xs text-indigo-600">Team Chenn Queue (Ext. 4012)</td>
-                                <td class="p-3"><span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded font-semibold text-xs">Resolved</span></td>
-                                <td class="p-3 text-right"><button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-mono text-xs text-slate-500">11:30 PM</td>
-                                <td class="p-3 font-medium">Maria Kristelle Cambronero De Leon</td>
-                                <td class="p-3 font-mono text-xs text-indigo-600">BC AI Escalations (Ext. 4015)</td>
-                                <td class="p-3"><span class="px-2.5 py-1 bg-amber-50 text-amber-600 rounded font-semibold text-xs">Pending Callback</span></td>
-                                <td class="p-3 text-right"><button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button></td>
-                            </tr>
+                            <!-- Empty starting state -->
                         </tbody>
                     </table>
                 </div>
@@ -383,7 +323,7 @@
             toggleAddMeetModal();
         }
 
-        // Delete Row Function (shared for both tables)
+        // Delete Row Function
         function deleteRow(button) {
             const row = button.closest('tr');
             row.remove();
