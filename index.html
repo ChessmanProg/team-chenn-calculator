@@ -1032,7 +1032,7 @@ tick();
 if (!useDb) {
   showBanner('Database connection is unavailable. Check the Supabase URL and public key in the script.');
 }
-
+loadThemeSettings();
 switchTab('dashboard');
 calculate();
 ['coaching', 'ic', 'link'].forEach(render);
