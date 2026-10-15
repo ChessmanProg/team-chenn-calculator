@@ -195,6 +195,95 @@ const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
 const useDb = !SUPABASE_URL.startsWith('YOUR_') && window.supabase;
 const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  
+/* ============ ADMIN AUTHENTICATION ============ */
+let isTeamChennAdmin = false;
+
+async function refreshAuthState() {
+  const status = document.getElementById('auth-status');
+  const loginForm = document.getElementById('login-form');
+  const logoutButton = document.getElementById('logout-button');
+
+  isTeamChennAdmin = false;
+
+  if (!db) {
+    status.textContent = 'Database connection is unavailable.';
+    loginForm.classList.remove('hidden');
+    logoutButton.classList.add('hidden');
+    return;
+  }
+
+  const { data: { session }, error } = await db.auth.getSession();
+
+  if (error || !session) {
+    status.textContent = 'Sign in to manage Team Chenn records.';
+    loginForm.classList.remove('hidden');
+    logoutButton.classList.add('hidden');
+    return;
+  }
+
+  const { data, error: adminError } =
+    await db.rpc('is_team_chenn_admin');
+
+  isTeamChennAdmin = !adminError && data === true;
+
+  status.textContent = isTeamChennAdmin
+    ? 'Admin logged in. You can manage records.'
+    : 'Signed in, but this account is not an admin.';
+
+  loginForm.classList.add('hidden');
+  logoutButton.classList.remove('hidden');
+}
+
+async function adminLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errorBox = document.getElementById('auth-error');
+
+  errorBox.classList.add('hidden');
+
+  if (!db) {
+    errorBox.textContent = 'Database connection is unavailable.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if (!email || !password) {
+    errorBox.textContent = 'Enter your email and password.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  const { error } = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    errorBox.textContent = 'Login failed: ' + error.message;
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('login-password').value = '';
+  await refreshAuthState();
+}
+
+async function adminLogout() {
+  if (!db) return;
+
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    const errorBox = document.getElementById('auth-error');
+    errorBox.textContent = 'Logout failed: ' + error.message;
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  await refreshAuthState();
+}
+
 
 const AGENTS = [
   "Raphael Santiago Reyes",
