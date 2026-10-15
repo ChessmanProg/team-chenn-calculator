@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Chenn - BPO Operational & PPH Calculator</title>
+    <!-- Tailwind CSS for modern, clean UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
+                <p class="text-xs text-slate-400">Operational Portal & Productivity Calculator</p>
+            </div>
+            <div class="mt-2 sm:mt-0 flex gap-2">
+                <span class="px-3 py-1 bg-emerald-600/30 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30">Shift Active</span>
+                <span id="live-clock" class="px-3 py-1 bg-slate-800 text-slate-300 text-xs font-mono rounded-full border border-slate-700"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Column: PPH & Exemption Calculator -->
+        <section class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    📊 PPH & Exemption Pace Calculator
+                </h2>
+                <span class="text-xs text-slate-500">Live Target Adjustment</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Target PPH</label>
+                    <input type="number" id="target-pph" value="15" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Total Shift Hours</label>
+                    <input type="number" id="shift-hours" value="9" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Exemption Hours (Coaching/Break/Meetings)</label>
+                    <input type="number" id="exemption-hours" value="1.5" step="0.25" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Items Completed So Far</label>
+                    <input type="number" id="completed-items" value="65" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Calculated Results Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Net Production Hours</p>
+                    <p id="net-hours" class="text-xl font-bold text-slate-900 mt-1">7.5 hrs</p>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Required Total Items</p>
+                    <p id="total-required" class="text-xl font-bold text-indigo-600 mt-1">113 items</p>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500">Pace Needed (Remaining)</p>
+                    <p id="remaining-pace" class="text-xl font-bold text-emerald-600 mt-1">12.8 / hr</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div>
+                <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                    <span>Shift Progress to Target</span>
+                    <span id="progress-percent">58%</span>
+                </div>
+                <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 58%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Tool Quick Links & Rule IDs -->
+        <div class="space-y-6">
+            <!-- Quick Links -->
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">🚀 Quick-Launch LOB Tools</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">SNW Portal</a>
+                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Catalog Tool</a>
+                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Zoho Learn</a>
+                    <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">InContact</a>
+                </div>
+            </section>
+
+            <!-- Quick Rule ID Lookup -->
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">🔍 Rule ID Quick Lookup</h2>
+                <input type="text" id="rule-search" placeholder="Search Rule ID or keyword..." class="w-full px-3 py-2 mb-3 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <div id="rule-results" class="space-y-2 text-xs">
+                    <div class="p-2 bg-slate-50 rounded border border-slate-200">
+                        <span class="font-bold text-indigo-600">Rule #402:</span> Prohibited Content - Ensure accurate GLR mapping before markdown.
+                    </div>
+                    <div class="p-2 bg-slate-50 rounded border border-slate-200">
+                        <span class="font-bold text-indigo-600">Rule #715:</span> Duplicate Item Check - Verify tenant ID before processing.
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        Team Chenn Internal Portal &bull; Built for non-voice efficiency
+    </footer>
+
+    <!-- JavaScript Calculation Engine -->
+    <script>
+        // Live Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // PPH Calculator Logic
+        const targetPphInput = document.getElementById('target-pph');
+        const shiftHoursInput = document.getElementById('shift-hours');
+        const exemptionHoursInput = document.getElementById('exemption-hours');
+        const completedItemsInput = document.getElementById('completed-items');
+
+        function calculatePph() {
+            const targetPph = parseFloat(targetPphInput.value) || 0;
+            const shiftHours = parseFloat(shiftHoursInput.value) || 0;
+            const exemptions = parseFloat(exemptionHoursInput.value) || 0;
+            const completed = parseFloat(completedItemsInput.value) || 0;
+
+            const netHours = Math.max(0, shiftHours - exemptions);
+            const totalRequired = Math.round(netHours * targetPph);
+            const remainingItems = Math.max(0, totalRequired - completed);
+            
+            // Assume 8 hours have passed or estimate remaining time
+            const remainingHours = Math.max(0.25, netHours - (completed / (targetPph || 1)));
+            const requiredPace = (remainingItems / remainingHours).toFixed(1);
+
+            const percent = totalRequired > 0 ? Math.min(100, Math.round((completed / totalRequired) * 100)) : 0;
+
+            document.getElementById('net-hours').innerText = netHours.toFixed(2) + ' hrs';
+            document.getElementById('total-required').innerText = totalRequired + ' items';
+            document.getElementById('remaining-pace').innerText = requiredPace + ' / hr';
+            document.getElementById('progress-percent').innerText = percent + '%';
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
+        [targetPphInput, shiftHoursInput, exemptionHoursInput, completedItemsInput].forEach(input => {
+            input.addEventListener('input', calculatePph);
+        });
+
+        calculatePph();
+
+        // Rule Search Mock
+        const rules = [
+            { id: "Rule #402", desc: "Prohibited Content - Ensure accurate GLR mapping before markdown." },
+            { id: "Rule #715", desc: "Duplicate Item Check - Verify tenant ID before processing." },
+            { id: "Rule #809", desc: "Product Recall Verification - Check batch numbers and serials." },
+            { id: "Rule #102", desc: "Formatting error - Double-check attribute fields prior to submit." }
+        ];
+
+        document.getElementById('rule-search').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const container = document.getElementById('rule-results');
+            const filtered = rules.filter(r => r.id.toLowerCase().includes(query) || r.desc.toLowerCase().includes(query));
+            
+            container.innerHTML = filtered.map(r => `
+                <div class="p-2 bg-slate-50 rounded border border-slate-200">
+                    <span class="font-bold text-indigo-600">${r.id}:</span> ${r.desc}
+                </div>
+            `).join('') || '<p class="text-slate-400 italic">No matching rules found.</p>';
+        });
+    </script>
+</body>
+</html>
