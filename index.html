@@ -320,7 +320,7 @@ fields: [
     title: 'Add IC Extension Record',
     fields: [
       ['agent_name', 'Agent Name', 'agent_select'],
-      ['queue', 'IC Extension / Minutes', 'text'],
+['extension_queue', 'IC Extension / Minutes', 'text'],
       ['status', 'Status', 'select']
     ]
   },
@@ -484,7 +484,7 @@ if (key === 'coaching') {
        body.innerHTML = rows.length
       ? rows.map(r => `<tr>
           <td class="p-4">${esc(r.agent_name)}</td>
-          <td class="p-4">${esc(r.queue)}</td>
+          <td class="p-4">${esc(r.extension_queue)}</td>
           <td class="p-4">${badge(r.status)}</td>
           <td class="p-4 text-right">${delBtn(key, r.id)}</td>
         </tr>`).join('')
