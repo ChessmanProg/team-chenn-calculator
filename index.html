@@ -929,6 +929,7 @@ document.getElementById('modal').addEventListener('click', e => {
 const TABS = ['dashboard', 'ic-log', 'important-links'];
 
 function switchTab(name) {
+  localStorage.setItem('teamChennActiveTab', name);
   TABS.forEach(tab => {
     const active = tab === name;
     document.getElementById('tab-' + tab).classList.toggle('hidden', !active);
