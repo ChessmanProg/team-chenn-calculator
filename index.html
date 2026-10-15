@@ -16,9 +16,16 @@
     <!-- Header -->
     <header class="bg-slate-900 text-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
-                <p class="text-xs text-slate-400">Operational Portal & Productivity Calculator</p>
+            <!-- Brand / Logo Header -->
+            <div class="flex items-center gap-3">
+                <!-- Tech Logo Badge -->
+                <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-xl text-indigo-400 shadow-inner">
+                    🎧
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight leading-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
+                    <p class="text-xs text-slate-400">Operational Portal & Productivity Calculator</p>
+                </div>
             </div>
             <div class="mt-2 sm:mt-0 flex gap-2 items-center">
                 <span class="px-3 py-1 bg-emerald-600/30 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/30">Shift Active</span>
@@ -205,7 +212,7 @@
         </div>
     </div>
 
-    <!-- Modal for Adding New IC Log -->
+    <!-- Modal for Adding New IC Log (Free text inputs for Extension & Status) -->
     <div id="ic-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 justify-center items-center px-4 z-50">
         <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4 text-sm">
             <h3 class="text-base font-bold text-slate-900 border-b pb-2">Add New IC Extension Record</h3>
@@ -233,20 +240,11 @@
                 </div>
                 <div>
                     <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">IC Extension / Queue</label>
-                    <select id="ic-ext" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="Team Chenn Queue (Ext. 4012)">Team Chenn Queue (Ext. 4012)</option>
-                        <option value="BC AI Escalations (Ext. 4015)">BC AI Escalations (Ext. 4015)</option>
-                        <option value="IT / Tech Support Desk (Ext. 9110)">IT / Tech Support Desk (Ext. 9110)</option>
-                        <option value="Operations Floor Lead (Ext. 4020)">Operations Floor Lead (Ext. 4020)</option>
-                    </select>
+                    <input type="text" id="ic-ext" placeholder="e.g. Team Chenn Queue (Ext. 4012)" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div>
                     <label class="block font-semibold uppercase text-slate-600 text-xs mb-1">Status</label>
-                    <select id="ic-status" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="Resolved">Resolved</option>
-                        <option value="Pending Callback">Pending Callback</option>
-                        <option value="Escalated to Lead">Escalated to Lead</option>
-                    </select>
+                    <input type="text" id="ic-status" placeholder="e.g. Resolved, Pending, Active" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
             </div>
             <div class="flex justify-end gap-2 pt-3 border-t">
@@ -348,30 +346,37 @@
         // Save New IC Log Entry
         function saveIcLog() {
             const agent = document.getElementById('ic-agent').value;
-            const ext = document.getElementById('ic-ext').value;
-            const status = document.getElementById('ic-status').value;
+            const ext = document.getElementById('ic-ext').value.trim();
+            const status = document.getElementById('ic-status').value.trim();
 
             if (!agent) {
                 alert('Please select an Agent Name.');
                 return;
             }
 
+            if (!ext) {
+                alert('Please enter an IC Extension / Queue.');
+                return;
+            }
+
             const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const tbody = document.getElementById('ic-table-body');
 
-            const badgeClass = status === 'Resolved' ? 'bg-emerald-50 text-emerald-600' : (status === 'Pending Callback' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600');
+            const statusText = status || 'Logged';
 
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
                 <td class="p-3 font-mono text-xs text-slate-500">${timeNow}</td>
                 <td class="p-3 font-medium">${agent}</td>
                 <td class="p-3 font-mono text-xs text-indigo-600">${ext}</td>
-                <td class="p-3"><span class="px-2.5 py-1 ${badgeClass} rounded font-semibold text-xs">${status}</span></td>
+                <td class="p-3"><span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded font-semibold text-xs">${statusText}</span></td>
                 <td class="p-3 text-right"><button onclick="deleteRow(this)" class="px-2 py-1 bg-rose-50 text-rose-600 font-semibold rounded hover:bg-rose-100 transition text-xs cursor-pointer">✕</button></td>
             `;
             tbody.prepend(newRow);
 
             document.getElementById('ic-agent').selectedIndex = 0;
+            document.getElementById('ic-ext').value = '';
+            document.getElementById('ic-status').value = '';
             closeIcModal();
         }
 
