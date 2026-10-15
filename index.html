@@ -168,6 +168,34 @@ button.bg-indigo-600:hover {
       <button id="logout-button" onclick="adminLogout()" class="hidden px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg">Log Out</button>
     </div>
     <p id="auth-error" class="hidden text-sm text-red-600 mt-2"></p>
+    
+<div id="password-reset-form" class="hidden mt-4 space-y-3">
+  <h3 class="font-semibold text-slate-900">Set a new password</h3>
+  <input
+    id="new-password"
+    type="password"
+    autocomplete="new-password"
+    minlength="8"
+    placeholder="New password (at least 8 characters)"
+    class="px-3 py-2 border border-slate-300 rounded-lg"
+  >
+  <input
+    id="confirm-new-password"
+    type="password"
+    autocomplete="new-password"
+    minlength="8"
+    placeholder="Confirm new password"
+    class="px-3 py-2 border border-slate-300 rounded-lg"
+  >
+  <button
+    type="button"
+    onclick="saveNewPassword()"
+    class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg"
+  >
+    Update Password
+  </button>
+</div>
+
   </div>
 </section>
 
