@@ -335,6 +335,12 @@ async function insertRow(key, row) {
   return null;
 }
 async function deleteRow(key, id) {
+  
+  if (!isTeamChennAdmin) {
+    showBanner('Admin access is required to delete records.');
+    return;
+  }
+
   const t = TABLES[key].name;
   if (db) { const { error } = await db.from(t).delete().eq('id', id); if (error) showBanner('Delete failed: ' + error.message); }
   else { const rows = (await loadRows(key)).filter(r => String(r.id) !== String(id));
@@ -344,7 +350,11 @@ async function deleteRow(key, id) {
 function showBanner(msg) { const b = document.getElementById('db-banner'); b.textContent = msg; b.classList.remove('hidden'); }
 
 /* ============ 3. RENDERING ============ */
-const delBtn = (key, id) => `<button onclick="deleteRow('${key}','${esc(id)}')" class="text-sm text-red-600 hover:text-red-800 font-semibold">Delete</button>`;
+
+const delBtn = (key, id) => isTeamChennAdmin
+  ? `<button onclick="deleteRow('${key}','${esc(id)}')" class="text-sm text-red-600 hover:text-red-800 font-semibold">Delete</button>`
+  : '<span class="text-sm text-slate-400">View only</span>';
+
 const empty = (cols, msg) => `<tr><td colspan="${cols}" class="p-4 text-slate-500 text-center">${msg}</td></tr>`;
 const badge = s => `<span class="px-3 py-1 rounded-full text-sm font-semibold ${s==='Done'?'bg-emerald-100 text-emerald-700':s==='Active'?'bg-indigo-100 text-indigo-700':'bg-amber-100 text-amber-700'}">${esc(s)}</span>`;
 
@@ -368,6 +378,12 @@ async function render(key) {
 let currentKey = null;
 const inputCls = 'w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none';
 function openModal(key) {
+  
+  if (!isTeamChennAdmin) {
+    showBanner('Please log in with an authorized admin account to add records.');
+    return;
+  }
+
   currentKey = key;
   const cfg = TABLES[key];
   document.getElementById('modal-title').textContent = cfg.title;
@@ -389,6 +405,13 @@ function openModal(key) {
 }
 function closeModal() { document.getElementById('modal').classList.add('hidden'); currentKey = null; }
 async function saveModal() {
+  
+  if (!isTeamChennAdmin) {
+    showBanner('Admin access is required to save records.');
+    closeModal();
+    return;
+  }
+
   const cfg = TABLES[currentKey], row = {};
   cfg.fields.forEach(([id]) => row[id] = document.getElementById('f-' + id).value.trim());
   const err = document.getElementById('modal-error');
