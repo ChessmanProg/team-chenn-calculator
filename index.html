@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,49 +34,21 @@
   </div>
 </header>
 
-<!-- Admin Login Panel -->
+<!-- ADMIN LOGIN -->
 <section class="bg-white border-b border-slate-200">
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h2 class="font-bold text-slate-900">Admin Access</h2>
-        <p id="auth-status" class="text-sm text-slate-500">
-          Sign in to manage Team Chenn records.
-        </p>
+        <p id="auth-status" class="text-sm text-slate-500">Sign in to manage Team Chenn records.</p>
       </div>
-
       <div id="login-form" class="flex flex-col sm:flex-row gap-2">
-        <input
-          id="login-email"
-          type="email"
-          autocomplete="username"
-          placeholder="Admin email"
-          class="px-3 py-2 border border-slate-300 rounded-lg"
-        >
-        <input
-          id="login-password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Password"
-          class="px-3 py-2 border border-slate-300 rounded-lg"
-        >
-        <button
-          onclick="adminLogin()"
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg"
-        >
-          Log In
-        </button>
+        <input id="login-email" type="email" autocomplete="username" placeholder="Admin email" class="px-3 py-2 border border-slate-300 rounded-lg">
+        <input id="login-password" type="password" autocomplete="current-password" placeholder="Password" class="px-3 py-2 border border-slate-300 rounded-lg">
+        <button onclick="adminLogin()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg">Log In</button>
       </div>
-
-      <button
-        id="logout-button"
-        onclick="adminLogout()"
-        class="hidden px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg"
-      >
-        Log Out
-      </button>
+      <button id="logout-button" onclick="adminLogout()" class="hidden px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg">Log Out</button>
     </div>
-
     <p id="auth-error" class="hidden text-sm text-red-600 mt-2"></p>
   </div>
 </section>
@@ -83,7 +56,7 @@
 <main class="max-w-7xl w-full mx-auto px-6 py-8 flex-grow">
   <div id="db-banner" class="hidden mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm"></div>
 
-  <!-- TAB 1 -->
+  <!-- DASHBOARD -->
   <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <section class="lg:col-span-2 space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
@@ -133,7 +106,7 @@
     </div>
   </div>
 
-  <!-- TAB 2 -->
+  <!-- IC LOG -->
   <div id="tab-ic-log" class="hidden">
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
@@ -154,7 +127,7 @@
     </div>
   </div>
 
-  <!-- TAB 3 -->
+  <!-- IMPORTANT LINKS -->
   <div id="tab-important-links" class="hidden">
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
@@ -176,7 +149,7 @@
   </div>
 </main>
 
-<!-- Shared modal -->
+<!-- SHARED MODAL -->
 <div id="modal" class="hidden fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
     <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-4"></h3>
@@ -195,11 +168,10 @@ const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
 const useDb = !SUPABASE_URL.startsWith('YOUR_') && window.supabase;
 const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-  
+
 /* ============ ADMIN AUTHENTICATION ============ */
 let isTeamChennAdmin = false;
 
-async function 
 function updateAdminControls() {
   document.querySelectorAll('button[onclick^="openModal("]').forEach(button => {
     button.classList.toggle('hidden', !isTeamChennAdmin);
@@ -262,10 +234,7 @@ async function adminLogin() {
     return;
   }
 
-  const { error } = await db.auth.signInWithPassword({
-    email,
-    password
-  });
+  const { error } = await db.auth.signInWithPassword({ email, password });
 
   if (error) {
     errorBox.textContent = 'Login failed: ' + error.message;
@@ -292,7 +261,7 @@ async function adminLogout() {
   await refreshAuthState();
 }
 
-
+/* ============ AGENTS AND TABLES ============ */
 const AGENTS = [
   "Raphael Santiago Reyes",
   "Maria Kristelle Cambronero De Leon",
@@ -312,165 +281,330 @@ const AGENTS = [
 ];
 
 const TABLES = {
-  coaching: { name: 'coaching_schedules', body: 'coaching-table-body', title: 'Add Coaching Schedule',
-    fields: [['time','Time','time'],['agent','Agent','agent_select']] },
-  ic: { name: 'ic_logs', body: 'ic-table-body', title: 'Add IC Extension Log',
-    fields: [['time_logged','Time Logged','time'],['agent_name','Agent Name','agent_select'],['queue','IC Extension / Queue','text'],['status','Status','select']] },
-  link: { name: 'important_links', body: 'link-table-body', title: 'Add Important Link',
-    fields: [['topic','Topic','text'],['day','Day','text'],['time','Time','time'],['link','GMeet Link','url']] }
+  coaching: {
+    name: 'coaching_schedules',
+    body: 'coaching-table-body',
+    title: 'Add Coaching Schedule',
+    fields: [['time', 'Time', 'time'], ['agent', 'Agent', 'agent_select']]
+  },
+  ic: {
+    name: 'ic_logs',
+    body: 'ic-table-body',
+    title: 'Add IC Extension Log',
+    fields: [
+      ['time_logged', 'Time Logged', 'time'],
+      ['agent_name', 'Agent Name', 'agent_select'],
+      ['queue', 'IC Extension / Queue', 'text'],
+      ['status', 'Status', 'select']
+    ]
+  },
+  link: {
+    name: 'important_links',
+    body: 'link-table-body',
+    title: 'Add Important Link',
+    fields: [
+      ['topic', 'Topic', 'text'],
+      ['day', 'Day', 'text'],
+      ['time', 'Time', 'time'],
+      ['link', 'GMeet Link', 'url']
+    ]
+  }
 };
-const STATUSES = ['Pending','Active','Done'];
 
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;n'}[c]));
-const fmtTime = t => { if(!t) return ''; const [h,m] = t.split(':'); const hh = +h; return `${hh%12||12}:${m} ${hh>=12?'PM':'AM'}`; };
+const STATUSES = ['Pending', 'Active', 'Done'];
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}[c]));
+
+const fmtTime = t => {
+  if (!t) return '';
+  const [h, m] = t.split(':');
+  const hh = +h;
+  return `${hh % 12 || 12}:${m} ${hh >= 12 ? 'PM' : 'AM'}`;
+};
 
 /* ============ 2. DATA LAYER ============ */
 async function loadRows(key) {
-  const t = TABLES[key].name;
+  const tableName = TABLES[key].name;
+
   if (db) {
-    const { data, error } = await db.from(t).select('*').order('id');
-    if (error) { showBanner('Could not load ' + t + ': ' + error.message); return []; }
-    return data;
+    const { data, error } = await db.from(tableName).select('*').order('id');
+    if (error) {
+      showBanner('Could not load ' + tableName + ': ' + error.message);
+      return [];
+    }
+    return data || [];
   }
-  try { return JSON.parse(localStorage.getItem(t) || '[]'); } catch { return []; }
+
+  try {
+    return JSON.parse(localStorage.getItem(tableName) || '[]');
+  } catch {
+    return [];
+  }
 }
+
 async function insertRow(key, row) {
-  const t = TABLES[key].name;
-  if (db) { const { error } = await db.from(t).insert(row); return error; }
+  const tableName = TABLES[key].name;
+
+  if (db) {
+    const { error } = await db.from(tableName).insert(row);
+    return error;
+  }
+
   const rows = await loadRows(key);
   rows.push({ id: Date.now(), ...row });
-  try { localStorage.setItem(t, JSON.stringify(rows)); } catch {}
+
+  try {
+    localStorage.setItem(tableName, JSON.stringify(rows));
+  } catch {}
+
   return null;
 }
+
 async function deleteRow(key, id) {
-  
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to delete records.');
     return;
   }
 
-  const t = TABLES[key].name;
-  if (db) { const { error } = await db.from(t).delete().eq('id', id); if (error) showBanner('Delete failed: ' + error.message); }
-  else { const rows = (await loadRows(key)).filter(r => String(r.id) !== String(id));
-    try { localStorage.setItem(t, JSON.stringify(rows)); } catch {} }
-  render(key);
+  const tableName = TABLES[key].name;
+
+  if (db) {
+    const { error } = await db.from(tableName).delete().eq('id', id);
+    if (error) {
+      showBanner('Delete failed: ' + error.message);
+      return;
+    }
+  } else {
+    const rows = (await loadRows(key)).filter(r => String(r.id) !== String(id));
+    try {
+      localStorage.setItem(tableName, JSON.stringify(rows));
+    } catch {}
+  }
+
+  await render(key);
 }
-function showBanner(msg) { const b = document.getElementById('db-banner'); b.textContent = msg; b.classList.remove('hidden'); }
+
+function showBanner(msg) {
+  const banner = document.getElementById('db-banner');
+  banner.textContent = msg;
+  banner.classList.remove('hidden');
+}
 
 /* ============ 3. RENDERING ============ */
-
 const delBtn = (key, id) => isTeamChennAdmin
   ? `<button onclick="deleteRow('${key}','${esc(id)}')" class="text-sm text-red-600 hover:text-red-800 font-semibold">Delete</button>`
   : '<span class="text-sm text-slate-400">View only</span>';
 
 const empty = (cols, msg) => `<tr><td colspan="${cols}" class="p-4 text-slate-500 text-center">${msg}</td></tr>`;
-const badge = s => `<span class="px-3 py-1 rounded-full text-sm font-semibold ${s==='Done'?'bg-emerald-100 text-emerald-700':s==='Active'?'bg-indigo-100 text-indigo-700':'bg-amber-100 text-amber-700'}">${esc(s)}</span>`;
+
+const badge = s => `<span class="px-3 py-1 rounded-full text-sm font-semibold ${
+  s === 'Done' ? 'bg-emerald-100 text-emerald-700' :
+  s === 'Active' ? 'bg-indigo-100 text-indigo-700' :
+  'bg-amber-100 text-amber-700'
+}">${esc(s)}</span>`;
 
 async function render(key) {
   const rows = await loadRows(key);
   const body = document.getElementById(TABLES[key].body);
+
   if (key === 'coaching') {
-    rows.sort((a,b) => (a.time||'').localeCompare(b.time||''));
-    body.innerHTML = rows.length ? rows.map(r => `<tr><td class="p-3 whitespace-nowrap">${fmtTime(r.time)}</td><td class="p-3">${esc(r.agent)}</td><td class="p-3 text-right">${delBtn(key,r.id)}</td></tr>`).join('') : empty(3,'No coaching scheduled yet.');
+    rows.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+    body.innerHTML = rows.length
+      ? rows.map(r => `<tr>
+          <td class="p-3 whitespace-nowrap">${fmtTime(r.time)}</td>
+          <td class="p-3">${esc(r.agent)}</td>
+          <td class="p-3 text-right">${delBtn(key, r.id)}</td>
+        </tr>`).join('')
+      : empty(3, 'No coaching scheduled yet.');
   } else if (key === 'ic') {
-    body.innerHTML = rows.length ? rows.map(r => `<tr><td class="p-4 whitespace-nowrap">${fmtTime(r.time_logged)}</td><td class="p-4">${esc(r.agent_name)}</td><td class="p-4">${esc(r.queue)}</td><td class="p-4">${badge(r.status)}</td><td class="p-4 text-right">${delBtn(key,r.id)}</td></tr>`).join('') : empty(5,'No IC logs yet. Select "Add New IC Log" to start.');
+    body.innerHTML = rows.length
+      ? rows.map(r => `<tr>
+          <td class="p-4 whitespace-nowrap">${fmtTime(r.time_logged)}</td>
+          <td class="p-4">${esc(r.agent_name)}</td>
+          <td class="p-4">${esc(r.queue)}</td>
+          <td class="p-4">${badge(r.status)}</td>
+          <td class="p-4 text-right">${delBtn(key, r.id)}</td>
+        </tr>`).join('')
+      : empty(5, 'No IC logs yet. Select "Add New IC Log" to start.');
   } else {
-    body.innerHTML = rows.length ? rows.map(r => {
-      const safe = /^https?:\/\//i.test(r.link || '') ? esc(r.link) : '';
-      return `<tr><td class="p-4">${esc(r.topic)}</td><td class="p-4">${esc(r.day)}</td><td class="p-4 whitespace-nowrap">${fmtTime(r.time)}</td><td class="p-4">${safe ? `<a href="${safe}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline font-semibold">Join</a>` : '-'}</td><td class="p-4 text-right">${delBtn(key,r.id)}</td></tr>`;
-    }).join('') : empty(5,'No links yet. Select "Add Important Link" to start.');
+    body.innerHTML = rows.length
+      ? rows.map(r => {
+          const safe = /^https?:\/\//i.test(r.link || '') ? esc(r.link) : '';
+          return `<tr>
+            <td class="p-4">${esc(r.topic)}</td>
+            <td class="p-4">${esc(r.day)}</td>
+            <td class="p-4 whitespace-nowrap">${fmtTime(r.time)}</td>
+            <td class="p-4">${safe ? `<a href="${safe}" target="_blank" rel="noopener" class="text-indigo-600 hover:underline font-semibold">Join</a>` : '-'}</td>
+            <td class="p-4 text-right">${delBtn(key, r.id)}</td>
+          </tr>`;
+        }).join('')
+      : empty(5, 'No links yet. Select "Add Important Link" to start.');
   }
 }
 
 /* ============ 4. MODAL ============ */
 let currentKey = null;
 const inputCls = 'w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none';
+
 function openModal(key) {
-  
   if (!isTeamChennAdmin) {
     showBanner('Please log in with an authorized admin account to add records.');
     return;
   }
 
   currentKey = key;
-  const cfg = TABLES[key];
-  document.getElementById('modal-title').textContent = cfg.title;
+  const config = TABLES[key];
+  document.getElementById('modal-title').textContent = config.title;
   document.getElementById('modal-error').classList.add('hidden');
-  document.getElementById('modal-fields').innerHTML = cfg.fields.map(([id,label,type]) => {
+
+  document.getElementById('modal-fields').innerHTML = config.fields.map(([id, label, type]) => {
     let input = '';
+
     if (type === 'select') {
-      input = `<select id="f-${id}" class="${inputCls}">${STATUSES.map(s=>`<option>${s}</option>`).join('')}</select>`;
+      input = `<select id="f-${id}" class="${inputCls}">${STATUSES.map(s => `<option>${s}</option>`).join('')}</select>`;
     } else if (type === 'agent_select') {
-      input = `<select id="f-${id}" class="${inputCls}"><option value="" disabled selected>-- Select Agent --</option>${AGENTS.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('')}</select>`;
+      input = `<select id="f-${id}" class="${inputCls}">
+        <option value="" disabled selected>-- Select Agent --</option>
+        ${AGENTS.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('')}
+      </select>`;
     } else {
-      input = `<input id="f-${id}" type="${type}" ${type==='url'?'placeholder="https://meet.google.com/..."':''} class="${inputCls}">`;
+      input = `<input id="f-${id}" type="${type}" ${type === 'url' ? 'placeholder="https://meet.google.com/..."' : ''} class="${inputCls}">`;
     }
+
     return `<div><label class="block text-sm font-semibold text-slate-600 mb-1">${label}</label>${input}</div>`;
   }).join('');
+
   document.getElementById('modal').classList.remove('hidden');
   const first = document.querySelector('#modal-fields input, #modal-fields select');
   if (first) first.focus();
 }
-function closeModal() { document.getElementById('modal').classList.add('hidden'); currentKey = null; }
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+  currentKey = null;
+}
+
 async function saveModal() {
-  
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to save records.');
     closeModal();
     return;
   }
 
-  const cfg = TABLES[currentKey], row = {};
-  cfg.fields.forEach(([id]) => row[id] = document.getElementById('f-' + id).value.trim());
-  const err = document.getElementById('modal-error');
-  if (cfg.fields.some(([id,,type]) => type !== 'select' && !row[id])) { err.textContent = 'Please fill in every field.'; err.classList.remove('hidden'); return; }
-  if (row.link && !/^https?:\/\//i.test(row.link)) { err.textContent = 'The link must start with http:// or https://'; err.classList.remove('hidden'); return; }
+  if (!currentKey) return;
+
+  const config = TABLES[currentKey];
+  const row = {};
+
+  config.fields.forEach(([id]) => {
+    row[id] = document.getElementById('f-' + id).value.trim();
+  });
+
+  const errorBox = document.getElementById('modal-error');
+
+  if (config.fields.some(([id, , type]) => type !== 'select' && !row[id])) {
+    errorBox.textContent = 'Please fill in every field.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if (row.link && !/^https?:\/\//i.test(row.link)) {
+    errorBox.textContent = 'The link must start with http:// or https://';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
   const key = currentKey;
   const error = await insertRow(key, row);
-  if (error) { err.textContent = 'Could not save: ' + error.message; err.classList.remove('hidden'); return; }
-  closeModal(); render(key);
+
+  if (error) {
+    errorBox.textContent = 'Could not save: ' + error.message;
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  closeModal();
+  await render(key);
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
 
 /* ============ 5. TABS ============ */
-const TABS = ['dashboard','ic-log','important-links'];
+const TABS = ['dashboard', 'ic-log', 'important-links'];
+
 function switchTab(name) {
-  TABS.forEach(t => {
-    const on = t === name;
-    document.getElementById('tab-' + t).classList.toggle('hidden', !on);
-    document.getElementById('btn-' + t).className = 'px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap transition ' +
-      (on ? 'bg-white text-slate-900 shadow-sm' : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white');
+  TABS.forEach(tab => {
+    const active = tab === name;
+    document.getElementById('tab-' + tab).classList.toggle('hidden', !active);
+    document.getElementById('btn-' + tab).className =
+      'px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap transition ' +
+      (active
+        ? 'bg-white text-slate-900 shadow-sm'
+        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white');
   });
 }
 
 /* ============ 6. CALCULATOR ============ */
 const num = id => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
+
 function calculate() {
-  const target = num('target-pph'), shift = num('shift-hours'), exempt = num('exemption-hours');
-  const done = num('completed-items'), worked = num('hours-worked');
+  const target = num('target-pph');
+  const shift = num('shift-hours');
+  const exempt = num('exemption-hours');
+  const done = num('completed-items');
+  const worked = num('hours-worked');
+
   const net = Math.max(0, shift - exempt);
   const required = Math.ceil(target * net);
   const itemsLeft = Math.max(0, required - done);
   const hoursLeft = Math.max(0, net - worked);
   const pace = itemsLeft === 0 ? 0 : hoursLeft > 0 ? itemsLeft / hoursLeft : null;
-  const pct = required > 0 ? Math.min(100, Math.round(done / required * 100)) : 0;
+  const percent = required > 0 ? Math.min(100, Math.round(done / required * 100)) : 0;
+
   document.getElementById('net-hours').textContent = (+net.toFixed(2)) + ' hrs';
   document.getElementById('total-required').textContent = required + ' items';
-  document.getElementById('remaining-pace').textContent = pace === null ? 'No time left' : itemsLeft === 0 ? 'Target met' : pace.toFixed(1) + ' / hr';
-  document.getElementById('progress-percent').textContent = pct + '%';
-  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('remaining-pace').textContent =
+    pace === null ? 'No time left' :
+    itemsLeft === 0 ? 'Target met' :
+    pace.toFixed(1) + ' / hr';
+
+  document.getElementById('progress-percent').textContent = percent + '%';
+  document.getElementById('progress-bar').style.width = percent + '%';
 }
+
 document.querySelectorAll('.calc').forEach(el => el.addEventListener('input', calculate));
 
 /* ============ 7. CLOCK ============ */
-function tick() { document.getElementById('live-clock').textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'}); }
-setInterval(tick, 1000); tick();
+function tick() {
+  document.getElementById('live-clock').textContent = new Date().toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+setInterval(tick, 1000);
+tick();
 
 /* ============ 8. START ============ */
-if (!useDb) showBanner('Local mode: entries are saved in this browser only. Add your Supabase URL and key near the top of the script to share data with the team.');
-switchTab('dashboard'); calculate();
-['coaching','ic','link'].forEach(render);
+if (!useDb) {
+  showBanner('Database connection is unavailable. Check the Supabase URL and public key in the script.');
+}
+
+switchTab('dashboard');
+calculate();
+['coaching', 'ic', 'link'].forEach(render);
 refreshAuthState();
 </script>
 </body>
