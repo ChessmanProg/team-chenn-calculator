@@ -491,6 +491,32 @@ async function saveNewPassword() {
   errorBox.classList.add('text-emerald-600');
   errorBox.textContent = 'Password updated successfully. You can now log in with your new password.';
 }
+  
+async function handlePasswordRecovery() {
+  if (!db) return;
+
+  const params = new URLSearchParams(window.location.hash.substring(1));
+
+  if (params.get('type') !== 'recovery') return;
+
+  const form = document.getElementById('password-reset-form');
+  const status = document.getElementById('auth-status');
+  const errorBox = document.getElementById('auth-error');
+
+  form.classList.remove('hidden');
+  status.textContent = 'Choose a new password for your account.';
+
+  const { data, error } = await db.auth.getSession();
+
+  if (error || !data.session) {
+    errorBox.textContent =
+      'This reset link may have expired. Please request a new password-reset email.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  errorBox.classList.add('hidden');
+}
 async function adminLogout() {
   if (!db) return;
 
