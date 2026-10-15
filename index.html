@@ -942,7 +942,7 @@ if (!useDb) {
 switchTab('dashboard');
 calculate();
 ['coaching', 'ic', 'link'].forEach(render);
-refreshAuthState();
+refreshAuthState().then(handlePasswordRecovery);
 </script>
 </body>
 </html>
