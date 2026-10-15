@@ -285,7 +285,11 @@ const TABLES = {
     name: 'coaching_schedules',
     body: 'coaching-table-body',
     title: 'Add Coaching Schedule',
-fields: [['time_slot', 'Time', 'time'], ['agent_name', 'Agent', 'agent_select']]
+fields: [
+  ['time_slot', 'Time', 'time'],
+  ['agent_name', 'Agent', 'agent_select'],
+  ['meet_link', 'GMeet Link', 'url']
+]
   },
   ic: {
     name: 'ic_logs',
