@@ -189,7 +189,7 @@
                             </tr>
                             <tr>
                                 <td class="p-3 font-mono text-slate-500">11:30 PM</td>
-                                <td class="p-3 font-medium">Maria Kristelle De Leon</td>
+                                <td class="p-3 font-medium">Maria Kristelle Cambronero De Leon</td>
                                 <td class="p-3 font-mono text-indigo-600">BC AI Escalations (Ext. 4015)</td>
                                 <td class="p-3">BC AI Item Review Inquiry</td>
                                 <td class="p-3"><span class="px-2 py-0.5 bg-amber-50 text-amber-600 rounded font-semibold">Pending Callback</span></td>
@@ -239,7 +239,23 @@
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold uppercase text-slate-600 mb-1">Agent Name</label>
-                    <input type="text" id="ic-agent" placeholder="e.g. John Doe" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <select id="ic-agent" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
+                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
+                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
+                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
+                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
+                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
+                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
+                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
+                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
+                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
+                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
+                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
+                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
+                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
+                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block font-semibold uppercase text-slate-600 mb-1">IC Extension / Queue</label>
@@ -321,13 +337,13 @@
 
         // Save New IC Log Entry
         function saveIcLog() {
-            const agent = document.getElementById('ic-agent').value.trim();
+            const agent = document.getElementById('ic-agent').value;
             const ext = document.getElementById('ic-ext').value;
             const reason = document.getElementById('ic-reason').value.trim();
             const status = document.getElementById('ic-status').value;
 
-            if (!agent || !reason) {
-                alert('Please fill in Agent Name and Reason.');
+            if (!reason) {
+                alert('Please fill in the Call Type / Reason.');
                 return;
             }
 
@@ -346,8 +362,7 @@
             `;
             tbody.prepend(newRow);
 
-            // Clear inputs and close modal
-            document.getElementById('ic-agent').value = '';
+            // Clear input and close modal
             document.getElementById('ic-reason').value = '';
             closeIcModal();
         }
