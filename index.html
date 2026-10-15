@@ -481,15 +481,14 @@ if (key === 'coaching') {
 
     document.getElementById('ic-willing-count').textContent =
       countByStatus('Willing to extend');
-    body.innerHTML = rows.length
+       body.innerHTML = rows.length
       ? rows.map(r => `<tr>
-          <td class="p-4 whitespace-nowrap">${fmtTime(r.time_logged)}</td>
           <td class="p-4">${esc(r.agent_name)}</td>
           <td class="p-4">${esc(r.queue)}</td>
           <td class="p-4">${badge(r.status)}</td>
           <td class="p-4 text-right">${delBtn(key, r.id)}</td>
         </tr>`).join('')
-      : empty(5, 'No IC logs yet. Select "Add New IC Log" to start.');
+      : empty(4, 'No IC logs yet. Select "Add New IC Log" to start.');
   } else {
     body.innerHTML = rows.length
       ? rows.map(r => {
