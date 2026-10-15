@@ -95,15 +95,30 @@
                 </div>
             </section>
 
-            <!-- Right Column: Coaching Schedules -->
+            <!-- Right Column: Coaching Schedules with Dynamic Link Updater -->
             <div class="space-y-6">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
                         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                             📅 Coaching Schedules
                         </h2>
-                        <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-1 rounded">1:1 Sessions</span>
+                        <button onclick="toggleMeetConfig()" class="text-xs text-indigo-600 font-semibold bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded transition">⚙️ Update Links</button>
                     </div>
+
+                    <!-- Hidden Config Box to Paste Links Weekly -->
+                    <div id="meet-config-box" class="hidden mb-4 p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 text-xs">
+                        <p class="font-bold text-slate-700">Paste Weekly Google Meet Links:</p>
+                        <div>
+                            <label class="text-slate-500">Link 1 (Raphael / General)</label>
+                            <input type="text" id="input-link-1" value="https://meet.google.com/icj-ftmn-opp" class="w-full px-2 py-1 border rounded bg-white">
+                        </div>
+                        <div>
+                            <label class="text-slate-500">Link 2 (Kristelle / Others)</label>
+                            <input type="text" id="input-link-2" value="https://meet.google.com/kaw-usaj-vjv" class="w-full px-2 py-1 border rounded bg-white">
+                        </div>
+                        <button onclick="saveMeetLinks()" class="w-full py-1.5 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">Apply Links</button>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
@@ -117,32 +132,32 @@
                                 <tr>
                                     <td class="p-2 font-mono">12:00</td>
                                     <td class="p-2 font-medium">Raphael Reyes</td>
-                                    <td class="p-2"><a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
+                                    <td class="p-2"><a id="link-display-1" href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">12:30</td>
                                     <td class="p-2 font-medium">Kristelle De Leon</td>
-                                    <td class="p-2"><a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
+                                    <td class="p-2"><a id="link-display-2" href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">13:30</td>
                                     <td class="p-2 font-medium">Chito Delvo</td>
-                                    <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
+                                    <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">14:00</td>
                                     <td class="p-2 font-medium">John Villaflores</td>
-                                    <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
+                                    <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">14:30</td>
                                     <td class="p-2 font-medium">Bryson Lasam</td>
-                                    <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
+                                    <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">17:00</td>
                                     <td class="p-2 font-medium">Phoebe Sarmiento</td>
-                                    <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
+                                    <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -321,6 +336,29 @@
             }
         }
 
+        // Toggle Meet Config Panel
+        function toggleMeetConfig() {
+            const box = document.getElementById('meet-config-box');
+            box.classList.toggle('hidden');
+        }
+
+        // Save and Apply Meet Links Dynamically
+        function saveMeetLinks() {
+            const link1 = document.getElementById('input-link-1').value.trim();
+            const link2 = document.getElementById('input-link-2').value.trim();
+
+            if(link1) {
+                document.getElementById('link-display-1').href = link1;
+                document.getElementById('link-display-3').href = link1;
+            }
+            if(link2) {
+                document.getElementById('link-display-2').href = link2;
+            }
+            
+            alert('Naibunong dagiti baro a Google Meet links!');
+            toggleMeetConfig();
+        }
+
         // Modal Controls
         function openIcModal() {
             document.getElementById('ic-modal').classList.remove('hidden');
@@ -343,7 +381,7 @@
             const status = document.getElementById('ic-status').value;
 
             if (!reason) {
-                alert('Please fill in the Call Type / Reason.');
+                alert('Pangngaasi a punnuan ti Call Type / Reason.');
                 return;
             }
 
@@ -362,7 +400,6 @@
             `;
             tbody.prepend(newRow);
 
-            // Clear input and close modal
             document.getElementById('ic-reason').value = '';
             closeIcModal();
         }
@@ -385,7 +422,7 @@
                     <span class="font-medium text-slate-700">${item.name}</span>
                     <span class="font-mono font-bold text-indigo-600">${item.ext}</span>
                 </div>
-            `).join('') || '<p class="text-slate-400 italic">No extension found.</p>';
+            `).join('') || '<p class="text-slate-400 italic"> awan ti nasarakan nga extension.</p>';
         });
 
         // PPH Calculator Logic
