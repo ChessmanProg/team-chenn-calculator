@@ -27,7 +27,7 @@
         </div>
         <!-- Tab Navigation Bar -->
         <div class="max-w-7xl mx-auto px-4 flex gap-2 border-t border-slate-800 pt-2">
-            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition">📊 Dashboard & Calculator</button>
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-white text-slate-900 transition shadow-sm">📊 Dashboard & Calculator</button>
             <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition">📝 Today's IC Extension Record</button>
         </div>
     </header>
@@ -93,12 +93,14 @@
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Coaching Schedules Section -->
+            <!-- Right Column: Coaching Schedules -->
+            <div class="space-y-6">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
                         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                            📅 Coaching Schedules & Meet Links
+                            📅 Coaching Schedules
                         </h2>
                         <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-1 rounded">1:1 Sessions</span>
                     </div>
@@ -106,92 +108,59 @@
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
                                 <tr>
-                                    <th class="p-2">Time Slot</th>
-                                    <th class="p-2">Agent Name</th>
-                                    <th class="p-2">Google Meet</th>
-                                    <th class="p-2">Status</th>
+                                    <th class="p-2">Time</th>
+                                    <th class="p-2">Agent</th>
+                                    <th class="p-2">Meet</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-slate-700">
                                 <tr>
-                                    <td class="p-2 font-mono">12:00 – 12:30</td>
-                                    <td class="p-2 font-medium">Raphael Santiago Reyes</td>
-                                    <td class="p-2"><a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                    <td class="p-2 font-mono">12:00</td>
+                                    <td class="p-2 font-medium">Raphael Reyes</td>
+                                    <td class="p-2"><a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">12:30 – 13:00</td>
-                                    <td class="p-2 font-medium">Maria Kristelle De Leon</td>
-                                    <td class="p-2"><a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                    <td class="p-2 font-mono">12:30</td>
+                                    <td class="p-2 font-medium">Kristelle De Leon</td>
+                                    <td class="p-2"><a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">13:30 – 14:00</td>
-                                    <td class="p-2 font-medium">Chito Canuto Delvo</td>
-                                    <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                    <td class="p-2 font-mono">13:30</td>
+                                    <td class="p-2 font-medium">Chito Delvo</td>
+                                    <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">14:00 – 14:30</td>
-                                    <td class="p-2 font-medium">John Anthony Villaflores</td>
-                                    <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                    <td class="p-2 font-mono">14:00</td>
+                                    <td class="p-2 font-medium">John Villaflores</td>
+                                    <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">14:30 – 15:00</td>
-                                    <td class="p-2 font-medium">Bryson Blando Lasam</td>
-                                    <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                    <td class="p-2 font-mono">14:30</td>
+                                    <td class="p-2 font-medium">Bryson Lasam</td>
+                                    <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-mono">17:00 – 17:30</td>
-                                    <td class="p-2 font-medium">Phoebe Regio Sarmiento</td>
-                                    <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="text-indigo-600 hover:underline">Join Meet</a></td>
-                                    <td class="p-2"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Done</span></td>
+                                    <td class="p-2 font-mono">17:00</td>
+                                    <td class="p-2 font-medium">Phoebe Sarmiento</td>
+                                    <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="text-indigo-600 hover:underline">Join</a></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </section>
-
-            <!-- Right Column: InContact Extensions -->
-            <div class="space-y-6">
-                <!-- InContact Extensions Directory -->
-                <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">📞 InContact Extensions</h2>
-                    <input type="text" id="ext-search" placeholder="Search agent or extension..." class="w-full px-3 py-2 mb-3 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    <div id="ext-list" class="space-y-2 text-xs">
-                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                            <span class="font-medium text-slate-700">Team Chenn Queue</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 4012</span>
-                        </div>
-                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                            <span class="font-medium text-slate-700">BC AI Escalations</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 4015</span>
-                        </div>
-                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                            <span class="font-medium text-slate-700">IT / Tech Support Desk</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 9110</span>
-                        </div>
-                        <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
-                            <span class="font-medium text-slate-700">Operations Floor Lead</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 4020</span>
-                        </div>
-                    </div>
-                </section>
             </div>
         </div>
 
         <!-- TAB 2: TODAY'S IC EXTENSION RECORD -->
-        <div id="tab-ic-log" class="hidden space-y-6">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-slate-100 gap-4">
+        <div id="tab-ic-log" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left: Extension Record Table -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             📝 Today's InContact (IC) Extension Record
                         </h2>
-                        <p class="text-xs text-slate-500">Log and track IC extension activities, calls, or transfers for today's shift.</p>
+                        <p class="text-xs text-slate-500">Log and track IC extension activities for today's shift.</p>
                     </div>
                     <button onclick="openIcModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1">
                         + Add New IC Log
@@ -207,27 +176,57 @@
                                 <th class="p-3">Agent Name</th>
                                 <th class="p-3">IC Extension / Queue</th>
                                 <th class="p-3">Call Type / Reason</th>
-                                <th class="p-3">Status / Remarks</th>
+                                <th class="p-3">Status</th>
                             </tr>
                         </thead>
                         <tbody id="ic-table-body" class="divide-y divide-slate-100 text-slate-700">
                             <tr>
                                 <td class="p-3 font-mono text-slate-500">10:15 PM</td>
                                 <td class="p-3 font-medium">Raphael Santiago Reyes</td>
-                                <td class="p-3 font-mono text-indigo-600">Ext. 4012</td>
+                                <td class="p-3 font-mono text-indigo-600">Team Chenn Queue (Ext. 4012)</td>
                                 <td class="p-3">Queue Transfer / Escalation</td>
                                 <td class="p-3"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-semibold">Resolved</span></td>
                             </tr>
                             <tr>
                                 <td class="p-3 font-mono text-slate-500">11:30 PM</td>
                                 <td class="p-3 font-medium">Maria Kristelle De Leon</td>
-                                <td class="p-3 font-mono text-indigo-600">Ext. 4015</td>
+                                <td class="p-3 font-mono text-indigo-600">BC AI Escalations (Ext. 4015)</td>
                                 <td class="p-3">BC AI Item Review Inquiry</td>
                                 <td class="p-3"><span class="px-2 py-0.5 bg-amber-50 text-amber-600 rounded font-semibold">Pending Callback</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- Right: InContact Extensions Lookup Widget -->
+            <div class="space-y-6">
+                <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        📞 InContact Extensions
+                    </h2>
+                    <p class="text-xs text-slate-400 mb-3">Click any extension below to quickly log an entry.</p>
+                    <input type="text" id="ext-search" placeholder="Search agent or extension..." class="w-full px-3 py-2 mb-3 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    
+                    <div id="ext-list" class="space-y-2 text-xs">
+                        <div onclick="selectExtension('Team Chenn Queue (Ext. 4012)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
+                            <span class="font-medium text-slate-700">Team Chenn Queue</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 4012</span>
+                        </div>
+                        <div onclick="selectExtension('BC AI Escalations (Ext. 4015)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
+                            <span class="font-medium text-slate-700">BC AI Escalations</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 4015</span>
+                        </div>
+                        <div onclick="selectExtension('IT / Tech Support Desk (Ext. 9110)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
+                            <span class="font-medium text-slate-700">IT / Tech Support Desk</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 9110</span>
+                        </div>
+                        <div onclick="selectExtension('Operations Floor Lead (Ext. 4020)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
+                            <span class="font-medium text-slate-700">Operations Floor Lead</span>
+                            <span class="font-mono font-bold text-indigo-600">Ext. 4020</span>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -244,7 +243,12 @@
                 </div>
                 <div>
                     <label class="block font-semibold uppercase text-slate-600 mb-1">IC Extension / Queue</label>
-                    <input type="text" id="ic-ext" placeholder="e.g. Ext. 4012" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <select id="ic-ext" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="Team Chenn Queue (Ext. 4012)">Team Chenn Queue (Ext. 4012)</option>
+                        <option value="BC AI Escalations (Ext. 4015)">BC AI Escalations (Ext. 4015)</option>
+                        <option value="IT / Tech Support Desk (Ext. 9110)">IT / Tech Support Desk (Ext. 9110)</option>
+                        <option value="Operations Floor Lead (Ext. 4020)">Operations Floor Lead (Ext. 4020)</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block font-semibold uppercase text-slate-600 mb-1">Call Type / Reason</label>
@@ -309,15 +313,21 @@
             document.getElementById('ic-modal').classList.add('hidden');
         }
 
+        // Extension Selection Shortcut
+        function selectExtension(extVal) {
+            document.getElementById('ic-ext').value = extVal;
+            openIcModal();
+        }
+
         // Save New IC Log Entry
         function saveIcLog() {
             const agent = document.getElementById('ic-agent').value.trim();
-            const ext = document.getElementById('ic-ext').value.trim();
+            const ext = document.getElementById('ic-ext').value;
             const reason = document.getElementById('ic-reason').value.trim();
             const status = document.getElementById('ic-status').value;
 
-            if (!agent || !ext || !reason) {
-                alert('Please fill in all fields.');
+            if (!agent || !reason) {
+                alert('Please fill in Agent Name and Reason.');
                 return;
             }
 
@@ -338,7 +348,6 @@
 
             // Clear inputs and close modal
             document.getElementById('ic-agent').value = '';
-            document.getElementById('ic-ext').value = '';
             document.getElementById('ic-reason').value = '';
             closeIcModal();
         }
@@ -357,7 +366,7 @@
             const filtered = extensions.filter(item => item.name.toLowerCase().includes(query) || item.ext.toLowerCase().includes(query));
             
             container.innerHTML = filtered.map(item => `
-                <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                <div onclick="selectExtension('${item.name} (${item.ext})')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
                     <span class="font-medium text-slate-700">${item.name}</span>
                     <span class="font-mono font-bold text-indigo-600">${item.ext}</span>
                 </div>
