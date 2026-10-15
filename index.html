@@ -670,6 +670,24 @@ function calculate() {
 
 document.querySelectorAll('.calc').forEach(el => el.addEventListener('input', calculate));
 
+/* ============ THEME SETTINGS ============ */
+function applyThemeSettings() {
+  const mode = document.getElementById('theme-mode').value;
+  const accent = document.getElementById('theme-color').value;
+
+  document.body.classList.toggle('dark', mode === 'dark');
+  document.documentElement.style.setProperty(
+    '--team-accent',
+    accent === 'emerald' ? '#059669' :
+    accent === 'blue' ? '#2563eb' :
+    accent === 'violet' ? '#7c3aed' :
+    accent === 'rose' ? '#e11d48' :
+    accent === 'amber' ? '#d97706' :
+    accent === 'cyan' ? '#0891b2' :
+    accent === 'indigo' ? '#4f46e5' :
+    '#475569'
+  );
+}
 /* ============ 7. CLOCK ============ */
 function tick() {
   document.getElementById('live-clock').textContent = new Date().toLocaleTimeString([], {
