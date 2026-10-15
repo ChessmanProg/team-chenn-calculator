@@ -387,6 +387,41 @@ async function adminLogin() {
   await refreshAuthState();
 }
 
+async function requestPasswordReset() {
+  const email = document.getElementById('login-email').value.trim();
+  const errorBox = document.getElementById('auth-error');
+
+  errorBox.classList.add('hidden');
+
+  if (!db) {
+    errorBox.textContent = 'Database connection is unavailable.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if (!email) {
+    errorBox.textContent = 'Enter your email address first.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://chessmanprog.github.io/team-chenn-calculator/'
+  });
+
+  if (error) {
+    errorBox.textContent = 'Could not send reset email: ' + error.message;
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  errorBox.textContent =
+    'If an account exists for this email, a password-reset email will be sent. Check your inbox and spam folder.';
+  errorBox.classList.remove('hidden');
+  errorBox.classList.remove('text-red-600');
+  errorBox.classList.add('text-emerald-600');
+}
+
 async function adminLogout() {
   if (!db) return;
 
