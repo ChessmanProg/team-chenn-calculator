@@ -95,28 +95,16 @@
                 </div>
             </section>
 
-            <!-- Right Column: Coaching Schedules with Dynamic Link Updater -->
+            <!-- Right Column: Coaching Schedules with Dynamic Add Button -->
             <div class="space-y-6">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
                         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                             📅 Coaching Schedules
                         </h2>
-                        <button onclick="toggleMeetConfig()" class="text-xs text-indigo-600 font-semibold bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded transition">⚙️ Update Links</button>
-                    </div>
-
-                    <!-- Hidden Config Box to Paste Links Weekly -->
-                    <div id="meet-config-box" class="hidden mb-4 p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 text-xs">
-                        <p class="font-bold text-slate-700">Paste Weekly Google Meet Links:</p>
-                        <div>
-                            <label class="text-slate-500">Link 1 (Raphael / General)</label>
-                            <input type="text" id="input-link-1" value="https://meet.google.com/icj-ftmn-opp" class="w-full px-2 py-1 border rounded bg-white">
-                        </div>
-                        <div>
-                            <label class="text-slate-500">Link 2 (Kristelle / Others)</label>
-                            <input type="text" id="input-link-2" value="https://meet.google.com/kaw-usaj-vjv" class="w-full px-2 py-1 border rounded bg-white">
-                        </div>
-                        <button onclick="saveMeetLinks()" class="w-full py-1.5 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">Apply Links</button>
+                        <button onclick="toggleAddMeetModal()" class="text-xs text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-2.5 py-1 rounded-lg transition shadow-sm flex items-center gap-1">
+                            + Add Schedule
+                        </button>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -128,35 +116,35 @@
                                     <th class="p-2">Meet</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                            <tbody id="coaching-table-body" class="divide-y divide-slate-100 text-slate-700">
                                 <tr>
                                     <td class="p-2 font-mono">12:00</td>
-                                    <td class="p-2 font-medium">Raphael Reyes</td>
-                                    <td class="p-2"><a id="link-display-1" href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+                                    <td class="p-2 font-medium">Raphael Santiago Reyes</td>
+                                    <td class="p-2"><a href="https://meet.google.com/icj-ftmn-opp" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">12:30</td>
-                                    <td class="p-2 font-medium">Kristelle De Leon</td>
-                                    <td class="p-2"><a id="link-display-2" href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+                                    <td class="p-2 font-medium">Maria Kristelle Cambronero De Leon</td>
+                                    <td class="p-2"><a href="https://meet.google.com/kaw-usaj-vjv" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">13:30</td>
-                                    <td class="p-2 font-medium">Chito Delvo</td>
+                                    <td class="p-2 font-medium">Chito Canuto Quintela Delvo</td>
                                     <td class="p-2"><a href="https://meet.google.com/ycd-uxxu-vha" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">14:00</td>
-                                    <td class="p-2 font-medium">John Villaflores</td>
+                                    <td class="p-2 font-medium">John Anthony Reyes Villaflores</td>
                                     <td class="p-2"><a href="https://meet.google.com/uqi-sonx-prv" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">14:30</td>
-                                    <td class="p-2 font-medium">Bryson Lasam</td>
+                                    <td class="p-2 font-medium">Bryson Blando Lasam</td>
                                     <td class="p-2"><a href="https://meet.google.com/rcy-kqvx-det" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 font-mono">17:00</td>
-                                    <td class="p-2 font-medium">Phoebe Sarmiento</td>
+                                    <td class="p-2 font-medium">Phoebe Regio Sarmiento</td>
                                     <td class="p-2"><a href="https://meet.google.com/fnx-apbf-mxr" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
                                 </tr>
                             </tbody>
@@ -167,9 +155,9 @@
         </div>
 
         <!-- TAB 2: TODAY'S IC EXTENSION RECORD -->
-        <div id="tab-ic-log" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left: Extension Record Table -->
-            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+        <div id="tab-ic-log" class="hidden grid grid-cols-1 gap-6">
+            <!-- Extension Record Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -213,39 +201,50 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Right: InContact Extensions Lookup Widget -->
-            <div class="space-y-6">
-                <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
-                        📞 InContact Extensions
-                    </h2>
-                    <p class="text-xs text-slate-400 mb-3">Click any extension below to quickly log an entry.</p>
-                    <input type="text" id="ext-search" placeholder="Search agent or extension..." class="w-full px-3 py-2 mb-3 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    
-                    <div id="ext-list" class="space-y-2 text-xs">
-                        <div onclick="selectExtension('Team Chenn Queue (Ext. 4012)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
-                            <span class="font-medium text-slate-700">Team Chenn Queue</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 4012</span>
-                        </div>
-                        <div onclick="selectExtension('BC AI Escalations (Ext. 4015)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
-                            <span class="font-medium text-slate-700">BC AI Escalations</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 4015</span>
-                        </div>
-                        <div onclick="selectExtension('IT / Tech Support Desk (Ext. 9110)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
-                            <span class="font-medium text-slate-700">IT / Tech Support Desk</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 9110</span>
-                        </div>
-                        <div onclick="selectExtension('Operations Floor Lead (Ext. 4020)')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
-                            <span class="font-medium text-slate-700">Operations Floor Lead</span>
-                            <span class="font-mono font-bold text-indigo-600">Ext. 4020</span>
-                        </div>
-                    </div>
-                </section>
-            </div>
         </div>
 
     </main>
+
+    <!-- Modal for Adding New Coaching Schedule -->
+    <div id="add-meet-modal" class="fixed inset-0 bg-slate-900/50 hidden flex justify-center items-center px-4 z-50">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <h3 class="text-base font-bold text-slate-900 border-b pb-2">Add New Coaching Schedule</h3>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 mb-1">Agent Name</label>
+                    <select id="meet-agent" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="Raphael Santiago Reyes">Raphael Santiago Reyes</option>
+                        <option value="Maria Kristelle Cambronero De Leon">Maria Kristelle Cambronero De Leon</option>
+                        <option value="Chito Canuto Quintela Delvo">Chito Canuto Quintela Delvo</option>
+                        <option value="John Anthony Reyes Villaflores">John Anthony Reyes Villaflores</option>
+                        <option value="Phoebe Albufuera Almacen">Phoebe Albufuera Almacen</option>
+                        <option value="Bryson Blando Lasam">Bryson Blando Lasam</option>
+                        <option value="Harold Ferdie Pulgan Orbina">Harold Ferdie Pulgan Orbina</option>
+                        <option value="Amalkene John Calalo Ligaya">Amalkene John Calalo Ligaya</option>
+                        <option value="Jessa Marie Marantal Albos">Jessa Marie Marantal Albos</option>
+                        <option value="Neil Andre Tuballa">Neil Andre Tuballa</option>
+                        <option value="Phoebe Regio Sarmiento">Phoebe Regio Sarmiento</option>
+                        <option value="Allia Cabuena Aguilar">Allia Cabuena Aguilar</option>
+                        <option value="Romeo Jr. Villaviray Perez">Romeo Jr. Villaviray Perez</option>
+                        <option value="Florame Trumata Caspe">Florame Trumata Caspe</option>
+                        <option value="Enrique Banzal Calvez">Enrique Banzal Calvez</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 mb-1">Time Slot</label>
+                    <input type="text" id="meet-time" placeholder="e.g. 15:00 - 15:30" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-600 mb-1">Google Meet Link</label>
+                    <input type="url" id="meet-link" placeholder="https://meet.google.com/..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t">
+                <button onclick="toggleAddMeetModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg">Cancel</button>
+                <button onclick="saveCoachingSchedule()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg">Add to Schedule</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal for Adding New IC Log -->
     <div id="ic-modal" class="fixed inset-0 bg-slate-900/50 hidden flex justify-center items-center px-4 z-50">
@@ -336,30 +335,38 @@
             }
         }
 
-        // Toggle Meet Config Panel
-        function toggleMeetConfig() {
-            const box = document.getElementById('meet-config-box');
-            box.classList.toggle('hidden');
+        // Toggle Coaching Add Modal
+        function toggleAddMeetModal() {
+            document.getElementById('add-meet-modal').classList.toggle('hidden');
         }
 
-        // Save and Apply Meet Links Dynamically
-        function saveMeetLinks() {
-            const link1 = document.getElementById('input-link-1').value.trim();
-            const link2 = document.getElementById('input-link-2').value.trim();
+        // Add New Coaching Schedule Row
+        function saveCoachingSchedule() {
+            const agent = document.getElementById('meet-agent').value;
+            const time = document.getElementById('meet-time').value.trim();
+            const link = document.getElementById('meet-link').value.trim();
 
-            if(link1) {
-                document.getElementById('link-display-1').href = link1;
-                document.getElementById('link-display-3').href = link1;
+            if (!time || !link) {
+                alert('Please fill in both Time Slot and Google Meet Link.');
+                return;
             }
-            if(link2) {
-                document.getElementById('link-display-2').href = link2;
-            }
-            
-            alert('Naibunong dagiti baro a Google Meet links!');
-            toggleMeetConfig();
+
+            const tbody = document.getElementById('coaching-table-body');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="p-2 font-mono">${time}</td>
+                <td class="p-2 font-medium">${agent}</td>
+                <td class="p-2"><a href="${link}" target="_blank" class="px-2 py-1 bg-indigo-50 text-indigo-600 font-semibold rounded hover:bg-indigo-100 transition">Join</a></td>
+            `;
+            tbody.appendChild(newRow);
+
+            // Reset inputs & close modal
+            document.getElementById('meet-time').value = '';
+            document.getElementById('meet-link').value = '';
+            toggleAddMeetModal();
         }
 
-        // Modal Controls
+        // IC Extension Modal Controls
         function openIcModal() {
             document.getElementById('ic-modal').classList.remove('hidden');
         }
@@ -367,97 +374,7 @@
             document.getElementById('ic-modal').classList.add('hidden');
         }
 
-        // Extension Selection Shortcut
-        function selectExtension(extVal) {
-            document.getElementById('ic-ext').value = extVal;
-            openIcModal();
-        }
-
         // Save New IC Log Entry
         function saveIcLog() {
             const agent = document.getElementById('ic-agent').value;
-            const ext = document.getElementById('ic-ext').value;
-            const reason = document.getElementById('ic-reason').value.trim();
-            const status = document.getElementById('ic-status').value;
-
-            if (!reason) {
-                alert('Pangngaasi a punnuan ti Call Type / Reason.');
-                return;
-            }
-
-            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const tbody = document.getElementById('ic-table-body');
-
-            const badgeClass = status === 'Resolved' ? 'bg-emerald-50 text-emerald-600' : (status === 'Pending Callback' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600');
-
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td class="p-3 font-mono text-slate-500">${timeNow}</td>
-                <td class="p-3 font-medium">${agent}</td>
-                <td class="p-3 font-mono text-indigo-600">${ext}</td>
-                <td class="p-3">${reason}</td>
-                <td class="p-3"><span class="px-2 py-0.5 ${badgeClass} rounded font-semibold">${status}</span></td>
-            `;
-            tbody.prepend(newRow);
-
-            document.getElementById('ic-reason').value = '';
-            closeIcModal();
-        }
-
-        // Extension Search Filter Logic
-        const extensions = [
-            { name: "Team Chenn Queue", ext: "Ext. 4012" },
-            { name: "BC AI Escalations", ext: "Ext. 4015" },
-            { name: "IT / Tech Support Desk", ext: "Ext. 9110" },
-            { name: "Operations Floor Lead", ext: "Ext. 4020" }
-        ];
-
-        document.getElementById('ext-search').addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase();
-            const container = document.getElementById('ext-list');
-            const filtered = extensions.filter(item => item.name.toLowerCase().includes(query) || item.ext.toLowerCase().includes(query));
-            
-            container.innerHTML = filtered.map(item => `
-                <div onclick="selectExtension('${item.name} (${item.ext})')" class="p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg flex justify-between items-center cursor-pointer transition">
-                    <span class="font-medium text-slate-700">${item.name}</span>
-                    <span class="font-mono font-bold text-indigo-600">${item.ext}</span>
-                </div>
-            `).join('') || '<p class="text-slate-400 italic"> awan ti nasarakan nga extension.</p>';
-        });
-
-        // PPH Calculator Logic
-        const targetPphInput = document.getElementById('target-pph');
-        const shiftHoursInput = document.getElementById('shift-hours');
-        const exemptionHoursInput = document.getElementById('exemption-hours');
-        const completedItemsInput = document.getElementById('completed-items');
-
-        function calculatePph() {
-            const targetPph = parseFloat(targetPphInput.value) || 0;
-            const shiftHours = parseFloat(shiftHoursInput.value) || 0;
-            const exemptions = parseFloat(exemptionHoursInput.value) || 0;
-            const completed = parseFloat(completedItemsInput.value) || 0;
-
-            const netHours = Math.max(0, shiftHours - exemptions);
-            const totalRequired = Math.round(netHours * targetPph);
-            const remainingItems = Math.max(0, totalRequired - completed);
-            
-            const remainingHours = Math.max(0.25, netHours - (completed / (targetPph || 1)));
-            const requiredPace = (remainingItems / remainingHours).toFixed(1);
-
-            const percent = totalRequired > 0 ? Math.min(100, Math.round((completed / totalRequired) * 100)) : 0;
-
-            document.getElementById('net-hours').innerText = netHours.toFixed(2) + ' hrs';
-            document.getElementById('total-required').innerText = totalRequired + ' items';
-            document.getElementById('remaining-pace').innerText = requiredPace + ' / hr';
-            document.getElementById('progress-percent').innerText = percent + '%';
-            document.getElementById('progress-bar').style.width = percent + '%';
-        }
-
-        [targetPphInput, shiftHoursInput, exemptionHoursInput, completedItemsInput].forEach(input => {
-            input.addEventListener('input', calculatePph);
-        });
-
-        calculatePph();
-    </script>
-</body>
-</html>
+            const ext = document.getElementById('ic-ext').value
