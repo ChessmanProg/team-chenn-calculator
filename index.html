@@ -877,18 +877,30 @@ async function saveModal() {
 
   const errorBox = document.getElementById('modal-error');
 
-  if (config.fields.some(([id, , type]) => type !== 'select' && !row[id])) {
+
+  if (currentKey === 'link' && !row.topic) {
+    errorBox.textContent = 'Please enter a topic.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if (currentKey === 'link' && row.meet_url && !/^https?:\/\//i.test(row.meet_url)) {
+    errorBox.textContent = 'The GMeet link must start with http:// or https://';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if (currentKey === 'link' && row.link_url && !/^https?:\/\//i.test(row.link_url)) {
+    errorBox.textContent = 'The information link must start with http:// or https://';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  if (currentKey !== 'link' && config.fields.some(([id, , type]) => type !== 'select' && !row[id])) {
     errorBox.textContent = 'Please fill in every field.';
     errorBox.classList.remove('hidden');
     return;
   }
-
-  if (row.link && !/^https?:\/\//i.test(row.link)) {
-    errorBox.textContent = 'The link must start with http:// or https://';
-    errorBox.classList.remove('hidden');
-    return;
-  }
-
   const key = currentKey;
   const error = await insertRow(key, row);
 
