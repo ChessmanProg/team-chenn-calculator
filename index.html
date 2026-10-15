@@ -155,19 +155,8 @@
                 </div>
             </section>
 
-            <!-- Right Column: Tool Quick Links & InContact Extensions -->
+            <!-- Right Column: InContact Extensions -->
             <div class="space-y-6">
-                <!-- Quick Links -->
-                <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">🚀 Quick-Launch LOB Tools</h2>
-                    <div class="grid grid-cols-2 gap-2">
-                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">SNW Portal</a>
-                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Catalog Tool</a>
-                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Zoho Learn</a>
-                        <a href="#" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-lg text-xs font-semibold text-slate-700 hover:text-indigo-700 transition text-center">Confluence</a>
-                    </div>
-                </section>
-
                 <!-- InContact Extensions Directory -->
                 <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <h2 class="text-base font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">📞 InContact Extensions</h2>
@@ -353,6 +342,27 @@
             document.getElementById('ic-reason').value = '';
             closeIcModal();
         }
+
+        // Extension Search Filter Logic
+        const extensions = [
+            { name: "Team Chenn Queue", ext: "Ext. 4012" },
+            { name: "BC AI Escalations", ext: "Ext. 4015" },
+            { name: "IT / Tech Support Desk", ext: "Ext. 9110" },
+            { name: "Operations Floor Lead", ext: "Ext. 4020" }
+        ];
+
+        document.getElementById('ext-search').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const container = document.getElementById('ext-list');
+            const filtered = extensions.filter(item => item.name.toLowerCase().includes(query) || item.ext.toLowerCase().includes(query));
+            
+            container.innerHTML = filtered.map(item => `
+                <div class="p-2 bg-slate-50 rounded border border-slate-200 flex justify-between items-center">
+                    <span class="font-medium text-slate-700">${item.name}</span>
+                    <span class="font-mono font-bold text-indigo-600">${item.ext}</span>
+                </div>
+            `).join('') || '<p class="text-slate-400 italic">No extension found.</p>';
+        });
 
         // PPH Calculator Logic
         const targetPphInput = document.getElementById('target-pph');
