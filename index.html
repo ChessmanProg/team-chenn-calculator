@@ -1152,5 +1152,61 @@ refreshAuthState().then(handlePasswordRecovery);
 
 <!-- QUESTION PANEL WILL BE ADDED NEXT -->
 <div id="question-panel" class="hidden"></div>
+
+<style>
+  #question-panel {
+    position: fixed;
+    right: 24px;
+    bottom: 100px;
+    z-index: 999;
+    width: min(360px, calc(100vw - 28px));
+    padding: 22px;
+    border: 1px solid rgba(110, 231, 183, 0.35);
+    border-radius: 20px;
+    background: linear-gradient(145deg, #064e3b, #022c22);
+    color: #ecfdf5;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  #question-panel.hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  function toggleQuestionPanel() {
+    const panel = document.getElementById('question-panel');
+    const bubble = document.getElementById('pending-questions-bubble');
+
+    const isHidden = panel.classList.contains('hidden');
+
+    if (isHidden) {
+      panel.classList.remove('hidden');
+      panel.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+          <h2 style="font-size:20px; font-weight:800; margin:0;">
+            💬 Pending Questions
+          </h2>
+          <button type="button"
+            onclick="toggleQuestionPanel()"
+            aria-label="Close questions panel"
+            style="font-size:24px; color:#a7f3d0; background:none; border:0; cursor:pointer;">
+            &times;
+          </button>
+        </div>
+        <p style="margin-top:12px; color:#d1fae5;">
+          Have a question for Team Chenn? This is where you’ll be able to submit it.
+        </p>
+        <p style="margin-top:8px; font-size:12px; color:#a7f3d0;">
+          Question submission will be connected in the next step.
+        </p>
+      `;
+      bubble.setAttribute('aria-expanded', 'true');
+    } else {
+      panel.classList.add('hidden');
+      bubble.setAttribute('aria-expanded', 'false');
+    }
+  }
+</script>
 </body>
 </html>
