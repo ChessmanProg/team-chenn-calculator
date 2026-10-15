@@ -33,6 +33,53 @@
   </div>
 </header>
 
+<!-- Admin Login Panel -->
+<section class="bg-white border-b border-slate-200">
+  <div class="max-w-7xl mx-auto px-6 py-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h2 class="font-bold text-slate-900">Admin Access</h2>
+        <p id="auth-status" class="text-sm text-slate-500">
+          Sign in to manage Team Chenn records.
+        </p>
+      </div>
+
+      <div id="login-form" class="flex flex-col sm:flex-row gap-2">
+        <input
+          id="login-email"
+          type="email"
+          autocomplete="username"
+          placeholder="Admin email"
+          class="px-3 py-2 border border-slate-300 rounded-lg"
+        >
+        <input
+          id="login-password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Password"
+          class="px-3 py-2 border border-slate-300 rounded-lg"
+        >
+        <button
+          onclick="adminLogin()"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg"
+        >
+          Log In
+        </button>
+      </div>
+
+      <button
+        id="logout-button"
+        onclick="adminLogout()"
+        class="hidden px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg"
+      >
+        Log Out
+      </button>
+    </div>
+
+    <p id="auth-error" class="hidden text-sm text-red-600 mt-2"></p>
+  </div>
+</section>
+
 <main class="max-w-7xl w-full mx-auto px-6 py-8 flex-grow">
   <div id="db-banner" class="hidden mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm"></div>
 
