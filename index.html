@@ -243,8 +243,6 @@ async function refreshAuthState() {
   ['coaching', 'ic', 'link'].forEach(render);
 }
 
-  const { data: { session }, error } = await db.auth.getSession();
-
   if (error || !session) {
     status.textContent = 'Sign in to manage Team Chenn records.';
     loginForm.classList.remove('hidden');
