@@ -902,6 +902,8 @@ async function saveModal() {
     errorBox.classList.remove('hidden');
     return;
   }
+  console.log('Important Link form data:', row);
+console.log('Information fields:', row.link_label, row.link_url);
   const key = currentKey;
   const error = await insertRow(key, row);
 
