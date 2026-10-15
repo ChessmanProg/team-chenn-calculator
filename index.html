@@ -954,22 +954,68 @@ function calculate() {
 document.querySelectorAll('.calc').forEach(el => el.addEventListener('input', calculate));
 
 /* ============ THEME SETTINGS ============ */
+
 function applyThemeSettings() {
   const mode = document.getElementById('theme-mode').value;
   const accent = document.getElementById('theme-color').value;
 
+  // Apply the theme only in this user's browser.
   document.body.classList.toggle('dark', mode === 'dark');
+
+  const accentColors = {
+    emerald: '#059669',
+    blue: '#2563eb',
+    violet: '#7c3aed',
+    rose: '#e11d48',
+    amber: '#d97706',
+    cyan: '#0891b2',
+    indigo: '#4f46e5',
+    slate: '#475569'
+  };
+
   document.documentElement.style.setProperty(
     '--team-accent',
-    accent === 'emerald' ? '#059669' :
-    accent === 'blue' ? '#2563eb' :
-    accent === 'violet' ? '#7c3aed' :
-    accent === 'rose' ? '#e11d48' :
-    accent === 'amber' ? '#d97706' :
-    accent === 'cyan' ? '#0891b2' :
-    accent === 'indigo' ? '#4f46e5' :
-    '#475569'
+    accentColors[accent] || accentColors.slate
   );
+
+  // Save preferences on this device, not in the shared database.
+  try {
+    localStorage.setItem('teamChennTheme', JSON.stringify({
+      mode: mode,
+      accent: accent
+    }));
+  } catch (error) {
+    console.warn('Could not save theme preferences.', error);
+  }
+}
+
+function loadThemeSettings() {
+  let settings = { mode: 'light', accent: 'emerald' };
+
+  try {
+    const saved = localStorage.getItem('teamChennTheme');
+    if (saved) {
+      settings = { ...settings, ...JSON.parse(saved) };
+    }
+  } catch (error) {
+    console.warn('Could not load theme preferences.', error);
+  }
+
+  const validModes = ['light', 'dark'];
+  const validAccents = [
+    'emerald', 'blue', 'violet', 'rose',
+    'amber', 'cyan', 'indigo', 'slate'
+  ];
+
+  if (!validModes.includes(settings.mode)) settings.mode = 'light';
+  if (!validAccents.includes(settings.accent)) {
+    settings.accent = 'emerald';
+  }
+
+  document.getElementById('theme-mode').value = settings.mode;
+  document.getElementById('theme-color').value = settings.accent;
+
+  applyThemeSettings();
 }
 /* ============ 7. CLOCK ============ */
 function tick() {
