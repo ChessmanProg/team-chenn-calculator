@@ -199,6 +199,13 @@ const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : nu
 /* ============ ADMIN AUTHENTICATION ============ */
 let isTeamChennAdmin = false;
 
+async function 
+function updateAdminControls() {
+  document.querySelectorAll('button[onclick^="openModal("]').forEach(button => {
+    button.classList.toggle('hidden', !isTeamChennAdmin);
+  });
+}
+
 async function refreshAuthState() {
   const status = document.getElementById('auth-status');
   const loginForm = document.getElementById('login-form');
@@ -210,8 +217,31 @@ async function refreshAuthState() {
     status.textContent = 'Database connection is unavailable.';
     loginForm.classList.remove('hidden');
     logoutButton.classList.add('hidden');
-    return;
+  } else {
+    const { data: { session }, error } = await db.auth.getSession();
+
+    if (error || !session) {
+      status.textContent = 'Sign in to manage Team Chenn records.';
+      loginForm.classList.remove('hidden');
+      logoutButton.classList.add('hidden');
+    } else {
+      const { data, error: adminError } =
+        await db.rpc('is_team_chenn_admin');
+
+      isTeamChennAdmin = !adminError && data === true;
+
+      status.textContent = isTeamChennAdmin
+        ? 'Admin logged in. You can manage records.'
+        : 'Signed in, but this account is not an admin.';
+
+      loginForm.classList.add('hidden');
+      logoutButton.classList.remove('hidden');
+    }
   }
+
+  updateAdminControls();
+  ['coaching', 'ic', 'link'].forEach(render);
+}
 
   const { data: { session }, error } = await db.auth.getSession();
 
@@ -463,6 +493,7 @@ setInterval(tick, 1000); tick();
 if (!useDb) showBanner('Local mode: entries are saved in this browser only. Add your Supabase URL and key near the top of the script to share data with the team.');
 switchTab('dashboard'); calculate();
 ['coaching','ic','link'].forEach(render);
+refreshAuthState();
 </script>
 </body>
 </html>
