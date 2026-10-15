@@ -1133,5 +1133,24 @@ calculate();
 ['coaching', 'ic', 'link'].forEach(render);
 refreshAuthState().then(handlePasswordRecovery);
 </script>
+  
+<!-- PENDING QUESTIONS FLOATING BUBBLE -->
+<button
+  id="pending-questions-bubble"
+  type="button"
+  onclick="toggleQuestionPanel()"
+  aria-label="Open Pending Questions"
+  aria-expanded="false"
+>
+  <span class="question-icon">💬</span>
+  <span class="text-left">
+    <span class="block text-sm font-bold">Pending Questions</span>
+    <span class="block text-xs text-emerald-100">Ask the team</span>
+  </span>
+  <span class="question-count" id="pending-question-count">0</span>
+</button>
+
+<!-- QUESTION PANEL WILL BE ADDED NEXT -->
+<div id="question-panel" class="hidden"></div>
 </body>
 </html>
