@@ -450,6 +450,47 @@ async function requestPasswordReset() {
   errorBox.classList.add('text-emerald-600');
 }
 
+async function saveNewPassword() {
+  const password = document.getElementById('new-password').value;
+  const confirmPassword = document.getElementById('confirm-new-password').value;
+  const errorBox = document.getElementById('auth-error');
+
+  errorBox.classList.remove('hidden');
+  errorBox.classList.remove('text-emerald-600');
+  errorBox.classList.add('text-red-600');
+
+  if (!db) {
+    errorBox.textContent = 'Database connection is unavailable.';
+    return;
+  }
+
+  if (password.length < 8) {
+    errorBox.textContent = 'Your password must be at least 8 characters.';
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    errorBox.textContent = 'The passwords do not match.';
+    return;
+  }
+
+  const { error } = await db.auth.updateUser({
+    password: password
+  });
+
+  if (error) {
+    errorBox.textContent = 'Could not update password: ' + error.message;
+    return;
+  }
+
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-new-password').value = '';
+  document.getElementById('password-reset-form').classList.add('hidden');
+
+  errorBox.classList.remove('text-red-600');
+  errorBox.classList.add('text-emerald-600');
+  errorBox.textContent = 'Password updated successfully. You can now log in with your new password.';
+}
 async function adminLogout() {
   if (!db) return;
 
