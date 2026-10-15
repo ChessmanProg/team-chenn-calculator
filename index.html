@@ -418,11 +418,11 @@ async function render(key) {
   const body = document.getElementById(TABLES[key].body);
 
   if (key === 'coaching') {
-    rows.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+    rows.sort((a, b) => (a.time_slot || '').localeCompare(b.time_slot || ''));
     body.innerHTML = rows.length
       ? rows.map(r => `<tr>
-          <td class="p-3 whitespace-nowrap">${fmtTime(r.time)}</td>
-          <td class="p-3">${esc(r.agent)}</td>
+<td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
+<td class="p-3">${esc(r.agent_name)}</td>
           <td class="p-3 text-right">${delBtn(key, r.id)}</td>
         </tr>`).join('')
       : empty(3, 'No coaching scheduled yet.');
