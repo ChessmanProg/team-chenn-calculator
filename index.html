@@ -418,6 +418,51 @@ async function adminLogin() {
   await refreshAuthState();
 }
 
+async function signUpUser() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errorBox = document.getElementById('auth-error');
+
+  errorBox.classList.remove('hidden');
+  errorBox.classList.remove('text-emerald-600');
+  errorBox.classList.add('text-red-600');
+
+  if (!db) {
+    errorBox.textContent = 'Database connection is unavailable.';
+    return;
+  }
+
+  if (!email || !password) {
+    errorBox.textContent = 'Enter your email and password to create an account.';
+    return;
+  }
+
+  if (password.length < 8) {
+    errorBox.textContent = 'Your password must be at least 8 characters.';
+    return;
+  }
+
+  const { data, error } = await db.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    errorBox.textContent = 'Could not create account: ' + error.message;
+    return;
+  }
+
+  errorBox.classList.remove('text-red-600');
+  errorBox.classList.add('text-emerald-600');
+
+  if (data.user && !data.session) {
+    errorBox.textContent =
+      'Account request submitted! Check your email to confirm your account before logging in.';
+  } else {
+    errorBox.textContent =
+      'Account created successfully. You can now log in.';
+  }
+}
 async function requestPasswordReset() {
   const email = document.getElementById('login-email').value.trim();
   const errorBox = document.getElementById('auth-error');
