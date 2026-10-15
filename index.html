@@ -101,6 +101,82 @@ button.bg-indigo-600 {
 button.bg-indigo-600:hover {
   filter: brightness(0.9);
 }
+  
+/* ============ PENDING QUESTIONS FLOATING BUBBLE ============ */
+#pending-questions-bubble {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border: 1px solid rgba(110, 231, 183, 0.45);
+  border-radius: 999px;
+  color: #ecfdf5;
+  background: linear-gradient(135deg, #064e3b, #022c22);
+  box-shadow: 0 8px 30px rgba(6, 78, 59, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  animation: questionBubbleFloat 3s ease-in-out infinite;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+
+#pending-questions-bubble:hover {
+  box-shadow: 0 12px 38px rgba(16, 185, 129, 0.35);
+  transform: scale(1.03);
+}
+
+#pending-questions-bubble .question-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(110, 231, 183, 0.4);
+  font-size: 22px;
+}
+
+#pending-questions-bubble .question-count {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #fbbf24;
+  color: #422006;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+@keyframes questionBubbleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (max-width: 640px) {
+  #pending-questions-bubble {
+    right: 14px;
+    bottom: 14px;
+    padding: 10px 14px;
+  }
+
+  #pending-questions-bubble .question-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pending-questions-bubble {
+    animation: none;
+    transition: none;
+  }
+}
+
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-base">
