@@ -149,21 +149,35 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const useDb = !SUPABASE_URL.startsWith('YOUR_') && window.supabase;
 const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-/* Tables (each also needs an auto-generated id column):
-   coaching_schedules(id, time, agent)
-   ic_logs(id, time_logged, agent_name, queue, status)
-   important_links(id, topic, day, time, link) */
+const AGENTS = [
+  "Raphael Santiago Reyes",
+  "Maria Kristelle Cambronero De Leon",
+  "Chito Canuto Quintela Delvo",
+  "John Anthony Reyes Villaflores",
+  "Phoebe Albufuera Almacen",
+  "Bryson Blando Lasam",
+  "Harold Ferdie Pulgan Orbina",
+  "Amalkene John Calalo Ligaya",
+  "Jessa Marie Marantal Albos",
+  "Neil Andre Tuballa",
+  "Phoebe Regio Sarmiento",
+  "Allia Cabuena Aguilar",
+  "Romeo Jr. Villaviray Perez",
+  "Florame Trumata Caspe",
+  "Enrique Banzal Calvez"
+];
+
 const TABLES = {
   coaching: { name: 'coaching_schedules', body: 'coaching-table-body', title: 'Add Coaching Schedule',
-    fields: [['time','Time','time'],['agent','Agent','text']] },
+    fields: [['time','Time','time'],['agent','Agent','agent_select']] },
   ic: { name: 'ic_logs', body: 'ic-table-body', title: 'Add IC Extension Log',
-    fields: [['time_logged','Time Logged','time'],['agent_name','Agent Name','text'],['queue','IC Extension / Queue','text'],['status','Status','select']] },
+    fields: [['time_logged','Time Logged','time'],['agent_name','Agent Name','agent_select'],['queue','IC Extension / Queue','text'],['status','Status','select']] },
   link: { name: 'important_links', body: 'link-table-body', title: 'Add Important Link',
     fields: [['topic','Topic','text'],['day','Day','text'],['time','Time','time'],['link','GMeet Link','url']] }
 };
 const STATUSES = ['Pending','Active','Done'];
 
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;n'}[c]));
 const fmtTime = t => { if(!t) return ''; const [h,m] = t.split(':'); const hh = +h; return `${hh%12||12}:${m} ${hh>=12?'PM':'AM'}`; };
 
 /* ============ 2. DATA LAYER ============ */
@@ -223,9 +237,14 @@ function openModal(key) {
   document.getElementById('modal-title').textContent = cfg.title;
   document.getElementById('modal-error').classList.add('hidden');
   document.getElementById('modal-fields').innerHTML = cfg.fields.map(([id,label,type]) => {
-    const input = type === 'select'
-      ? `<select id="f-${id}" class="${inputCls}">${STATUSES.map(s=>`<option>${s}</option>`).join('')}</select>`
-      : `<input id="f-${id}" type="${type}" ${type==='url'?'placeholder="https://meet.google.com/..."':''} class="${inputCls}">`;
+    let input = '';
+    if (type === 'select') {
+      input = `<select id="f-${id}" class="${inputCls}">${STATUSES.map(s=>`<option>${s}</option>`).join('')}</select>`;
+    } else if (type === 'agent_select') {
+      input = `<select id="f-${id}" class="${inputCls}"><option value="" disabled selected>-- Select Agent --</option>${AGENTS.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('')}</select>`;
+    } else {
+      input = `<input id="f-${id}" type="${type}" ${type==='url'?'placeholder="https://meet.google.com/..."':''} class="${inputCls}">`;
+    }
     return `<div><label class="block text-sm font-semibold text-slate-600 mb-1">${label}</label>${input}</div>`;
   }).join('');
   document.getElementById('modal').classList.remove('hidden');
