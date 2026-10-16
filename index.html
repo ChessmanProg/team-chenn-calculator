@@ -184,8 +184,32 @@ button.bg-indigo-600:hover {
     animation: none;
     transition: none;
   }
+
+/* ========== FOREST GLASS THEME ========== */
+
+body {
+  background-color: #061a14;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
+/* Translucent forest-green content cards */
+body:not(.dark) .bg-white,
+body:not(.dark) .bg-slate-50,
+body:not(.dark) .bg-gray-50 {
+  background-color: rgba(6, 35, 26, 0.82) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-color: rgba(110, 231, 183, 0.2);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* Forest-green text */
+body:not(.dark) {
+  color: #ecfdf5;
+}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-base">
