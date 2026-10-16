@@ -31,11 +31,18 @@ body {
 }
 
 /* Smooth, consistent dark theme */
+
 body.dark {
-  background: #212121 !important;
+  background-color: #061a14 !important;
+  background-image:
+    linear-gradient(rgba(2, 20, 14, 0.35), rgba(2, 20, 14, 0.50)),
+    url('./forest-background.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
   color: #ececec !important;
 }
-
 /* Main cards, panels, and modal */
 body.dark .bg-white,
 body.dark .bg-slate-50,
