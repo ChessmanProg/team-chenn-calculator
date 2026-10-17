@@ -1561,6 +1561,14 @@ async function showTeamQuestions() {
           esc(q.answer) + '</p></div>'
         : '';
 
+const hasOwnerToken = !!localStorage.getItem(
+  'teamQuestionOwnerToken_' + q.id
+);
+
+const deleteButton = hasOwnerToken
+  ? '<button class="q-button" type="button" style="margin-top:10px;background:#7f1d1d;color:#fff;" onclick="deleteOwnTeamQuestion(' + Number(q.id) + ')">🗑 Delete my question</button>'
+  : '';
+
       return '<article class="q-card">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
         '<strong>' + esc(q.name) + '</strong>' +
@@ -1569,7 +1577,7 @@ async function showTeamQuestions() {
         new Date(q.created_at).toLocaleString() + '</p>' +
         '<p style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:8px;">' +
         esc(q.question) + '</p>' +
-        photo + answer + '</article>';
+        photo + answer + deleteButton + '</article>';
     }));
 
     list.innerHTML = cards.join('');
