@@ -1680,6 +1680,113 @@ const deleteButton = hasOwnerToken
   }
 }
 
+/* Floating question details window */
+function closeTeamQuestionDetail() {
+  document.getElementById('q-detail-overlay')?.remove();
+  document.getElementById('q-image-overlay')?.remove();
+  document.removeEventListener('keydown', handleQuestionDetailKey);
+}
+
+function handleQuestionDetailKey(event) {
+  if (event.key === 'Escape') {
+    closeTeamQuestionDetail();
+  }
+}
+
+function openTeamQuestionDetail(card) {
+  closeTeamQuestionDetail();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'q-detail-overlay';
+  overlay.className = 'q-detail-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'Question details');
+
+  const windowBox = document.createElement('div');
+  windowBox.className = 'q-detail-window';
+
+  const header = document.createElement('div');
+  header.style.cssText =
+    'display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;';
+
+  const heading = document.createElement('strong');
+  heading.textContent = 'Question details';
+  heading.style.fontSize = '20px';
+
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'q-detail-close';
+  closeButton.textContent = '×';
+  closeButton.setAttribute('aria-label', 'Close question details');
+  closeButton.addEventListener('click', closeTeamQuestionDetail);
+
+  header.append(heading, closeButton);
+
+  const content = card.cloneNode(true);
+  content.style.cursor = 'default';
+
+  content.querySelectorAll('.q-photo').forEach(photo => {
+    photo.classList.add('q-detail-photo');
+    photo.removeAttribute('loading');
+
+    photo.addEventListener('click', event => {
+      event.stopPropagation();
+
+      const imageOverlay = document.createElement('div');
+      imageOverlay.id = 'q-image-overlay';
+      imageOverlay.className = 'q-image-overlay';
+
+      const enlargedImage = document.createElement('img');
+      enlargedImage.src = photo.src;
+      enlargedImage.alt = photo.alt || 'Enlarged question attachment';
+
+      imageOverlay.appendChild(enlargedImage);
+
+      imageOverlay.addEventListener('click', () => {
+        imageOverlay.remove();
+      });
+
+      enlargedImage.addEventListener('click', event => {
+        event.stopPropagation();
+      });
+
+      document.body.appendChild(imageOverlay);
+    });
+  });
+
+  content.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => {
+      closeTeamQuestionDetail();
+    });
+  });
+
+  windowBox.append(header, content);
+  overlay.appendChild(windowBox);
+
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) {
+      closeTeamQuestionDetail();
+    }
+  });
+
+  document.body.appendChild(overlay);
+  document.addEventListener('keydown', handleQuestionDetailKey);
+  closeButton.focus();
+}
+
+/* Make question cards open their floating details window */
+document.addEventListener('click', event => {
+  const card = event.target.closest('#question-list article.q-card');
+
+  if (!card) return;
+
+  /* Keep buttons such as Delete working normally. */
+  if (event.target.closest('button, a')) return;
+
+  openTeamQuestionDetail(card);
+});
+
 async function submitTeamQuestion(event) {
   event.preventDefault();
 
