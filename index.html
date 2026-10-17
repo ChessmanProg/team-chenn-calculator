@@ -1682,6 +1682,7 @@ const deleteButton = hasOwnerToken
 
 /* Floating question details window */
   
+
 async function setupQuestionDiscussion(questionId, host) {
   const section = document.createElement('section');
   section.style.cssText =
@@ -1692,9 +1693,9 @@ async function setupQuestionDiscussion(questionId, host) {
   title.style.cssText = 'font-size:19px;font-weight:800;margin-bottom:5px;';
 
   const subtitle = document.createElement('p');
-  subtitle.textContent = 'Share suggestions and help your teammates.';
   subtitle.className = 'q-muted';
   subtitle.style.marginBottom = '14px';
+  subtitle.textContent = 'Share suggestions and help your teammates.';
 
   const commentsList = document.createElement('div');
   commentsList.style.cssText =
@@ -1740,6 +1741,12 @@ async function setupQuestionDiscussion(questionId, host) {
   section.append(title, subtitle, commentsList, notice, form);
   host.appendChild(section);
 
+  async function getSignedInUser() {
+    const { data, error } = await db.auth.getUser();
+    if (error) throw error;
+    return data.user || null;
+  }
+
   async function loadComments() {
     commentsList.replaceChildren();
 
@@ -1750,9 +1757,11 @@ async function setupQuestionDiscussion(questionId, host) {
     notice.textContent = '';
 
     try {
+      const user = await getSignedInUser();
+
       const { data, error } = await db
         .from('team_question_comments')
-        .select('id,name,comment_text,created_at')
+        .select('id,name,comment_text,created_at,user_id')
         .eq('question_id', questionId)
         .order('created_at', { ascending: true });
 
@@ -1760,14 +1769,23 @@ async function setupQuestionDiscussion(questionId, host) {
 
       commentsList.replaceChildren();
 
-      if (!data.length) {
+      if (!user) {
+        notice.textContent =
+          'Please sign in to your Team Chenn account to post, edit, or delete comments.';
+      }
+
+      submitButton.disabled = !user;
+      nameInput.disabled = !user;
+      commentInput.disabled = !user;
+
+      if (!data || data.length === 0) {
         const empty = document.createElement('p');
         empty.className = 'q-muted';
         empty.textContent = 'No comments yet. Be the first to help!';
         commentsList.appendChild(empty);
       }
 
-      data.forEach(comment => {
+      (data || []).forEach(comment => {
         const card = document.createElement('div');
         card.className = 'q-card';
         card.style.cssText =
@@ -1787,10 +1805,84 @@ async function setupQuestionDiscussion(questionId, host) {
         body.textContent = comment.comment_text;
 
         card.append(author, date, body);
+
+        if (user && comment.user_id === user.id) {
+          const actions = document.createElement('div');
+          actions.style.cssText =
+            'display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;';
+
+          const editButton = document.createElement('button');
+          editButton.type = 'button';
+          editButton.className = 'q-button';
+          editButton.textContent = '✏️ Edit';
+
+          editButton.addEventListener('click', async () => {
+            const edited = prompt('Edit your comment:', comment.comment_text);
+            if (edited === null) return;
+
+            const editedText = edited.trim();
+
+            if (!editedText || editedText.length > 1000) {
+              notice.textContent =
+                'Your comment must contain 1–1000 characters.';
+              return;
+            }
+
+            editButton.disabled = true;
+            try {
+              const { error } = await db
+                .from('team_question_comments')
+                .update({ comment_text: editedText })
+                .eq('id', comment.id)
+                .eq('user_id', user.id);
+
+              if (error) throw error;
+
+              notice.textContent = 'Comment updated successfully!';
+              await loadComments();
+            } catch (error) {
+              console.error('Comment edit error:', error);
+              notice.textContent = 'Could not edit comment: ' + error.message;
+              editButton.disabled = false;
+            }
+          });
+
+          const deleteButton = document.createElement('button');
+          deleteButton.type = 'button';
+          deleteButton.className = 'q-button';
+          deleteButton.textContent = '🗑️ Delete';
+
+          deleteButton.addEventListener('click', async () => {
+            if (!confirm('Delete your comment? This cannot be undone.')) return;
+
+            deleteButton.disabled = true;
+            try {
+              const { error } = await db
+                .from('team_question_comments')
+                .delete()
+                .eq('id', comment.id)
+                .eq('user_id', user.id);
+
+              if (error) throw error;
+
+              notice.textContent = 'Comment deleted.';
+              await loadComments();
+            } catch (error) {
+              console.error('Comment delete error:', error);
+              notice.textContent = 'Could not delete comment: ' + error.message;
+              deleteButton.disabled = false;
+            }
+          });
+
+          actions.append(editButton, deleteButton);
+          card.appendChild(actions);
+        }
+
         commentsList.appendChild(card);
       });
     } catch (error) {
       console.error('Comment loading error:', error);
+      commentsList.replaceChildren();
       notice.textContent = 'Could not load comments: ' + error.message;
     }
   }
@@ -1816,12 +1908,20 @@ async function setupQuestionDiscussion(questionId, host) {
     notice.textContent = '';
 
     try {
+      const user = await getSignedInUser();
+
+      if (!user) {
+        notice.textContent = 'Please sign in before posting a comment.';
+        return;
+      }
+
       const { error } = await db
         .from('team_question_comments')
         .insert({
           question_id: questionId,
           name: name,
-          comment_text: commentText
+          comment_text: commentText,
+          user_id: user.id
         });
 
       if (error) throw error;
