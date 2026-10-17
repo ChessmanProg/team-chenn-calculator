@@ -1362,6 +1362,57 @@ refreshAuthState().then(handlePasswordRecovery);
 
 <script>
 const QUESTION_BUCKET = 'team-question-photos';
+  
+function questionTokenHash(token) {
+  return crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(token)
+  ).then(buffer =>
+    Array.from(new Uint8Array(buffer))
+      .map(byte => byte.toString(16).padStart(2, '0'))
+      .join('')
+  );
+}
+
+async function deleteOwnTeamQuestion(questionId) {
+  const storageKey = 'teamQuestionOwnerToken_' + questionId;
+  const ownerToken = localStorage.getItem(storageKey);
+
+  if (!ownerToken) {
+    alert('This device does not have the ownership key for this question.');
+    return;
+  }
+
+  if (!confirm('Delete your question? This cannot be undone.')) {
+    return;
+  }
+
+  try {
+    const { data, error } = await db.rpc(
+      'delete_own_team_question',
+      {
+        p_question_id: questionId,
+        p_owner_token: ownerToken
+      }
+    );
+
+    if (error) throw error;
+
+    if (data !== true) {
+      alert('Deletion denied. Only the original poster can delete this question.');
+      return;
+    }
+
+    localStorage.removeItem(storageKey);
+    alert('Your question was deleted.');
+    await showTeamQuestions();
+    await refreshQuestionCount();
+  } catch (error) {
+    console.error('Question deletion error:', error);
+    alert('Could not delete the question: ' + error.message);
+  }
+}
+
 let questionPanelOpen = false;
 
 function toggleQuestionPanel() {
