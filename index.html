@@ -1278,8 +1278,9 @@ refreshAuthState().then(handlePasswordRecovery);
   <span class="question-count" id="pending-question-count">0</span>
 </button>
 
-<!-- QUESTION PANEL WILL BE ADDED NEXT -->
-<div id="question-panel" class="hidden"></div>
+
+<!-- TEAM CHENN QUESTIONS PANEL -->
+<div id="question-panel" class="hidden" aria-label="Team questions"></div>
 
 <style>
   #question-panel {
@@ -1287,54 +1288,343 @@ refreshAuthState().then(handlePasswordRecovery);
     right: 24px;
     bottom: 100px;
     z-index: 999;
-    width: min(360px, calc(100vw - 28px));
-    padding: 22px;
-    border: 1px solid rgba(110, 231, 183, 0.35);
-    border-radius: 20px;
+    box-sizing: border-box;
+    width: min(430px, calc(100vw - 28px));
+    max-height: 78vh;
+    overflow-y: auto;
+    padding: 20px;
+    border: 1px solid rgba(110, 231, 183, .35);
+    border-radius: 22px;
     background: linear-gradient(145deg, #064e3b, #022c22);
     color: #ecfdf5;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .4);
   }
 
   #question-panel.hidden {
     display: none;
   }
+
+  #question-panel .q-input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 5px;
+    padding: 10px 12px;
+    border: 1px solid rgba(110, 231, 183, .3);
+    border-radius: 12px;
+    background: #052d23;
+    color: #f0fdf4;
+  }
+
+  #question-panel .q-button {
+    padding: 10px 12px;
+    border: 1px solid rgba(110, 231, 183, .25);
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  #question-panel .q-primary {
+    background: #10b981;
+    color: #022c22;
+  }
+
+  #question-panel .q-card {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid rgba(167, 243, 208, .2);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .05);
+  }
+
+  #question-panel .q-muted {
+    color: #a7f3d0;
+    font-size: 12px;
+  }
+
+  #question-panel .q-photo {
+    display: block;
+    max-width: 100%;
+    max-height: 220px;
+    margin-top: 10px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 640px) {
+    #question-panel {
+      right: 10px;
+      bottom: 82px;
+      width: calc(100vw - 20px);
+      padding: 15px;
+    }
+  }
 </style>
 
 <script>
-  function toggleQuestionPanel() {
-    const panel = document.getElementById('question-panel');
-    const bubble = document.getElementById('pending-questions-bubble');
+const QUESTION_BUCKET = 'team-question-photos';
+let questionPanelOpen = false;
 
-    const isHidden = panel.classList.contains('hidden');
+function toggleQuestionPanel() {
+  const panel = document.getElementById('question-panel');
+  const bubble = document.getElementById('pending-questions-bubble');
 
-    if (isHidden) {
-      panel.classList.remove('hidden');
-      panel.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-          <h2 style="font-size:20px; font-weight:800; margin:0;">
-            💬 Pending Questions
-          </h2>
-          <button type="button"
-            onclick="toggleQuestionPanel()"
-            aria-label="Close questions panel"
-            style="font-size:24px; color:#a7f3d0; background:none; border:0; cursor:pointer;">
-            &times;
-          </button>
-        </div>
-        <p style="margin-top:12px; color:#d1fae5;">
-          Have a question for Team Chenn? This is where you’ll be able to submit it.
-        </p>
-        <p style="margin-top:8px; font-size:12px; color:#a7f3d0;">
-          Question submission will be connected in the next step.
-        </p>
-      `;
-      bubble.setAttribute('aria-expanded', 'true');
-    } else {
-      panel.classList.add('hidden');
-      bubble.setAttribute('aria-expanded', 'false');
+  questionPanelOpen = panel.classList.contains('hidden');
+  panel.classList.toggle('hidden', !questionPanelOpen);
+
+  if (bubble) {
+    bubble.setAttribute('aria-expanded', String(questionPanelOpen));
+  }
+
+  if (questionPanelOpen) {
+    renderQuestionPanel();
+  }
+}
+
+function questionMessage(message, isError = false) {
+  const notice = document.getElementById('question-notice');
+
+  if (!notice) {
+    alert(message);
+    return;
+  }
+
+  notice.textContent = message;
+  notice.style.color = isError ? '#fecaca' : '#a7f3d0';
+  notice.classList.remove('hidden');
+}
+
+async function getTeamQuestions() {
+  if (!db) {
+    throw new Error('Supabase connection is unavailable.');
+  }
+
+  const { data, error } = await db
+    .from('team_questions')
+    .select('id,name,question,photo_url,answer,status,created_at')
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) throw error;
+
+  const count = document.getElementById('pending-question-count');
+
+  if (count) {
+    count.textContent = data.filter(q => q.status === 'Pending').length;
+  }
+
+  return data;
+}
+
+async function renderQuestionPanel() {
+  const panel = document.getElementById('question-panel');
+
+  panel.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <div>
+        <h2 style="font-size:20px;font-weight:800;margin:0;">💬 Team Questions</h2>
+        <p class="q-muted" style="margin-top:5px;">Ask and help the team</p>
+      </div>
+      <button class="q-button" type="button"
+        aria-label="Close questions panel"
+        onclick="toggleQuestionPanel()">✕</button>
+    </div>
+
+    <form id="question-submit-form" style="margin-top:16px;"
+      onsubmit="submitTeamQuestion(event)">
+      <label>
+        Your name
+        <input id="question-name" class="q-input" maxlength="80"
+          required placeholder="Enter your name">
+      </label>
+
+      <label style="display:block;margin-top:12px;">
+        Your question
+        <textarea id="question-message" class="q-input" rows="3"
+          maxlength="2000" required
+          placeholder="What would you like to ask?"></textarea>
+      </label>
+
+      <label style="display:block;margin-top:12px;">
+        Attach a photo <span class="q-muted">(optional, max 5 MB)</span>
+        <input id="question-photo" class="q-input" type="file"
+          accept="image/jpeg,image/png,image/webp">
+      </label>
+
+      <button id="question-submit-button"
+        class="q-button q-primary" style="width:100%;margin-top:12px;"
+        type="submit">Send question ✨</button>
+
+      <p id="question-notice" class="hidden" style="font-size:13px;margin-top:8px;"
+        role="status"></p>
+    </form>
+
+    <div style="height:1px;background:#ffffff25;margin:18px 0;"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+      <h3 style="font-weight:800;margin:0;">Recent questions</h3>
+      <button class="q-button" type="button"
+        onclick="showTeamQuestions()">↻ Refresh</button>
+    </div>
+
+    <div id="question-list" style="margin-top:10px;">
+      <p class="q-muted">Loading questions…</p>
+    </div>
+  `;
+
+  await showTeamQuestions();
+}
+
+async function showTeamQuestions() {
+  const list = document.getElementById('question-list');
+  if (!list) return;
+
+  list.innerHTML = '<p class="q-muted">Loading questions…</p>';
+
+  try {
+    const questions = await getTeamQuestions();
+
+    if (!questions.length) {
+      list.innerHTML =
+        '<p class="q-muted">No questions yet. Be the first!</p>';
+      return;
+    }
+
+    const cards = await Promise.all(questions.map(async q => {
+      let photo = '';
+
+      if (q.photo_url) {
+        const { data, error } = await db.storage
+          .from(QUESTION_BUCKET)
+          .createSignedUrl(q.photo_url, 3600);
+
+        if (!error && data && data.signedUrl) {
+          photo = '<img class="q-photo" loading="lazy" src="' +
+            esc(data.signedUrl) + '" alt="Question attachment">';
+        } else {
+          photo = '<p class="q-muted" style="margin-top:8px;">Photo unavailable.</p>';
+        }
+      }
+
+      const answer = q.answer
+        ? '<div class="q-card"><strong>Admin answer</strong><p style="white-space:pre-wrap;overflow-wrap:anywhere;">' +
+          esc(q.answer) + '</p></div>'
+        : '';
+
+      return '<article class="q-card">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
+        '<strong>' + esc(q.name) + '</strong>' +
+        '<span class="q-muted">' + esc(q.status) + '</span></div>' +
+        '<p class="q-muted" style="margin-top:5px;">' +
+        new Date(q.created_at).toLocaleString() + '</p>' +
+        '<p style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:8px;">' +
+        esc(q.question) + '</p>' +
+        photo + answer + '</article>';
+    }));
+
+    list.innerHTML = cards.join('');
+  } catch (error) {
+    console.error('Question loading error:', error);
+    list.innerHTML =
+      '<p style="color:#fecaca;overflow-wrap:anywhere;">Could not load questions: ' +
+      esc(error.message) + '</p>';
+  }
+}
+
+async function submitTeamQuestion(event) {
+  event.preventDefault();
+
+  const name = document.getElementById('question-name').value.trim();
+  const question = document.getElementById('question-message').value.trim();
+  const file = document.getElementById('question-photo').files[0];
+  const button = document.getElementById('question-submit-button');
+
+  if (!db) {
+    questionMessage('Database connection is unavailable.', true);
+    return;
+  }
+
+  if (!name || !question) {
+    questionMessage('Enter your name and question.', true);
+    return;
+  }
+
+  if (file && !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    questionMessage('Choose a JPG, PNG, or WebP image.', true);
+    return;
+  }
+
+  if (file && file.size > 5 * 1024 * 1024) {
+    questionMessage('The photo must be 5 MB or smaller.', true);
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Sending…';
+
+  let photoPath = null;
+
+  try {
+    if (file) {
+      const ext = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp'
+      }[file.type];
+
+      photoPath = 'question-photos/' +
+        crypto.randomUUID() + '.' + ext;
+
+      const { error: uploadError } = await db.storage
+        .from(QUESTION_BUCKET)
+        .upload(photoPath, file, {
+          contentType: file.type,
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+    }
+
+    const { error } = await db.from('team_questions').insert({
+      name: name,
+      question: question,
+      photo_url: photoPath,
+      status: 'Pending',
+      answer: null
+    });
+
+    if (error) throw error;
+
+    document.getElementById('question-submit-form').reset();
+    questionMessage('Question shared with the team! 💚');
+    await showTeamQuestions();
+  } catch (error) {
+    console.error('Question submission error:', error);
+    questionMessage('Could not submit: ' + error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Send question ✨';
+
+    try {
+      await getTeamQuestions();
+    } catch (error) {
+      console.error('Pending count refresh failed:', error);
     }
   }
+}
+
+async function refreshQuestionCount() {
+  try {
+    await getTeamQuestions();
+  } catch (error) {
+    console.error('Question counter refresh failed:', error);
+
+    const count = document.getElementById('pending-question-count');
+    if (count) count.textContent = '!';
+  }
+}
+
+refreshQuestionCount();
+setInterval(refreshQuestionCount, 30000);
 </script>
 </body>
 </html>
