@@ -1087,11 +1087,11 @@ function switchTab(name) {
   TABS.forEach(tab => {
     const active = tab === name;
     document.getElementById('tab-' + tab).classList.toggle('hidden', !active);
-    document.getElementById('btn-' + tab).className =
-      'px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap transition ' +
-      (active
-        ? 'bg-white text-slate-900 shadow-sm'
-        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white');
+document.getElementById('btn-' + tab).className =
+  'px-5 py-3 text-sm sm:text-base font-semibold rounded-xl whitespace-nowrap transition-all duration-200 ' +
+  (active
+    ? 'bg-emerald-700 text-white shadow-lg shadow-emerald-950/30'
+    : 'bg-white/10 text-emerald-50 hover:bg-white/20 hover:text-white');
   });
 }
 
