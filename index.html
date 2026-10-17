@@ -1660,7 +1660,7 @@ const deleteButton = hasOwnerToken
   ? '<button class="q-button" type="button" style="margin-top:10px;background:#7f1d1d;color:#fff;" onclick="deleteOwnTeamQuestion(' + Number(q.id) + ')">🗑 Delete my question</button>'
   : '';
 
-      return '<article class="q-card">' +
+      return '<article class="q-card" data-question-id="' + Number(q.id) + '">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
         '<strong>' + esc(q.name) + '</strong>' +
         '<span class="q-muted">' + esc(q.status) + '</span></div>' +
