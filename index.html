@@ -1926,6 +1926,7 @@ function openTeamQuestionDetail(card) {
   });
 
   windowBox.append(header, content);
+  setupQuestionDiscussion(Number(card.dataset.questionId), windowBox);
   overlay.appendChild(windowBox);
 
   overlay.addEventListener('click', event => {
