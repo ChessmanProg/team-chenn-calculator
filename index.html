@@ -83,15 +83,19 @@ body.dark .bg-slate-200 {
   background-color: #383838 !important;
 }
 
-/* Header and dark surfaces */
-  header {
-    background-color: rgba(6, 26, 20, 0.85) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(110, 231, 183, 0.25);
-  }
+/* Transparent header — let the forest background shine through */
+header {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 body.dark header {
-  background-color: #171717 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 body.dark .bg-slate-800,
@@ -260,7 +264,7 @@ body:not(.dark) {
     <div class="flex items-center gap-4">
       <div class="w-12 h-12 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-2xl text-indigo-400 shadow-inner">🎧</div>
       <div>
-        <h1 class="text-2xl font-bold tracking-tight leading-tight">TEAM CHENN BC AI / ITEM REVIEW</h1>
+        <h1 class="text-2xl font-bold tracking-tight leading-tight"> BC AI / ITEM REVIEW</h1>
         <p class="text-sm text-slate-400">Operational Portal & Productivity Calculator</p>
       </div>
     </div>
@@ -292,7 +296,7 @@ body:not(.dark) {
 </details>
     </div>
   </div>
-  <div class="max-w-7xl mx-auto px-6 flex gap-3 border-t border-slate-800 pt-3 overflow-x-auto">
+  <div class="max-w-7xl mx-auto px-6 flex gap-3 pt-3 overflow-x-auto">
     <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap">📊 Dashboard & Calculator</button>
     <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap">📝 Today's IC Extension Record</button>
     <button onclick="switchTab('important-links')" id="btn-important-links" class="px-5 py-2.5 text-base font-semibold rounded-t-lg whitespace-nowrap">🔗 Important Links</button>
