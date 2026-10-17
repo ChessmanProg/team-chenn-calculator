@@ -1635,16 +1635,33 @@ async function submitTeamQuestion(event) {
       if (uploadError) throw uploadError;
     }
 
-    const { error } = await db.from('team_questions').insert({
-      name: name,
-      question: question,
-      photo_url: photoPath,
-      status: 'Pending',
-      answer: null
-    });
+    
+const ownerToken = crypto.randomUUID() + crypto.randomUUID();
+const ownerTokenHash = await questionTokenHash(ownerToken);
 
-    if (error) throw error;
+const { data: insertedQuestion, error } = await db
+  .from('team_questions')
+  .insert({
+    name: name,
+    question: question,
+    photo_url: photoPath,
+    status: 'Pending',
+    answer: null,
+    owner_token_hash: ownerTokenHash
+  })
+  .select('id')
+  .single();
 
+if (error) throw error;
+
+try {
+  localStorage.setItem(
+    'teamQuestionOwnerToken_' + insertedQuestion.id,
+    ownerToken
+  );
+} catch (storageError) {
+  console.warn('Could not save question ownership key:', storageError);
+}
     document.getElementById('question-submit-form').reset();
     questionMessage('Question shared with the team! 💚');
     await showTeamQuestions();
