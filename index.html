@@ -1681,6 +1681,170 @@ const deleteButton = hasOwnerToken
 }
 
 /* Floating question details window */
+  
+async function setupQuestionDiscussion(questionId, host) {
+  const section = document.createElement('section');
+  section.style.cssText =
+    'margin-top:22px;padding-top:18px;border-top:1px solid rgba(167,243,208,.25);';
+
+  const title = document.createElement('h3');
+  title.textContent = '💬 Team discussion';
+  title.style.cssText = 'font-size:19px;font-weight:800;margin-bottom:5px;';
+
+  const subtitle = document.createElement('p');
+  subtitle.textContent = 'Share suggestions and help your teammates.';
+  subtitle.className = 'q-muted';
+  subtitle.style.marginBottom = '14px';
+
+  const commentsList = document.createElement('div');
+  commentsList.style.cssText =
+    'display:flex;flex-direction:column;gap:10px;';
+
+  const notice = document.createElement('p');
+  notice.className = 'q-muted';
+  notice.setAttribute('role', 'status');
+
+  const form = document.createElement('form');
+  form.style.cssText =
+    'display:flex;flex-direction:column;gap:10px;margin-top:16px;';
+
+  const nameInput = document.createElement('input');
+  nameInput.className = 'q-input';
+  nameInput.type = 'text';
+  nameInput.maxLength = 80;
+  nameInput.required = true;
+  nameInput.placeholder = 'Your name';
+  nameInput.setAttribute('aria-label', 'Your name for this comment');
+
+  const savedName =
+    document.getElementById('question-name')?.value.trim() ||
+    localStorage.getItem('teamQuestionCommentName') ||
+    '';
+
+  nameInput.value = savedName;
+
+  const commentInput = document.createElement('textarea');
+  commentInput.className = 'q-input';
+  commentInput.rows = 3;
+  commentInput.maxLength = 1000;
+  commentInput.required = true;
+  commentInput.placeholder = 'Suggest an answer or share an idea...';
+  commentInput.setAttribute('aria-label', 'Your comment');
+
+  const submitButton = document.createElement('button');
+  submitButton.className = 'q-button q-primary';
+  submitButton.type = 'submit';
+  submitButton.textContent = 'Post comment 💬';
+
+  form.append(nameInput, commentInput, submitButton);
+  section.append(title, subtitle, commentsList, notice, form);
+  host.appendChild(section);
+
+  async function loadComments() {
+    commentsList.replaceChildren();
+
+    const loading = document.createElement('p');
+    loading.className = 'q-muted';
+    loading.textContent = 'Loading discussion...';
+    commentsList.appendChild(loading);
+    notice.textContent = '';
+
+    try {
+      const { data, error } = await db
+        .from('team_question_comments')
+        .select('id,name,comment_text,created_at')
+        .eq('question_id', questionId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+
+      commentsList.replaceChildren();
+
+      if (!data.length) {
+        const empty = document.createElement('p');
+        empty.className = 'q-muted';
+        empty.textContent = 'No comments yet. Be the first to help!';
+        commentsList.appendChild(empty);
+      }
+
+      data.forEach(comment => {
+        const card = document.createElement('div');
+        card.className = 'q-card';
+        card.style.cssText =
+          'padding:12px;border:1px solid rgba(167,243,208,.2);';
+
+        const author = document.createElement('strong');
+        author.textContent = comment.name;
+
+        const date = document.createElement('p');
+        date.className = 'q-muted';
+        date.style.cssText = 'font-size:12px;margin-top:3px;';
+        date.textContent = new Date(comment.created_at).toLocaleString();
+
+        const body = document.createElement('p');
+        body.style.cssText =
+          'white-space:pre-wrap;overflow-wrap:anywhere;margin-top:8px;';
+        body.textContent = comment.comment_text;
+
+        card.append(author, date, body);
+        commentsList.appendChild(card);
+      });
+    } catch (error) {
+      console.error('Comment loading error:', error);
+      notice.textContent = 'Could not load comments: ' + error.message;
+    }
+  }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const name = nameInput.value.trim();
+    const commentText = commentInput.value.trim();
+
+    if (!name || !commentText) {
+      notice.textContent = 'Enter your name and comment first.';
+      return;
+    }
+
+    if (name.length > 80 || commentText.length > 1000) {
+      notice.textContent = 'Your name or comment is too long.';
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'Posting...';
+    notice.textContent = '';
+
+    try {
+      const { error } = await db
+        .from('team_question_comments')
+        .insert({
+          question_id: questionId,
+          name: name,
+          comment_text: commentText
+        });
+
+      if (error) throw error;
+
+      try {
+        localStorage.setItem('teamQuestionCommentName', name);
+      } catch (_) {}
+
+      commentInput.value = '';
+      notice.textContent = 'Comment posted successfully!';
+      await loadComments();
+    } catch (error) {
+      console.error('Comment submission error:', error);
+      notice.textContent = 'Could not post comment: ' + error.message;
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Post comment 💬';
+    }
+  });
+
+  await loadComments();
+}
+
 function closeTeamQuestionDetail() {
   document.getElementById('q-detail-overlay')?.remove();
   document.getElementById('q-image-overlay')?.remove();
