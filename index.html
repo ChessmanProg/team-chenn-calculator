@@ -921,6 +921,42 @@ async function deleteRow(key, id) {
   await render(key);
 }
 
+async function markCoachingDone(id) {
+  if (!isTeamChennAdmin) {
+    showBanner('Admin access is required to mark coaching as Done.');
+    return;
+  }
+
+  if (db) {
+    const { error } = await db
+      .from('coaching_schedules')
+      .update({ is_done: true })
+      .eq('id', id);
+
+    if (error) {
+      showBanner('Could not mark coaching as Done: ' + error.message);
+      return;
+    }
+  } else {
+    const rows = await loadRows('coaching');
+    const updatedRows = rows.map(r =>
+      String(r.id) === String(id) ? { ...r, is_done: true } : r
+    );
+
+    try {
+      localStorage.setItem(
+        TABLES.coaching.name,
+        JSON.stringify(updatedRows)
+      );
+    } catch {
+      showBanner('Could not save the Done status locally.');
+      return;
+    }
+  }
+
+  await render('coaching');
+}
+
 function showBanner(msg) {
   const banner = document.getElementById('db-banner');
   banner.textContent = msg;
