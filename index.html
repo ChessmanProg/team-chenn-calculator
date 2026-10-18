@@ -305,7 +305,13 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   background: rgba(5, 32, 24, 0.42) !important;
   border: none !important;
 }
-  
+ /* Ensure inactive tabs stay hidden */
+#tab-dashboard.hidden,
+#tab-productivity.hidden,
+#tab-ic-log.hidden,
+#tab-important-links.hidden {
+  display: none !important;
+} 
 /* Improve readability only in the Productivity tab */
 #tab-productivity .text-gray-500,
 #tab-productivity .text-gray-700,
