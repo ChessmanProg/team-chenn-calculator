@@ -930,6 +930,19 @@ const delBtn = (key, id) => isTeamChennAdmin
   ? `<button onclick="deleteRow('${key}','${esc(id)}')" class="text-sm text-red-600 hover:text-red-800 font-semibold">Delete</button>`
   : '<span class="text-sm text-slate-400">View only</span>';
 
+function getEasternDate() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(new Date());
+
+  const part = type => parts.find(p => p.type === type).value;
+
+  return `${part('year')}-${part('month')}-${part('day')}`;
+}
+
 const empty = (cols, msg) => `<tr><td colspan="${cols}" class="p-4 text-slate-500 text-center">${msg}</td></tr>`;
 
 const badge = s => `<span class="px-3 py-1 rounded-full text-sm font-semibold ${
