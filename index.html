@@ -1036,9 +1036,9 @@ if (key === 'coaching') {
           : '';
 
         return `<tr>
-          <td class="p-3 whitespace-nowrap">${esc(r.schedule_date || '')}</td>
-          <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
-          <td class="p-3">${esc(r.agent_name)}</td>
+          <td class="p-2 whitespace-nowrap">${esc(r.schedule_date || '')}</td>
+          <td class="p-2 whitespace-nowrap">${fmtTime(r.time_slot)}</td>       
+          <td class="p-2">${esc(r.agent_name)}</td>
           <td class="p-3">
             ${meetLink
               ? `<a href="${meetLink}" target="_blank" rel="noopener noreferrer"
