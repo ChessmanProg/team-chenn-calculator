@@ -961,16 +961,22 @@ async function render(key) {
   const body = document.getElementById(TABLES[key].body);
 
  
-if (key === 'coaching') {
-  rows.sort((a, b) => (a.time_slot || '').localeCompare(b.time_slot || ''));
 
-  body.innerHTML = rows.length
-    ? rows.map(r => {
+if (key === 'coaching') {
+  const today = getEasternDate();
+
+  const todaysRows = rows
+    .filter(r => r.schedule_date === today)
+    .sort((a, b) => (a.time_slot || '').localeCompare(b.time_slot || ''));
+
+  body.innerHTML = todaysRows.length
+    ? todaysRows.map(r => {
         const meetLink = /^https?:\/\//i.test(r.meet_link || '')
           ? esc(r.meet_link)
           : '';
 
         return `<tr>
+          <td class="p-3 whitespace-nowrap">${esc(r.schedule_date || '')}</td>
           <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
           <td class="p-3">${esc(r.agent_name)}</td>
           <td class="p-3">
@@ -986,7 +992,7 @@ if (key === 'coaching') {
           <td class="p-3 text-right">${delBtn(key, r.id)}</td>
         </tr>`;
       }).join('')
-    : empty(4, 'No coaching scheduled yet.');
+    : empty(5, 'No coaching scheduled for today.');
 } else if (key === 'ic') {
       const countByStatus = status =>
       rows.filter(r => r.status === status).length;
