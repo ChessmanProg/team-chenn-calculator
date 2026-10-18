@@ -1025,7 +1025,16 @@ if (key === 'coaching') {
                 </a>`
               : '<span class="text-sm text-slate-400">No link added</span>'}
           </td>
-          <td class="p-3 text-right">${delBtn(key, r.id)}</td>
+          
+<td class="p-3 text-right whitespace-nowrap">
+  ${r.is_done
+    ? '<span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">✓ Done</span>'
+    : isTeamChennAdmin
+      ? `<button onclick="markCoachingDone('${esc(r.id)}')" class="mr-3 rounded-full bg-emerald-600 px-3 py-1.5 text-sm font-bold text-white hover:bg-emerald-700">Mark Done</button>`
+      : '<span class="text-sm text-slate-500">Not completed</span>'}
+  ${delBtn(key, r.id)}
+</td>
+
         </tr>`;
       }).join('')
     : empty(5, 'No coaching scheduled for today.');
