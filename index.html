@@ -1005,12 +1005,29 @@ async function render(key) {
 
  
 
+
 if (key === 'coaching') {
   const today = getEasternDate();
+  const datePicker = document.getElementById('coaching-date-picker');
+
+  if (datePicker) {
+    datePicker.classList.toggle('hidden', !isTeamChennAdmin);
+    datePicker.disabled = !isTeamChennAdmin;
+
+    if (!datePicker.value || !isTeamChennAdmin) {
+      datePicker.value = today;
+    }
+  }
+
+  const selectedDate =
+    isTeamChennAdmin && datePicker && datePicker.value
+      ? datePicker.value
+      : today;
 
   const todaysRows = rows
-    .filter(r => r.schedule_date === today)
+    .filter(r => r.schedule_date === selectedDate)
     .sort((a, b) => (a.time_slot || '').localeCompare(b.time_slot || ''));
+
 
   body.innerHTML = todaysRows.length
     ? todaysRows.map(r => {
