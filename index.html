@@ -546,8 +546,8 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
       </div>
     </div>
 
-   <!-- Add Record Form -->
 <!-- Add Record Form -->
+ <!-- Add Record Form -->
     <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
       <h3 class="text-lg font-bold text-gray-800">➕ Add Private PPH Entry</h3>
       <p class="mt-1 text-sm text-gray-500">Enter your completed production lines and precise production time (minutes and seconds).</p>
@@ -1294,6 +1294,7 @@ document.getElementById('btn-' + tab).className =
 }
 
 /* ============ PRODUCTIVITY TRACKER ============ */
+/* ============ PRIVATE PPH TRACKER ============ */
 async function loadPrivatePphRecords() {
   const historyBody = document.getElementById('pph-history-body');
   const authNotice = document.getElementById('pph-auth-notice');
@@ -1340,7 +1341,10 @@ async function loadPrivatePphRecords() {
   historyBody.innerHTML = records.map(r => {
     const lines = Number(r.production_lines || 0);
     const timeHours = Number(r.production_time || 0);
-    const timeMinutes = Math.round(timeHours * 60);
+    const totalSeconds = Math.round(timeHours * 3600);
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    const timeFormatted = `${mins}m ${secs}s`;
 
     totalLines += lines;
     totalTimeHours += timeHours;
@@ -1348,7 +1352,7 @@ async function loadPrivatePphRecords() {
     return `<tr class="border-b border-gray-100">
       <td class="p-3">${esc(r.entry_date)}</td>
       <td class="p-3 font-semibold">${lines.toLocaleString()}</td>
-      <td class="p-3">${timeMinutes} mins</td>
+      <td class="p-3">${timeFormatted}</td>
       <td class="p-3 font-semibold text-emerald-700">${Number(r.pph).toFixed(1)}</td>
       <td class="p-3 text-right">
         <button type="button" onclick="deletePrivatePphRecord('${esc(r.id)}')" class="rounded-lg px-3 py-1 font-semibold text-red-600 hover:bg-red-50">Delete</button>
@@ -1382,14 +1386,15 @@ document.getElementById('pph-form').addEventListener('submit', async function (e
 
   const lines = Number(document.getElementById('pph-lines-input').value);
   const minutes = Number(document.getElementById('pph-minutes-input').value);
+  const seconds = Number(document.getElementById('pph-seconds-input').value);
 
-  if (lines <= 0 || minutes <= 0) {
-    alert('Please enter valid lines and production minutes greater than zero.');
+  if (lines <= 0 || (minutes === 0 && seconds === 0) || seconds < 0 || seconds > 59) {
+    alert('Please enter valid production lines and a time greater than zero (with seconds between 0 and 59).');
     return;
   }
 
-  // Convert minutes to hours for storage and accurate PPH calculation (Lines / Hours)
-  const timeHours = minutes / 60;
+  const totalSeconds = (minutes * 60) + seconds;
+  const timeHours = totalSeconds / 3600;
   const pph = lines / timeHours;
 
   const { data: { session }, error: sessionError } = await db.auth.getSession();
@@ -1415,6 +1420,7 @@ document.getElementById('pph-form').addEventListener('submit', async function (e
   document.getElementById('pph-form').reset();
   await loadPrivatePphRecords();
 });
+  
 /* ============ 6. CALCULATOR ============ */
 const num = id => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
 
