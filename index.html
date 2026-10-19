@@ -516,117 +516,78 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
     </div>
   </div>
 
-  <!-- PRODUCTIVITY TRACKER -->
+<!-- PRIVATE PPH TRACKER -->
   <div id="tab-productivity" class="tab-content hidden space-y-6">
     <div class="rounded-2xl bg-gradient-to-r from-emerald-900 to-green-700 p-6 text-white shadow-lg">
-      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-200">Team Chenn • Shift Tracker</p>
-      <h2 class="mt-2 text-2xl font-bold">⚡ Productivity Tracker</h2>
-      <p class="mt-2 text-sm text-emerald-50">Track every production batch and your IC time throughout your 10-hour shift.</p>
-      <p class="mt-3 text-sm font-semibold">Target: 120 lines per production hour</p>
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-200">Team Chenn • Secure Portal</p>
+      <h2 class="mt-2 text-2xl font-bold">🔒 Private PPH Tracker</h2>
+      <p class="mt-2 text-sm text-emerald-50">Enter your production records. Protected by Supabase Row Level Security (RLS) so only you can view your data.</p>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- Login Warning Notice -->
+    <div id="pph-auth-notice" class="hidden rounded-2xl border border-amber-300 bg-amber-50 p-5 text-amber-900 shadow-sm">
+      <p class="font-bold">⚠️ Authentication Required</p>
+      <p class="text-sm mt-1">Please log in using the Admin/Auth section at the top of the page to view and save your private PPH records.</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-gray-500">Total Lines</p>
-        <p id="prod-total-lines" class="mt-2 text-3xl font-bold text-emerald-800">0</p>
+        <p class="text-sm text-gray-500">Cumulative Production Lines</p>
+        <p id="pph-total-lines" class="mt-2 text-3xl font-bold text-emerald-800">0</p>
+      </div>
+      <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
+        <p class="text-sm text-gray-500">Total Production Time</p>
+        <p id="pph-total-time" class="mt-2 text-3xl font-bold text-gray-800">0.00 hrs</p>
       </div>
       <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
         <p class="text-sm text-gray-500">Overall PPH</p>
-        <p id="prod-overall-pph" class="mt-2 text-3xl font-bold text-emerald-800">0</p>
-        <p id="prod-target-status" class="mt-1 text-xs text-gray-500">Target: 120 PPH</p>
-      </div>
-      <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-gray-500">Production Time</p>
-        <p id="prod-total-time" class="mt-2 text-3xl font-bold text-gray-800">0m 0s</p>
-      </div>
-      <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-gray-500">Total IC Time</p>
-        <p id="prod-total-ic" class="mt-2 text-3xl font-bold text-amber-700">0 min</p>
-        <p id="prod-total-ic-hours" class="mt-1 text-xs text-gray-500">0.00 hours</p>
+        <p id="pph-overall" class="mt-2 text-3xl font-bold text-indigo-600">0.0</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 class="text-lg font-bold text-gray-800">➕ Add Production Batch</h3>
-        <p class="mt-1 text-sm text-gray-500">Enter the lines completed and the actual production time.</p>
-        <form id="prod-batch-form" class="mt-5 space-y-4">
+    <!-- Add Record Form -->
+    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <h3 class="text-lg font-bold text-gray-800">➕ Add Private PPH Entry</h3>
+      <p class="mt-1 text-sm text-gray-500">Enter your completed production lines and production time in hours.</p>
+      <form id="pph-form" class="mt-5 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="prod-lines" class="mb-1 block text-sm font-semibold text-gray-700">Lines completed</label>
-            <input id="prod-lines" type="number" min="1" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 45" />
+            <label for="pph-lines-input" class="mb-1 block text-sm font-semibold text-gray-700">Production Lines</label>
+            <input id="pph-lines-input" type="number" min="1" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 150" />
           </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label for="prod-minutes" class="mb-1 block text-sm font-semibold text-gray-700">Minutes</label>
-              <input id="prod-minutes" type="number" min="0" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 14" />
-            </div>
-            <div>
-              <label for="prod-seconds" class="mb-1 block text-sm font-semibold text-gray-700">Seconds</label>
-              <input id="prod-seconds" type="number" min="0" max="59" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 39" />
-            </div>
-          </div>
-          <button type="submit" class="w-full rounded-xl bg-emerald-700 px-4 py-3 font-bold text-white transition hover:bg-emerald-800">Add Production Batch</button>
-        </form>
-      </div>
-
-      <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 class="text-lg font-bold text-gray-800">⏱️ Log IC Minutes</h3>
-        <p class="mt-1 text-sm text-gray-500">Record IC time separately. These minutes won't be automatically added to production time.</p>
-        <form id="prod-ic-form" class="mt-5 space-y-4">
           <div>
-            <label for="prod-ic-minutes" class="mb-1 block text-sm font-semibold text-gray-700">IC minutes</label>
-            <input id="prod-ic-minutes" type="number" min="1" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 15" />
+            <label for="pph-time-input" class="mb-1 block text-sm font-semibold text-gray-700">Production Time (Hours)</label>
+            <input id="pph-time-input" type="number" min="0.01" step="0.01" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 1.5" />
           </div>
-          <button type="submit" class="w-full rounded-xl bg-amber-600 px-4 py-3 font-bold text-white transition hover:bg-amber-700">Add IC Time</button>
-        </form>
-      </div>
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-emerald-700 px-4 py-3 font-bold text-white transition hover:bg-emerald-800">Save Private Record</button>
+      </form>
     </div>
 
+    <!-- Personal History Table -->
     <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <h3 class="text-lg font-bold text-gray-800">📋 Production Batches</h3>
-        <span class="text-sm text-gray-500">Each batch is included in your overall PPH.</span>
+        <h3 class="text-lg font-bold text-gray-800">📋 Your Personal PPH History</h3>
+        <button type="button" onclick="loadPrivatePphRecords()" class="rounded-xl border border-slate-300 px-3 py-1.5 text-sm font-semibold hover:bg-slate-50">↻ Refresh</button>
       </div>
       <div class="mt-4 overflow-x-auto">
-        <table class="w-full min-w-[540px] text-left text-sm">
+        <table class="w-full min-w-[500px] text-left text-sm">
           <thead class="bg-emerald-50 text-emerald-900">
             <tr>
-              <th class="p-3">#</th>
+              <th class="p-3">Date</th>
               <th class="p-3">Lines</th>
-              <th class="p-3">Time</th>
-              <th class="p-3">Batch PPH</th>
-              <th class="p-3">Action</th>
+              <th class="p-3">Time (hrs)</th>
+              <th class="p-3">PPH</th>
+              <th class="p-3 text-right">Action</th>
             </tr>
           </thead>
-          <tbody id="prod-batches-body">
-            <tr><td colspan="5" class="p-4 text-center text-gray-500">No production batches yet.</td></tr>
+          <tbody id="pph-history-body">
+            <tr><td colspan="5" class="p-4 text-center text-gray-500">Sign in to view your private records.</td></tr>
           </tbody>
         </table>
       </div>
     </div>
-
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 class="text-lg font-bold text-gray-800">🗂️ IC Time Entries</h3>
-      <div class="mt-4 overflow-x-auto">
-        <table class="w-full min-w-[400px] text-left text-sm">
-          <thead class="bg-amber-50 text-amber-900">
-            <tr>
-              <th class="p-3">#</th>
-              <th class="p-3">IC Minutes</th>
-              <th class="p-3">Action</th>
-            </tr>
-          </thead>
-          <tbody id="prod-ic-body">
-            <tr><td colspan="3" class="p-4 text-center text-gray-500">No IC time entries yet.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="flex flex-wrap justify-end gap-3">
-      <button type="button" id="prod-reset-btn" class="rounded-xl border border-red-300 px-4 py-3 font-semibold text-red-700 transition hover:bg-red-50">Start New Shift</button>
-    </div>
-    <p class="text-xs text-gray-500">This tracker will save entries in this browser only. It won't change your existing IC records or sync entries to other devices.</p>
   </div>
 
   <!-- IC LOG -->
