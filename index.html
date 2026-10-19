@@ -517,6 +517,7 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   </div>
 
 <!-- PRIVATE PPH TRACKER -->
+ <!-- PRIVATE PPH TRACKER -->
   <div id="tab-productivity" class="tab-content hidden space-y-6">
     <div class="rounded-2xl bg-gradient-to-r from-emerald-900 to-green-700 p-6 text-white shadow-lg">
       <p class="text-sm font-semibold uppercase tracking-wider text-emerald-200">Team Chenn • Secure Portal</p>
@@ -546,8 +547,7 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
       </div>
     </div>
 
-<!-- Add Record Form -->
- <!-- Add Record Form -->
+    <!-- Add Record Form -->
     <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
       <h3 class="text-lg font-bold text-gray-800">➕ Add Private PPH Entry</h3>
       <p class="mt-1 text-sm text-gray-500">Enter your completed production lines and precise production time (minutes and seconds).</p>
@@ -569,6 +569,31 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
         <button type="submit" class="w-full rounded-xl bg-emerald-700 px-4 py-3 font-bold text-white transition hover:bg-emerald-800">Save Private Record</button>
       </form>
     </div>
+
+    <!-- Personal History Table -->
+    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h3 class="text-lg font-bold text-gray-800">📋 Your Personal PPH History</h3>
+        <button type="button" onclick="loadPrivatePphRecords()" class="rounded-xl border border-slate-300 px-3 py-1.5 text-sm font-semibold hover:bg-slate-50">↻ Refresh</button>
+      </div>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full min-w-[500px] text-left text-sm">
+          <thead class="bg-emerald-50 text-emerald-900">
+            <tr>
+              <th class="p-3">Date</th>
+              <th class="p-3">Lines</th>
+              <th class="p-3">Time</th>
+              <th class="p-3">PPH</th>
+              <th class="p-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="pph-history-body">
+            <tr><td colspan="5" class="p-4 text-center text-gray-500">Sign in to view your private records.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   <!-- IMPORTANT LINKS -->
   <div id="tab-important-links" class="hidden">
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
