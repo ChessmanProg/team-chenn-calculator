@@ -1330,7 +1330,6 @@ document.getElementById('btn-' + tab).className =
 }
 
 /* ============ PRODUCTIVITY TRACKER ============ */
-/* ============ PRIVATE PPH TRACKER ============ */
 async function loadPrivatePphRecords() {
   const historyBody = document.getElementById('pph-history-body');
   const authNotice = document.getElementById('pph-auth-notice');
@@ -1372,15 +1371,20 @@ async function loadPrivatePphRecords() {
   }
 
   let totalLines = 0;
-  let totalTime = 0;
+  let totalTimeHours = 0;
 
   historyBody.innerHTML = records.map(r => {
-    totalLines += Number(r.production_lines || 0);
-    totalTime += Number(r.production_time || 0);
+    const lines = Number(r.production_lines || 0);
+    const timeHours = Number(r.production_time || 0);
+    const timeMinutes = Math.round(timeHours * 60);
+
+    totalLines += lines;
+    totalTimeHours += timeHours;
+
     return `<tr class="border-b border-gray-100">
       <td class="p-3">${esc(r.entry_date)}</td>
-      <td class="p-3 font-semibold">${Number(r.production_lines).toLocaleString()}</td>
-      <td class="p-3">${Number(r.production_time).toFixed(2)}</td>
+      <td class="p-3 font-semibold">${lines.toLocaleString()}</td>
+      <td class="p-3">${timeMinutes} mins</td>
       <td class="p-3 font-semibold text-emerald-700">${Number(r.pph).toFixed(1)}</td>
       <td class="p-3 text-right">
         <button type="button" onclick="deletePrivatePphRecord('${esc(r.id)}')" class="rounded-lg px-3 py-1 font-semibold text-red-600 hover:bg-red-50">Delete</button>
@@ -1389,8 +1393,8 @@ async function loadPrivatePphRecords() {
   }).join('');
 
   document.getElementById('pph-total-lines').textContent = totalLines.toLocaleString();
-  document.getElementById('pph-total-time').textContent = totalTime.toFixed(2) + ' hrs';
-  document.getElementById('pph-overall').textContent = totalTime > 0 ? (totalLines / totalTime).toFixed(1) : '0.0';
+  document.getElementById('pph-total-time').textContent = totalTimeHours.toFixed(2) + ' hrs';
+  document.getElementById('pph-overall').textContent = totalTimeHours > 0 ? (totalLines / totalTimeHours).toFixed(1) : '0.0';
 }
 
 async function deletePrivatePphRecord(id) {
@@ -1413,14 +1417,16 @@ document.getElementById('pph-form').addEventListener('submit', async function (e
   event.preventDefault();
 
   const lines = Number(document.getElementById('pph-lines-input').value);
-  const time = Number(document.getElementById('pph-time-input').value);
+  const minutes = Number(document.getElementById('pph-minutes-input').value);
 
-  if (lines <= 0 || time <= 0) {
-    alert('Please enter valid lines and production time greater than zero.');
+  if (lines <= 0 || minutes <= 0) {
+    alert('Please enter valid lines and production minutes greater than zero.');
     return;
   }
 
-  const pph = lines / time;
+  // Convert minutes to hours for storage and accurate PPH calculation (Lines / Hours)
+  const timeHours = minutes / 60;
+  const pph = lines / timeHours;
 
   const { data: { session }, error: sessionError } = await db.auth.getSession();
   if (sessionError || !session) {
@@ -1433,7 +1439,7 @@ document.getElementById('pph-form').addEventListener('submit', async function (e
     .insert({
       user_id: session.user.id,
       production_lines: lines,
-      production_time: time,
+      production_time: timeHours,
       pph: pph
     });
 
@@ -1445,7 +1451,6 @@ document.getElementById('pph-form').addEventListener('submit', async function (e
   document.getElementById('pph-form').reset();
   await loadPrivatePphRecords();
 });
-
 /* ============ 6. CALCULATOR ============ */
 const num = id => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
 
