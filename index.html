@@ -1354,173 +1354,121 @@ document.getElementById('btn-' + tab).className =
 }
 
 /* ============ PRODUCTIVITY TRACKER ============ */
-(function () {
-  const STORAGE_KEY = 'teamChennProductivityTrackerV1';
-  const TARGET_PPH = 120;
-
-  let tracker = { batches: [], icEntries: [] };
-
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      tracker.batches = Array.isArray(parsed.batches) ? parsed.batches : [];
-      tracker.icEntries = Array.isArray(parsed.icEntries) ? parsed.icEntries : [];
-    }
-  } catch (error) {
-    console.error('Could not load productivity tracker data:', error);
-  }
-
-  const $ = (id) => document.getElementById(id);
-
-  function saveTracker() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tracker));
-    } catch (error) {
-      alert('Could not save tracker data in this browser.');
-      console.error(error);
-    }
-  }
-
-  function formatDuration(totalSeconds) {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}m ${seconds}s`;
-  }
-
-  function renderTracker() {
-    const totalLines = tracker.batches.reduce((sum, batch) => sum + batch.lines, 0);
-    const totalSeconds = tracker.batches.reduce((sum, batch) => sum + batch.seconds, 0);
-    const totalICMinutes = tracker.icEntries.reduce((sum, entry) => sum + entry.minutes, 0);
-    const overallPPH = totalSeconds > 0 ? totalLines * 3600 / totalSeconds : 0;
-
-    $('prod-total-lines').textContent = totalLines.toLocaleString();
-    $('prod-overall-pph').textContent = overallPPH.toFixed(1);
-    $('prod-total-time').textContent = formatDuration(totalSeconds);
-    $('prod-total-ic').textContent = `${totalICMinutes} min`;
-    $('prod-total-ic-hours').textContent = `${(totalICMinutes / 60).toFixed(2)} hours`;
-
-    const status = $('prod-target-status');
-    if (totalSeconds === 0) {
-      status.textContent = `Target: ${TARGET_PPH} PPH`;
-      status.className = 'mt-1 text-xs text-gray-500';
-    } else if (overallPPH >= TARGET_PPH) {
-      status.textContent = `✓ Above ${TARGET_PPH} PPH target`;
-      status.className = 'mt-1 text-xs font-semibold text-emerald-700';
-    } else {
-      status.textContent = `Below ${TARGET_PPH} PPH target`;
-      status.className = 'mt-1 text-xs font-semibold text-red-600';
-    }
-
-    const batchBody = $('prod-batches-body');
-    if (tracker.batches.length === 0) {
-      batchBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">No production batches yet.</td></tr>';
-    } else {
-      batchBody.innerHTML = tracker.batches.map((batch, index) => {
-        const pph = batch.seconds > 0 ? batch.lines * 3600 / batch.seconds : 0;
-        return `<tr class="border-b border-gray-100">
-          <td class="p-3">${index + 1}</td>
-          <td class="p-3 font-semibold">${batch.lines.toLocaleString()}</td>
-          <td class="p-3">${formatDuration(batch.seconds)}</td>
-          <td class="p-3 font-semibold">${pph.toFixed(1)}</td>
-          <td class="p-3"><button type="button" data-delete-batch="${index}" class="rounded-lg px-3 py-1 font-semibold text-red-600 hover:bg-red-50">Delete</button></td>
-        </tr>`;
-      }).join('');
-    }
-
-    const icBody = $('prod-ic-body');
-    if (tracker.icEntries.length === 0) {
-      icBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-500">No IC time entries yet.</td></tr>';
-    } else {
-      icBody.innerHTML = tracker.icEntries.map((entry, index) => `
-        <tr class="border-b border-gray-100">
-          <td class="p-3">${index + 1}</td>
-          <td class="p-3 font-semibold">${entry.minutes} min</td>
-          <td class="p-3"><button type="button" data-delete-ic="${index}" class="rounded-lg px-3 py-1 font-semibold text-red-600 hover:bg-red-50">Delete</button></td>
-        </tr>
-      `).join('');
-    }
-  }
-
-  const batchForm = $('prod-batch-form');
-  const icForm = $('prod-ic-form');
-
-  if (!batchForm || !icForm) {
-    console.error('Productivity tracker HTML elements were not found.');
+/* ============ PRIVATE PPH TRACKER ============ */
+async function loadPrivatePphRecords() {
+  const historyBody = document.getElementById('pph-history-body');
+  const authNotice = document.getElementById('pph-auth-notice');
+  
+  if (!db) {
+    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Database connection unavailable.</td></tr>';
     return;
   }
 
-  batchForm.addEventListener('submit', function (event) {
-    event.preventDefault();
+  const { data: { session }, error: sessionError } = await db.auth.getSession();
+  if (sessionError || !session) {
+    authNotice.classList.remove('hidden');
+    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Please sign in above to view your private PPH records.</td></tr>';
+    document.getElementById('pph-total-lines').textContent = '0';
+    document.getElementById('pph-total-time').textContent = '0.00 hrs';
+    document.getElementById('pph-overall').textContent = '0.0';
+    return;
+  }
 
-    const lines = Number($('prod-lines').value);
-    const minutes = Number($('prod-minutes').value);
-    const seconds = Number($('prod-seconds').value);
-    const durationSeconds = minutes * 60 + seconds;
+  authNotice.classList.add('hidden');
 
-    if (!Number.isInteger(lines) || lines < 1 ||
-        !Number.isInteger(minutes) || minutes < 0 ||
-        !Number.isInteger(seconds) || seconds < 0 || seconds > 59 ||
-        durationSeconds < 1) {
-      alert('Enter valid lines and a production time greater than zero.');
-      return;
-    }
+  const { data: records, error } = await db
+    .from('agent_pph_records')
+    .select('*')
+    .order('entry_date', { ascending: false });
 
-    tracker.batches.push({ lines, seconds: durationSeconds });
-    saveTracker();
-    renderTracker();
-    batchForm.reset();
-  });
+  if (error) {
+    console.error('Error loading PPH records:', error);
+    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Could not load records: ' + esc(error.message) + '</td></tr>';
+    return;
+  }
 
-  icForm.addEventListener('submit', function (event) {
-    event.preventDefault();
+  if (!records || records.length === 0) {
+    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">No private PPH records found. Add your first entry above!</td></tr>';
+    document.getElementById('pph-total-lines').textContent = '0';
+    document.getElementById('pph-total-time').textContent = '0.00 hrs';
+    document.getElementById('pph-overall').textContent = '0.0';
+    return;
+  }
 
-    const minutes = Number($('prod-ic-minutes').value);
-    if (!Number.isInteger(minutes) || minutes < 1) {
-      alert('Enter a valid IC time of at least 1 minute.');
-      return;
-    }
+  let totalLines = 0;
+  let totalTime = 0;
 
-    tracker.icEntries.push({ minutes });
-    saveTracker();
-    renderTracker();
-    icForm.reset();
-  });
+  historyBody.innerHTML = records.map(r => {
+    totalLines += Number(r.production_lines || 0);
+    totalTime += Number(r.production_time || 0);
+    return `<tr class="border-b border-gray-100">
+      <td class="p-3">${esc(r.entry_date)}</td>
+      <td class="p-3 font-semibold">${Number(r.production_lines).toLocaleString()}</td>
+      <td class="p-3">${Number(r.production_time).toFixed(2)}</td>
+      <td class="p-3 font-semibold text-emerald-700">${Number(r.pph).toFixed(1)}</td>
+      <td class="p-3 text-right">
+        <button type="button" onclick="deletePrivatePphRecord('${esc(r.id)}')" class="rounded-lg px-3 py-1 font-semibold text-red-600 hover:bg-red-50">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
 
-  $('prod-batches-body').addEventListener('click', function (event) {
-    const button = event.target.closest('[data-delete-batch]');
-    if (!button) return;
+  document.getElementById('pph-total-lines').textContent = totalLines.toLocaleString();
+  document.getElementById('pph-total-time').textContent = totalTime.toFixed(2) + ' hrs';
+  document.getElementById('pph-overall').textContent = totalTime > 0 ? (totalLines / totalTime).toFixed(1) : '0.0';
+}
 
-    const index = Number(button.dataset.deleteBatch);
-    if (!Number.isInteger(index) || index < 0 || index >= tracker.batches.length) return;
+async function deletePrivatePphRecord(id) {
+  if (!confirm('Are you sure you want to delete this private record?')) return;
 
-    tracker.batches.splice(index, 1);
-    saveTracker();
-    renderTracker();
-  });
+  const { error } = await db
+    .from('agent_pph_records')
+    .delete()
+    .eq('id', id);
 
-  $('prod-ic-body').addEventListener('click', function (event) {
-    const button = event.target.closest('[data-delete-ic]');
-    if (!button) return;
+  if (error) {
+    alert('Could not delete record: ' + error.message);
+    return;
+  }
 
-    const index = Number(button.dataset.deleteIc);
-    if (!Number.isInteger(index) || index < 0 || index >= tracker.icEntries.length) return;
+  await loadPrivatePphRecords();
+}
 
-    tracker.icEntries.splice(index, 1);
-    saveTracker();
-    renderTracker();
-  });
+document.getElementById('pph-form').addEventListener('submit', async function (event) {
+  event.preventDefault();
 
-  $('prod-reset-btn').addEventListener('click', function () {
-    if (!confirm('Start a new shift? This clears only the Productivity tracker entries saved in this browser. Your other Team Chenn records will not be changed.')) return;
+  const lines = Number(document.getElementById('pph-lines-input').value);
+  const time = Number(document.getElementById('pph-time-input').value);
 
-    tracker = { batches: [], icEntries: [] };
-    saveTracker();
-    renderTracker();
-  });
+  if (lines <= 0 || time <= 0) {
+    alert('Please enter valid lines and production time greater than zero.');
+    return;
+  }
 
-  renderTracker();
-})();
+  const pph = lines / time;
+
+  const { data: { session }, error: sessionError } = await db.auth.getSession();
+  if (sessionError || !session) {
+    alert('You must be logged in to save private PPH records.');
+    return;
+  }
+
+  const { error } = await db
+    .from('agent_pph_records')
+    .insert({
+      user_id: session.user.id,
+      production_lines: lines,
+      production_time: time,
+      pph: pph
+    });
+
+  if (error) {
+    alert('Could not save record: ' + error.message);
+    return;
+  }
+
+  document.getElementById('pph-form').reset();
+  await loadPrivatePphRecords();
+});
 
 /* ============ 6. CALCULATOR ============ */
 const num = id => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
