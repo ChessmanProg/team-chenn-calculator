@@ -1572,30 +1572,43 @@ tick();
 if (!useDb) {
   showBanner('Database connection is unavailable. Check the Supabase URL and public key in the script.');
 }
-loadThemeSettings();
+// Ensure everything runs only after the page DOM is fully loaded
+document.addEventListener('DOMContentLoaded', async () => {
+  loadThemeSettings();
 
-const savedTab = localStorage.getItem('teamChennActiveTab');
-if (document.getElementById('btn-' + (TABS.includes(savedTab) ? savedTab : 'dashboard'))) {
-  switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
-}
+  const savedTab = localStorage.getItem('teamChennActiveTab');
+  if (TABS.includes(savedTab)) {
+    switchTab(savedTab);
+  } else {
+    switchTab('dashboard');
+  }
 
-calculate();
+  calculate();
 
-// Handle password recovery link if present in URL
-handlePasswordRecovery();
+  // Handle password recovery link if present in URL
+  handlePasswordRecovery();
 
-// Supabase session handling and real-time auth listener
-if (db) {
-  db.auth.onAuthStateChange(async (event, session) => {
+  // Initial auth check and session restore
+  if (db) {
+    const { data: { session } } = await db.auth.getSession();
     await refreshAuthState();
     ['coaching', 'ic', 'link'].forEach(render);
     if (session) {
       loadPrivatePphRecords();
     }
-  });
-} else {
-  ['coaching', 'ic', 'link'].forEach(render);
-}
+
+    // Real-time auth state listener for subsequent changes/refreshes
+    db.auth.onAuthStateChange(async (event, session) => {
+      await refreshAuthState();
+      ['coaching', 'ic', 'link'].forEach(render);
+      if (session) {
+        loadPrivatePphRecords();
+      }
+    });
+  } else {
+    ['coaching', 'ic', 'link'].forEach(render);
+  }
+});
 </script>
   
 <!-- PENDING QUESTIONS FLOATING BUBBLE -->
