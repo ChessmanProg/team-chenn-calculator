@@ -1576,8 +1576,14 @@ loadThemeSettings();
 const savedTab = localStorage.getItem('teamChennActiveTab');
 switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
 calculate();
-['coaching', 'ic', 'link'].forEach(render);
-refreshAuthState().then(handlePasswordRecovery);
+
+// Initialize auth state and restore session before rendering tables
+refreshAuthState()
+  .then(() => handlePasswordRecovery())
+  .then(() => {
+    ['coaching', 'ic', 'link'].forEach(render);
+    loadPrivatePphRecords();
+  });
 </script>
   
 <!-- PENDING QUESTIONS FLOATING BUBBLE -->
