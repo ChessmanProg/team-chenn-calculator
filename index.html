@@ -1007,15 +1007,57 @@ const fmtTime = t => {
 };
 
 /* ============ 2. DATA LAYER ============ */
+
 async function loadRows(key) {
   const tableName = TABLES[key].name;
 
   if (db) {
-    const { data, error } = await db.from(tableName).select('*').order('id');
+    if (key === 'coaching') {
+      const { data, error } = await db
+        .from(tableName)
+        .select('id, schedule_date, time_slot, end_time, agent_name, completed, is_done')
+        .order('id');
+
+      if (error) {
+        showBanner('Could not load coaching schedules: ' + error.message);
+        return [];
+      }
+
+      const rows = data || [];
+
+      // Meeting links are fetched separately for approved admins only.
+      if (isTeamChennAdmin) {
+        const { data: links, error: linkError } = await db
+          .rpc('get_team_chenn_meeting_links');
+
+        if (linkError) {
+          showBanner('Could not load admin meeting links: ' + linkError.message);
+          return rows;
+        }
+
+        const linksById = new Map(
+          (links || []).map(item => [String(item.schedule_id), item.meet_link])
+        );
+
+        return rows.map(row => ({
+          ...row,
+          meet_link: linksById.get(String(row.id)) || ''
+        }));
+      }
+
+      return rows;
+    }
+
+    const { data, error } = await db
+      .from(tableName)
+      .select('*')
+      .order('id');
+
     if (error) {
       showBanner('Could not load ' + tableName + ': ' + error.message);
       return [];
     }
+
     return data || [];
   }
 
@@ -1025,6 +1067,7 @@ async function loadRows(key) {
     return [];
   }
 }
+
 
 async function insertRow(key, row) {
   const tableName = TABLES[key].name;
