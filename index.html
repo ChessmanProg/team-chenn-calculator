@@ -1326,7 +1326,9 @@ if (key === 'coaching') {
           ? esc(r.meet_link)
           : '';
 
-        return `<tr>
+       const isDone = r.completed === true;
+
+return `<tr class="${isDone ? 'opacity-70' : ''}">
           <td class="p-3 whitespace-nowrap">${esc(r.schedule_date || '')}</td>
           <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
           <td class="p-3">${esc(r.agent_name)}</td>
