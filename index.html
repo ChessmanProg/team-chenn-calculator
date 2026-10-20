@@ -245,6 +245,86 @@ button.bg-indigo-600:hover {
   }
 }
 
+/* ============ TEAM CHENN ANNOUNCEMENTS BUBBLE ============ */
+#team-announcements-bubble {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 112px !important;
+  z-index: 10001 !important;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 1px solid rgba(253, 224, 71, 0.65);
+  border-radius: 999px;
+  color: #fffbeb;
+  background: linear-gradient(135deg, #92400e, #451a03);
+  box-shadow: 0 8px 30px rgba(146, 64, 14, 0.4);
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+#team-announcements-bubble:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 34px rgba(251, 191, 36, 0.3);
+}
+
+#team-announcements-bubble .announcement-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(253, 224, 71, 0.6);
+  background: rgba(251, 191, 36, 0.16);
+  color: #fde68a;
+  font-size: 27px;
+  font-weight: 900;
+  animation: announcementBangFloat 1.6s ease-in-out infinite;
+}
+
+#team-announcements-bubble .announcement-count {
+  display: none;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #fef08a;
+  color: #451a03;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+#team-announcements-bubble .announcement-count.has-unread {
+  display: grid;
+}
+
+@keyframes announcementBangFloat {
+  0%, 100% { transform: translateY(0) rotate(-8deg); }
+  50% { transform: translateY(-6px) rotate(8deg); }
+}
+
+@media (max-width: 640px) {
+  #team-announcements-bubble {
+    right: 14px !important;
+    bottom: 94px !important;
+    padding: 9px 12px;
+    gap: 8px;
+  }
+
+  #team-announcements-bubble .announcement-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #team-announcements-bubble .announcement-icon {
+    animation: none;
+  }
+}
+
 /* ========== FOREST GLASS THEME ========== */
 body {
   background-color: #061a14;
@@ -2691,6 +2771,29 @@ refreshAuthState().then(handlePasswordRecovery);
   <span class="question-count" id="pending-question-count">0</span>
 </button>
 
+
+<!-- TEAM CHENN ANNOUNCEMENTS BUBBLE -->
+<button
+  id="team-announcements-bubble"
+  type="button"
+  onclick="toggleAnnouncementsPanel()"
+  aria-label="Open Team Chenn Announcements"
+  aria-expanded="false"
+>
+  <span class="announcement-icon" aria-hidden="true">!</span>
+  <span class="text-left">
+    <span class="block text-sm font-bold">Announcements</span>
+    <span class="block text-xs text-amber-100">Team updates</span>
+  </span>
+  <span
+    id="team-announcement-unread-count"
+    class="announcement-count"
+    aria-label="Unread announcements"
+  >0</span>
+</button>
+
+<!-- TEAM CHENN ANNOUNCEMENTS PANEL -->
+<div id="team-announcements-panel" class="hidden" aria-label="Team announcements"></div>
 
 <!-- TEAM CHENN QUESTIONS PANEL -->
 <div id="question-panel" class="hidden" aria-label="Team questions"></div>
