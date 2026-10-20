@@ -171,10 +171,10 @@ button.bg-indigo-600:hover {
   
 /* ============ PENDING QUESTIONS FLOATING BUBBLE ============ */
 #pending-questions-bubble {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 1000;
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  z-index: 10000 !important;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -186,8 +186,8 @@ button.bg-indigo-600:hover {
   box-shadow: 0 8px 30px rgba(6, 78, 59, 0.4),
               inset 0 1px 0 rgba(255, 255, 255, 0.12);
   cursor: pointer;
-  animation: questionBubbleFloat 3s ease-in-out infinite;
-  transition: box-shadow 0.25s, transform 0.25s;
+  animation: none !important;
+  transition: box-shadow 0.25s;
 }
 
 #pending-questions-bubble:hover {
