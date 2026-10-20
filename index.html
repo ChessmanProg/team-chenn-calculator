@@ -1047,7 +1047,7 @@ async function loadRows(key) {
         ...row,
         meet_link: linksById.get(String(row.id)) || ''
       }));
-
+    }
 
     const { data, error } = await db
       .from(tableName)
