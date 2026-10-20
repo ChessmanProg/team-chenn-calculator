@@ -1696,11 +1696,14 @@ function openMeetingReminder(url) {
       'fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm';
 
     overlay.innerHTML = `
-      <div class="w-full max-w-md rounded-2xl border border-emerald-200 bg-emerald-950 p-6 text-white shadow-2xl">
-        <h2 class="text-xl font-bold">🎥 Join Coaching Meeting</h2>
-        <p class="mt-3 text-sm text-emerald-100">
-          You are about to open the Google Meet link in a new tab.
-        </p>
+      <div class="w-full max-w-md rounded-2xl border border-emerald-200 bg-emerald-950 p-6 text-white shadow-2xl">        
+<h2 class="text-xl font-bold">Before You Join!</h2>
+<p class="mt-3 text-base font-extrabold text-amber-300">
+  Don't forget IC tagging and Zoho tagging.
+</p>
+<p class="mt-2 text-sm text-emerald-100">
+  Please read this reminder before proceeding to your coaching meeting.
+</p>
         <div class="mt-6 flex justify-end gap-3">
           <button type="button" id="meeting-reminder-cancel"
             class="rounded-xl border border-emerald-300/40 px-4 py-2 font-semibold hover:bg-white/10">
