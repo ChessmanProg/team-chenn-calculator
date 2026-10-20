@@ -1573,6 +1573,7 @@ if (!useDb) {
   showBanner('Database connection is unavailable. Check the Supabase URL and public key in the script.');
 }
 // Ensure everything runs only after the page DOM is fully loaded
+// Ensure everything runs only after the page DOM is fully loaded
 document.addEventListener('DOMContentLoaded', async () => {
   loadThemeSettings();
 
@@ -1588,16 +1589,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Handle password recovery link if present in URL
   handlePasswordRecovery();
 
-  // Initial auth check and session restore
+  // Render public team tables immediately for everyone
+  ['coaching', 'ic', 'link'].forEach(render);
+
+  // Check auth state for admin privileges and private records
   if (db) {
     const { data: { session } } = await db.auth.getSession();
     await refreshAuthState();
-    ['coaching', 'ic', 'link'].forEach(render);
     if (session) {
       loadPrivatePphRecords();
     }
 
-    // Real-time auth state listener for subsequent changes/refreshes
+    // Real-time auth state listener for subsequent logins/logouts
     db.auth.onAuthStateChange(async (event, session) => {
       await refreshAuthState();
       ['coaching', 'ic', 'link'].forEach(render);
@@ -1605,8 +1608,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadPrivatePphRecords();
       }
     });
-  } else {
-    ['coaching', 'ic', 'link'].forEach(render);
   }
 });
 </script>
