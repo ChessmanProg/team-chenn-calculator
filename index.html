@@ -1753,26 +1753,25 @@ function previewBulkCoachingImport() {
       return;
     }
 
-    if (cols.length < 5) {
-      errors.push(`Row ${index + 1}: Expected 5 columns.`);
+    if (cols.length < 4) {
+      errors.push(`Row ${index + 1}: Expected 4 columns.`);
       return;
     }
 
-    const date = parseBulkCoachingDate(cols[0]);
-    const start = parseBulkCoachingTime(cols[1]);
-    const end = parseBulkCoachingTime(cols[2]);
-    const agent = cols[3];
-    const link = cols[4];
+const date = parseBulkCoachingDate(cols[0]);
+const time = parseBulkCoachingTime(cols[1]);
+const agent = cols[2];
+const link = cols[3];
 
     if (!date) {
       errors.push(`Row ${index + 1}: Invalid date. Use YYYY-MM-DD or MM/DD/YYYY.`);
       return;
     }
 
-    if (!start || !end || start >= end) {
-      errors.push(`Row ${index + 1}: Invalid start or end time.`);
-      return;
-    }
+if (!time) {
+  errors.push(`Row ${index + 1}: Invalid time.`);
+  return;
+}
 
     if (!agent) {
       errors.push(`Row ${index + 1}: Agent name is missing.`);
@@ -1786,7 +1785,7 @@ function previewBulkCoachingImport() {
 
     parsed.push({
       schedule_date: date,
-      time_slot: `${start}-${end}`,
+      time_slot: time,
       agent_name: agent,
       meet_link: link,
       completed: false
