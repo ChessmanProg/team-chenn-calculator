@@ -1737,14 +1737,21 @@ function parseBulkCoachingTime(value) {
   return '';
 }
 
+
 function previewBulkCoachingImport() {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to import coaching schedules.');
     return;
   }
 
+  const selectedDate = document.getElementById('bulk-coaching-date').value;
   const input = document.getElementById('bulk-coaching-input').value.trim();
   const preview = document.getElementById('bulk-coaching-preview');
+
+  if (!selectedDate) {
+    showBulkImportStatus('Please choose a coaching date from the calendar.', true);
+    return;
+  }
 
   if (!input) {
     showBulkImportStatus('Paste your spreadsheet rows first.', true);
@@ -1758,31 +1765,23 @@ function previewBulkCoachingImport() {
   lines.forEach((line, index) => {
     const cols = line.split('\t').map(v => v.trim());
 
-    if (index === 0 &&
-        /date/i.test(cols[0] || '') &&
-        /agent/i.test(line)) {
+    if (index === 0 && /time/i.test(cols[0] || '') && /agent/i.test(line)) {
       return;
     }
 
-    if (cols.length < 4) {
-      errors.push(`Row ${index + 1}: Expected 4 columns.`);
+    if (cols.length < 3) {
+      errors.push(`Row ${index + 1}: Expected 3 columns: Time, Agent Name, Google Meet Link.`);
       return;
     }
 
-const date = parseBulkCoachingDate(cols[0]);
-const time = parseBulkCoachingTime(cols[1]);
-const agent = cols[2];
-const link = cols[3];
+    const time = parseBulkCoachingTime(cols[0]);
+    const agent = cols[1];
+    const link = cols[2];
 
-    if (!date) {
-      errors.push(`Row ${index + 1}: Invalid date. Use YYYY-MM-DD or MM/DD/YYYY.`);
+    if (!time) {
+      errors.push(`Row ${index + 1}: Invalid time. Use 09:00 AM or 09:00.`);
       return;
     }
-
-if (!time) {
-  errors.push(`Row ${index + 1}: Invalid time.`);
-  return;
-}
 
     if (!agent) {
       errors.push(`Row ${index + 1}: Agent name is missing.`);
@@ -1795,7 +1794,7 @@ if (!time) {
     }
 
     parsed.push({
-      schedule_date: date,
+      schedule_date: selectedDate,
       time_slot: time,
       agent_name: agent,
       meet_link: link,
@@ -1828,6 +1827,7 @@ if (!time) {
   preview.innerHTML = `
     <h3 class="mb-3 text-lg font-bold text-slate-900">Import Preview</h3>
     <p class="mb-3 text-sm text-slate-600">
+      Date selected: <strong>${esc(selectedDate)}</strong><br>
       ${unique.length} valid row(s) ready for duplicate checking and import.
     </p>
     ${errors.length ? `
@@ -1869,6 +1869,7 @@ if (!time) {
     `${unique.length} valid row(s) found. Existing schedules will be checked before saving.`
   );
 }
+
   async function importBulkCoachingSchedules() {
   if (!isTeamChennAdmin) {
     showBulkImportStatus(
