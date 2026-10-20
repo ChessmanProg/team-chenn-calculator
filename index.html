@@ -2191,7 +2191,8 @@ function previewBulkCoachingImport() {
     errors.length > 0
   );
 }
-  async function importBulkCoachingSchedules() {
+
+async function importBulkCoachingSchedules() {
   if (!isTeamChennAdmin) {
     showBulkImportStatus(
       'Admin access is required to import schedules.',
@@ -2228,7 +2229,9 @@ function previewBulkCoachingImport() {
       .select('schedule_date, time_slot, agent_name');
 
     if (fetchError) {
-      throw new Error('Could not check existing schedules: ' + fetchError.message);
+      throw new Error(
+        'Could not check existing schedules: ' + fetchError.message
+      );
     }
 
     const existingKeys = new Set(
@@ -2255,13 +2258,49 @@ function previewBulkCoachingImport() {
         continue;
       }
 
-      const { error } = await db
-        .from(TABLES.coaching.name)
-        .insert(row);
+      const meetLink = String(row.meet_link || '').trim();
 
-      if (error) {
+      if (meetLink && !/^https?:\/\//i.test(meetLink)) {
         failures.push(
-          `${row.schedule_date} ${row.time_slot} — ${row.agent_name}: ${error.message}`
+          `${row.schedule_date} ${row.time_slot} — ${row.agent_name}: invalid meeting URL`
+        );
+        continue;
+      }
+
+      const safeRow = {
+        ...row,
+        meet_link: 'PROTECTED'
+      };
+
+      const { data: inserted, error: insertError } = await db
+        .from(TABLES.coaching.name)
+        .insert(safeRow)
+        .select('id')
+        .single();
+
+      if (insertError) {
+        failures.push(
+          `${row.schedule_date} ${row.time_slot} — ${row.agent_name}: ${insertError.message}`
+        );
+        continue;
+      }
+
+      const { error: linkError } = await db.rpc(
+        'save_team_chenn_meeting_link',
+        {
+          p_schedule_id: inserted.id,
+          p_meet_link: meetLink
+        }
+      );
+
+      if (linkError) {
+        await db
+          .from(TABLES.coaching.name)
+          .delete()
+          .eq('id', inserted.id);
+
+        failures.push(
+          `${row.schedule_date} ${row.time_slot} — ${row.agent_name}: meeting link save failed — ${linkError.message}`
         );
         continue;
       }
@@ -2270,7 +2309,8 @@ function previewBulkCoachingImport() {
       existingKeys.add(key);
     }
 
-    let message = `Import finished. Added: ${added}. Skipped duplicates: ${skipped}.`;
+    let message =
+      `Import finished. Added: ${added}. Skipped duplicates: ${skipped}.`;
 
     if (failures.length) {
       message += ` Failed: ${failures.length}. ` + failures.join(' | ');
