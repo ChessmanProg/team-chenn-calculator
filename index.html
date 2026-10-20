@@ -411,25 +411,67 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
 
   <!-- DASHBOARD -->
   <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
- <section class="lg:col-span-2 space-y-6">
+<section class="lg:col-span-2 space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div class="flex flex-wrap justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-900">📊 Productivity Per Hour (PPH) Calculator</h2>
-          <span class="text-sm text-slate-500">Simple PPH Tracker</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
           <div>
-            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Production Lines / Items</label>
-            <input type="number" id="calc-lines" value="150" min="0" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <h2 class="text-xl font-bold text-slate-900">📊 Cumulative Shift PPH Calculator</h2>
+            <p class="text-sm text-slate-500">Goal: <strong>120 PPH</strong> | Track precise minute/second sessions</p>
           </div>
-          <div>
-            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Hours Worked</label>
-            <input type="number" id="calc-hours" value="8" min="0.01" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-sm font-bold rounded-full">Target: 120 PPH</span>
+        </div>
+
+        <!-- Add Shift Entry Form -->
+        <form id="calc-form" class="space-y-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Production Lines / Items</label>
+              <input type="number" id="calc-input-lines" min="1" step="1" required placeholder="e.g. 250" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Minutes</label>
+              <input type="number" id="calc-input-minutes" min="0" step="1" required placeholder="e.g. 13" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Seconds (0–59)</label>
+              <input type="number" id="calc-input-seconds" min="0" max="59" step="1" required placeholder="e.g. 42" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+          </div>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm">+ Add Shift Session</button>
+        </form>
+
+        <!-- Cumulative Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <p class="text-xs font-semibold text-slate-500 uppercase">Total Lines Completed</p>
+            <p id="calc-total-lines" class="text-2xl font-bold text-slate-900 mt-1">0</p>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <p class="text-xs font-semibold text-slate-500 uppercase">Total Time Worked</p>
+            <p id="calc-total-time" class="text-2xl font-bold text-slate-900 mt-1">0m 0s</p>
+          </div>
+          <div id="calc-summary-card" class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center transition-colors">
+            <p class="text-xs font-semibold uppercase text-slate-600">Cumulative Shift PPH</p>
+            <p id="calc-cumulative-pph" class="text-2xl font-extrabold text-slate-800 mt-1">0.0</p>
           </div>
         </div>
-        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center">
-          <p class="text-sm font-medium text-slate-500">Calculated PPH</p>
-          <p id="calc-result-pph" class="text-4xl font-extrabold text-emerald-600 mt-2">18.8</p>
+
+        <!-- Entries History Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+              <tr>
+                <th class="p-3">Session</th>
+                <th class="p-3">Lines</th>
+                <th class="p-3">Time</th>
+                <th class="p-3">PPH</th>
+                <th class="p-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="calc-entries-body" class="divide-y divide-slate-100">
+              <tr><td colspan="5" class="p-4 text-center text-slate-500">No shift sessions added yet.</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
