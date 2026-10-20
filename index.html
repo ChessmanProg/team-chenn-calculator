@@ -1660,10 +1660,11 @@ function applyThemeSettings() {
 
   // Save preferences on this device, not in the shared database.
   try {
-    localStorage.setItem('teamChennTheme', JSON.stringify({
-      mode: mode,
-      accent: accent
-    }));
+localStorage.setItem('teamChennTheme', JSON.stringify({
+  mode: mode,
+  accent: accent,
+  fontColor: fontColor
+}));
   } catch (error) {
     console.warn('Could not save theme preferences.', error);
   }
