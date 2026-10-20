@@ -1012,6 +1012,50 @@ async function markCoachingDone(id) {
   await render('coaching');
   showBanner('Coaching schedule marked as done!');
 }
+  async function undoCoachingDone(id) {
+  if (!isTeamChennAdmin) {
+    showBanner('Admin access is required to undo completion.');
+    return;
+  }
+
+  const confirmed = confirm(
+    'Undo completion for this coaching schedule?'
+  );
+
+  if (!confirmed) return;
+
+  if (db) {
+    const { error } = await db
+      .from(TABLES.coaching.name)
+      .update({ completed: false })
+      .eq('id', id);
+
+    if (error) {
+      showBanner('Could not undo completion: ' + error.message);
+      return;
+    }
+  } else {
+    const rows = await loadRows('coaching');
+    const updatedRows = rows.map(r =>
+      String(r.id) === String(id)
+        ? { ...r, completed: false }
+        : r
+    );
+
+    try {
+      localStorage.setItem(
+        TABLES.coaching.name,
+        JSON.stringify(updatedRows)
+      );
+    } catch {
+      showBanner('Could not save the change.');
+      return;
+    }
+  }
+
+  await render('coaching');
+  showBanner('Completion undone. The schedule is active again.');
+}
 async function editCoachingSchedule(id) {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to edit schedules.');
