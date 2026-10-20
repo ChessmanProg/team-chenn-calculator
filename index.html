@@ -1858,6 +1858,114 @@ if (!time) {
     `${unique.length} valid row(s) found. Existing schedules will be checked before saving.`
   );
 }
+  async function importBulkCoachingSchedules() {
+  if (!isTeamChennAdmin) {
+    showBulkImportStatus(
+      'Admin access is required to import schedules.',
+      true
+    );
+    return;
+  }
+
+  if (!db) {
+    showBulkImportStatus(
+      'Supabase is not connected. Nothing was imported.',
+      true
+    );
+    return;
+  }
+
+  if (!bulkCoachingRows.length) {
+    showBulkImportStatus('There are no valid rows to import.', true);
+    return;
+  }
+
+  const button = document.querySelector(
+    '#bulk-coaching-preview button[onclick="importBulkCoachingSchedules()"]'
+  );
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Importing...';
+  }
+
+  try {
+    const { data: existing, error: fetchError } = await db
+      .from(TABLES.coaching.name)
+      .select('schedule_date, time_slot, agent_name');
+
+    if (fetchError) {
+      throw new Error('Could not check existing schedules: ' + fetchError.message);
+    }
+
+    const existingKeys = new Set(
+      (existing || []).map(row => [
+        row.schedule_date,
+        String(row.time_slot || '').slice(0, 5),
+        String(row.agent_name || '').trim().toLowerCase()
+      ].join('|'))
+    );
+
+    let added = 0;
+    let skipped = 0;
+    const failures = [];
+
+    for (const row of bulkCoachingRows) {
+      const key = [
+        row.schedule_date,
+        String(row.time_slot || '').slice(0, 5),
+        String(row.agent_name || '').trim().toLowerCase()
+      ].join('|');
+
+      if (existingKeys.has(key)) {
+        skipped++;
+        continue;
+      }
+
+      const { error } = await db
+        .from(TABLES.coaching.name)
+        .insert(row);
+
+      if (error) {
+        failures.push(
+          `${row.schedule_date} ${row.time_slot} — ${row.agent_name}: ${error.message}`
+        );
+        continue;
+      }
+
+      added++;
+      existingKeys.add(key);
+    }
+
+    let message = `Import finished. Added: ${added}. Skipped duplicates: ${skipped}.`;
+
+    if (failures.length) {
+      message += ` Failed: ${failures.length}. ` + failures.join(' | ');
+    }
+
+    showBulkImportStatus(message, failures.length > 0);
+
+    if (added > 0) {
+      await render('coaching');
+    }
+
+    if (failures.length === 0) {
+      const preview = document.getElementById('bulk-coaching-preview');
+      preview.innerHTML = `
+        <p class="rounded-xl bg-emerald-50 p-4 font-semibold text-emerald-800">
+          ${esc(message)}
+        </p>
+      `;
+    }
+  } catch (error) {
+    showBulkImportStatus(error.message || 'Import failed.', true);
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Save Valid Schedules';
+    }
+  }
+}
 async function saveModal() {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to save records.');
