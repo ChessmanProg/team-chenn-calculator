@@ -1026,27 +1026,28 @@ async function loadRows(key) {
       const rows = data || [];
 
       // Meeting links are fetched separately for approved admins only.
-      if (isTeamChennAdmin) {
-        const { data: links, error: linkError } = await db
-          .rpc('get_team_chenn_meeting_links');
 
-        if (linkError) {
-          showBanner('Could not load admin meeting links: ' + linkError.message);
-          return rows;
-        }
+      // Fetch meeting links for everyone who can view coaching schedules.
+      const { data: links, error: linkError } = await db
+        .rpc('get_team_chenn_meeting_links');
 
-        const linksById = new Map(
-          (links || []).map(item => [String(item.schedule_id), item.meet_link])
-        );
-
-        return rows.map(row => ({
-          ...row,
-          meet_link: linksById.get(String(row.id)) || ''
-        }));
+      if (linkError) {
+        showBanner('Could not load meeting links: ' + linkError.message);
+        return rows;
       }
 
-      return rows;
-    }
+      const linksById = new Map(
+        (links || []).map(item => [
+          String(item.schedule_id),
+          item.meet_link
+        ])
+      );
+
+      return rows.map(row => ({
+        ...row,
+        meet_link: linksById.get(String(row.id)) || ''
+      }));
+
 
     const { data, error } = await db
       .from(tableName)
