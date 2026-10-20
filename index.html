@@ -1619,6 +1619,7 @@ document.getElementById('calc-form').addEventListener('submit', function(e) {
 function applyThemeSettings() {
   const mode = document.getElementById('theme-mode').value;
   const accent = document.getElementById('theme-color').value;
+  const fontColor = document.getElementById('font-color-select').value;
 
   // Apply the theme only in this user's browser.
   document.body.classList.toggle('dark', mode === 'dark');
