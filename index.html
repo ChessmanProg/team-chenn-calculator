@@ -411,32 +411,25 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
 
   <!-- DASHBOARD -->
   <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <section class="lg:col-span-2 space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-          <h2 class="text-xl font-bold text-slate-900">📊 PPH & Exemption Pace Calculator</h2>
-          <span class="text-sm text-slate-500">Live Target Adjustment</span>
+ <section class="lg:col-span-2 space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-wrap justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-slate-900">📊 Productivity Per Hour (PPH) Calculator</h2>
+          <span class="text-sm text-slate-500">Simple PPH Tracker</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Target PPH</label>
-            <input type="number" id="target-pph" value="15" min="0" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
-          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Shift Hours</label>
-            <input type="number" id="shift-hours" value="9" min="0" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
-          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Exemption Hours (Coaching/Break/Meetings)</label>
-            <input type="number" id="exemption-hours" value="1.5" min="0" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
-          <div><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Items Completed So Far</label>
-            <input type="number" id="completed-items" value="65" min="0" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
-          <div class="sm:col-span-2"><label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Production Hours Worked So Far</label>
-            <input type="number" id="hours-worked" value="3.75" min="0" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></div>
+          <div>
+            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Production Lines / Items</label>
+            <input type="number" id="calc-lines" value="150" min="0" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold uppercase text-slate-600 mb-2">Total Hours Worked</label>
+            <input type="number" id="calc-hours" value="8" min="0.01" step="0.25" class="calc w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-6">
-          <div><p class="text-sm font-medium text-slate-500">Net Production Hours</p><p id="net-hours" class="text-2xl font-bold text-slate-900 mt-1">7.5 hrs</p></div>
-          <div><p class="text-sm font-medium text-slate-500">Required Total Items</p><p id="total-required" class="text-2xl font-bold text-indigo-600 mt-1">113 items</p></div>
-          <div><p class="text-sm font-medium text-slate-500">Pace Needed (Remaining)</p><p id="remaining-pace" class="text-2xl font-bold text-emerald-600 mt-1">12.8 / hr</p></div>
-        </div>
-        <div>
-          <div class="flex justify-between text-sm font-semibold text-slate-600 mb-2"><span>Shift Progress to Target</span><span id="progress-percent">58%</span></div>
-          <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden"><div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width:58%"></div></div>
+        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center">
+          <p class="text-sm font-medium text-slate-500">Calculated PPH</p>
+          <p id="calc-result-pph" class="text-4xl font-extrabold text-emerald-600 mt-2">18.8</p>
         </div>
       </div>
     </section>
