@@ -955,6 +955,7 @@ async function insertRow(key, row) {
 
   return null;
 }
+
 async function editICStatus(id, currentStatus) {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to edit status.');
@@ -967,56 +968,95 @@ async function editICStatus(id, currentStatus) {
     'Willing to extend'
   ];
 
-  const newStatus = prompt(
-    'Enter the new status:\n\n' +
-    'Reported\n' +
-    'Not Reported\n' +
-    'Willing to extend',
-    currentStatus
-  );
+  const options = statuses
+    .map(status =>
+      `<option value="${status}" ${
+        status === currentStatus ? 'selected' : ''
+      }>${status}</option>`
+    )
+    .join('');
 
-  if (newStatus === null) return;
+  const choice = document.createElement('select');
 
-  const status = newStatus.trim();
+  choice.innerHTML = options;
+  choice.className =
+    'w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900';
 
-  if (!statuses.includes(status)) {
-    showBanner('Invalid status. Please use one of the listed options.');
-    return;
-  }
+  const overlay = document.createElement('div');
+  overlay.className =
+    'fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4';
 
-  if (db) {
-    const { error } = await db
-      .from(TABLES.ic.name)
-      .update({ status: status })
-      .eq('id', id);
+  const panel = document.createElement('div');
+  panel.className =
+    'w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl';
 
-    if (error) {
-      showBanner('Status update failed: ' + error.message);
-      return;
-    }
-  } else {
-    const tableName = TABLES.ic.name;
-    const rows = await loadRows('ic');
+  panel.innerHTML = `
+    <h3 class="mb-4 text-lg font-bold text-slate-900">
+      Edit IC Extension Status
+    </h3>
+    <div id="ic-status-select-container"></div>
+    <div class="mt-5 flex justify-end gap-3">
+      <button id="ic-status-cancel"
+        class="rounded-lg bg-slate-200 px-4 py-2 font-semibold text-slate-700">
+        Cancel
+      </button>
+      <button id="ic-status-save"
+        class="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white">
+        Save
+      </button>
+    </div>
+  `;
 
-    const updatedRows = rows.map(r =>
-      String(r.id) === String(id)
-        ? { ...r, status: status }
-        : r
-    );
+  panel.querySelector('#ic-status-select-container')
+    .appendChild(choice);
 
-    try {
-      localStorage.setItem(
-        tableName,
-        JSON.stringify(updatedRows)
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+
+  panel.querySelector('#ic-status-cancel').onclick = () => {
+    overlay.remove();
+  };
+
+  panel.querySelector('#ic-status-save').onclick = async () => {
+    const status = choice.value;
+
+    if (db) {
+      const { error } = await db
+        .from(TABLES.ic.name)
+        .update({ status })
+        .eq('id', id);
+
+      if (error) {
+        overlay.remove();
+        showBanner('Status update failed: ' + error.message);
+        return;
+      }
+    } else {
+      const tableName = TABLES.ic.name;
+      const rows = await loadRows('ic');
+
+      const updatedRows = rows.map(r =>
+        String(r.id) === String(id)
+          ? { ...r, status }
+          : r
       );
-    } catch {
-      showBanner('Could not save the updated status.');
-      return;
-    }
-  }
 
-  await render('ic');
-  showBanner('IC Extension status updated successfully.');
+      try {
+        localStorage.setItem(
+          tableName,
+          JSON.stringify(updatedRows)
+        );
+      } catch {
+        overlay.remove();
+        showBanner('Could not save the updated status.');
+        return;
+      }
+    }
+
+    overlay.remove();
+    await render('ic');
+    showBanner('IC Extension status updated successfully.');
+  };
 }
 async function deleteRow(key, id) {
   if (!isTeamChennAdmin) {
