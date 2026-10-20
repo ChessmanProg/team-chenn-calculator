@@ -1395,7 +1395,7 @@ if (!useDb) {
 loadThemeSettings();
 const savedTab = localStorage.getItem('teamChennActiveTab');
 switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
-calculate();
+renderCalculator();
 ['coaching', 'ic', 'link'].forEach(render);
 refreshAuthState().then(handlePasswordRecovery);
 </script>
