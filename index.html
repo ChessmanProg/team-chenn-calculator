@@ -592,7 +592,20 @@ const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
 const useDb = !SUPABASE_URL.startsWith('YOUR_') && window.supabase;
 const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+// Ensure session persists on page load and state changes
+if (db) {
+  db.auth.getSession().then(({ data: { session } }) => {
+    if (session && typeof checkUserSession === 'function') {
+      checkUserSession(session);
+    }
+  });
 
+  db.auth.onAuthStateChange((event, session) => {
+    if (typeof checkUserSession === 'function') {
+      checkUserSession(session);
+    }
+  });
+}
 /* ============ ADMIN AUTHENTICATION ============ */
 let isTeamChennAdmin = false;
 
