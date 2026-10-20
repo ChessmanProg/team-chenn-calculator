@@ -1470,7 +1470,15 @@ return `<tr class="${isDone ? 'opacity-70' : ''}">
           
 <td class="p-3 text-right whitespace-nowrap">
   ${r.completed === true
-    ? '<span class="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 mr-2">✓ Done</span>'
+    
+? isTeamChennAdmin
+  ? `<button
+      onclick="undoCoachingDone('${esc(r.id)}')"
+      class="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800 hover:bg-amber-200 mr-2">
+      ↩ Undo
+    </button>`
+  : '<span class="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 mr-2">✓ Done</span>'
+
     : isTeamChennAdmin
       ? `<button
           onclick="markCoachingDone('${esc(r.id)}')"
