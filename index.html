@@ -1211,6 +1211,7 @@ async function markCoachingDone(id) {
   await render('coaching');
   showBanner('Completion undone. The schedule is active again.');
 }
+
 async function editCoachingSchedule(id) {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to edit schedules.');
@@ -1240,25 +1241,17 @@ async function editCoachingSchedule(id) {
 
     <form id="edit-coaching-form" class="space-y-4">
       <div>
-        <label class="mb-1 block text-sm font-semibold text-slate-600">
-          Date (Eastern)
-        </label>
-        <input id="edit-coaching-date" type="date" required
-          class="${inputCls}">
+        <label class="mb-1 block text-sm font-semibold text-slate-600">Date (Eastern)</label>
+        <input id="edit-coaching-date" type="date" required class="${inputCls}">
       </div>
 
       <div>
-        <label class="mb-1 block text-sm font-semibold text-slate-600">
-          Time
-        </label>
-        <input id="edit-coaching-time" type="time" required
-          class="${inputCls}">
+        <label class="mb-1 block text-sm font-semibold text-slate-600">Time</label>
+        <input id="edit-coaching-time" type="time" required class="${inputCls}">
       </div>
 
       <div>
-        <label class="mb-1 block text-sm font-semibold text-slate-600">
-          Agent
-        </label>
+        <label class="mb-1 block text-sm font-semibold text-slate-600">Agent</label>
         <select id="edit-coaching-agent" required class="${inputCls}">
           ${AGENTS.map(a =>
             `<option value="${esc(a)}">${esc(a)}</option>`
@@ -1267,16 +1260,12 @@ async function editCoachingSchedule(id) {
       </div>
 
       <div>
-        <label class="mb-1 block text-sm font-semibold text-slate-600">
-          Google Meet Link
-        </label>
+        <label class="mb-1 block text-sm font-semibold text-slate-600">Google Meet Link</label>
         <input id="edit-coaching-link" type="url"
-          placeholder="https://meet.google.com/..."
-          class="${inputCls}">
+          placeholder="https://meet.google.com/..." class="${inputCls}">
       </div>
 
-      <p id="edit-coaching-error"
-        class="hidden text-sm font-medium text-red-600"></p>
+      <p id="edit-coaching-error" class="hidden text-sm font-medium text-red-600"></p>
 
       <div class="flex justify-end gap-3 pt-2">
         <button id="edit-coaching-cancel" type="button"
@@ -1294,20 +1283,12 @@ async function editCoachingSchedule(id) {
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
 
-  panel.querySelector('#edit-coaching-date').value =
-    schedule.schedule_date || '';
+  panel.querySelector('#edit-coaching-date').value = schedule.schedule_date || '';
+  panel.querySelector('#edit-coaching-time').value = schedule.time_slot || '';
+  panel.querySelector('#edit-coaching-agent').value = schedule.agent_name || '';
+  panel.querySelector('#edit-coaching-link').value = schedule.meet_link || '';
 
-  panel.querySelector('#edit-coaching-time').value =
-    schedule.time_slot || '';
-
-  panel.querySelector('#edit-coaching-agent').value =
-    schedule.agent_name || '';
-
-  panel.querySelector('#edit-coaching-link').value =
-    schedule.meet_link || '';
-
-  panel.querySelector('#edit-coaching-cancel').onclick = () =>
-    overlay.remove();
+  panel.querySelector('#edit-coaching-cancel').onclick = () => overlay.remove();
 
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.remove();
@@ -1322,26 +1303,27 @@ async function editCoachingSchedule(id) {
       return;
     }
 
+    const meetLink = panel.querySelector('#edit-coaching-link').value.trim();
+
+    if (meetLink && !/^https?:\/\//i.test(meetLink)) {
+      const errorBox = panel.querySelector('#edit-coaching-error');
+      errorBox.textContent = 'The meeting link must start with http:// or https://';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
     const updated = {
       schedule_date: panel.querySelector('#edit-coaching-date').value,
       time_slot: panel.querySelector('#edit-coaching-time').value,
       agent_name: panel.querySelector('#edit-coaching-agent').value,
-      meet_link: panel.querySelector('#edit-coaching-link').value.trim()
+      meet_link: 'PROTECTED'
     };
 
-    if (
-      updated.meet_link &&
-      !/^https?:\/\//i.test(updated.meet_link)
-    ) {
-      const error = panel.querySelector('#edit-coaching-error');
-      error.textContent = 'The meeting link must start with http:// or https://';
-      error.classList.remove('hidden');
-      return;
-    }
-
     const saveButton = panel.querySelector('button[type="submit"]');
+    const errorBox = panel.querySelector('#edit-coaching-error');
     saveButton.disabled = true;
     saveButton.textContent = 'Saving...';
+    errorBox.classList.add('hidden');
 
     if (db) {
       const { error } = await db
@@ -1352,16 +1334,32 @@ async function editCoachingSchedule(id) {
       if (error) {
         saveButton.disabled = false;
         saveButton.textContent = 'Save Changes';
+        errorBox.textContent = 'Schedule save failed: ' + error.message;
+        errorBox.classList.remove('hidden');
+        return;
+      }
 
-        const errorBox = panel.querySelector('#edit-coaching-error');
-        errorBox.textContent = 'Save failed: ' + error.message;
+      const { error: linkError } = await db.rpc(
+        'save_team_chenn_meeting_link',
+        {
+          p_schedule_id: Number(id),
+          p_meet_link: meetLink
+        }
+      );
+
+      if (linkError) {
+        saveButton.disabled = false;
+        saveButton.textContent = 'Save Changes';
+        errorBox.textContent =
+          'Schedule saved, but the meeting link could not be saved: ' +
+          linkError.message;
         errorBox.classList.remove('hidden');
         return;
       }
     } else {
       const updatedRows = rows.map(r =>
         String(r.id) === String(id)
-          ? { ...r, ...updated }
+          ? { ...r, ...updated, meet_link: meetLink }
           : r
       );
 
@@ -1373,8 +1371,6 @@ async function editCoachingSchedule(id) {
       } catch {
         saveButton.disabled = false;
         saveButton.textContent = 'Save Changes';
-
-        const errorBox = panel.querySelector('#edit-coaching-error');
         errorBox.textContent = 'Could not save the changes.';
         errorBox.classList.remove('hidden');
         return;
@@ -1386,6 +1382,7 @@ async function editCoachingSchedule(id) {
     showBanner('Coaching schedule updated successfully.');
   };
 }
+
 
 
 async function editICStatus(id, currentStatus) {
