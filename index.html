@@ -1477,8 +1477,8 @@ if (key === 'coaching') {
        const isDone = r.completed === true;
 
 return `<tr class="${isDone ? 'opacity-70' : ''}">
-          <td class="p-3 whitespace-nowrap">${esc(r.schedule_date || '')}</td>
-          <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
+          <td class="p-3 whitespace-nowrap">${esc(r.schedule_date || '')}</td>          
+          <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}${r.end_time ? ' – ' + fmtTime(r.end_time) : ''}</td>
           <td class="p-3">${esc(r.agent_name)}</td>
           <td class="p-3">
            
