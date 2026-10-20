@@ -1457,35 +1457,34 @@ return `<tr class="${isDone ? 'opacity-70' : ''}">
           <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
           <td class="p-3">${esc(r.agent_name)}</td>
           <td class="p-3">
-            ${meetLink
-              
-<a href="#" onclick="event.preventDefault(); openMeetingReminder('${meetLink}');" 
-                  class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-800 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-200 hover:shadow-md">
-                  <span>🎥</span>
-                  <span>Join Meeting</span>
-                  <span>↗</span>
-                </a>`
-              : '<span class="text-sm text-slate-400">No link added</span>'}
+           
+${meetLink
+  ? `<a href="#" onclick="event.preventDefault(); openMeetingReminder('${meetLink}');"
+      class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-800 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-200 hover:shadow-md">
+      <span>🎥</span>
+      <span>Join Meeting</span>
+      <span>↗</span>
+    </a>`
+  : '<span class="text-sm text-slate-400">No link added</span>'}
           </td>
           
 <td class="p-3 text-right whitespace-nowrap">
-  ${r.completed === true
-    
-? isTeamChennAdmin
-  ? `<button
-      onclick="undoCoachingDone('${esc(r.id)}')"
-      class="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800 hover:bg-amber-200 mr-2">
-      ↩ Undo
-    </button>`
-  : '<span class="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 mr-2">✓ Done</span>'
-
-    : isTeamChennAdmin
-      ? `<button
-          onclick="markCoachingDone('${esc(r.id)}')"
-          class="inline-block rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white hover:bg-emerald-700 mr-2">
-          ✓ Mark as Done
-        </button>`
-      : ''}
+  
+${r.completed === true
+  ? isTeamChennAdmin
+    ? `<button
+        onclick="undoCoachingDone('${esc(r.id)}')"
+        class="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800 hover:bg-amber-200 mr-2">
+        ↩ Undo
+      </button>`
+    : '<span class="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 mr-2">✓ Done</span>'
+  : isTeamChennAdmin
+    ? `<button
+        onclick="markCoachingDone('${esc(r.id)}')"
+        class="inline-block rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white hover:bg-emerald-700 mr-2">
+        ✓ Mark as Done
+      </button>`
+    : ''}
   ${isTeamChennAdmin ? `
     <button
       onclick="editCoachingSchedule('${esc(r.id)}')"
