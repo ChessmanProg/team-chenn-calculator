@@ -1695,6 +1695,16 @@ function loadThemeSettings() {
 
   document.getElementById('theme-mode').value = settings.mode;
   document.getElementById('theme-color').value = settings.accent;
+  const validFontColors = [
+  '#ecfdf5', '#ffffff', '#34d399', '#6ee7b7',
+  '#93c5fd', '#fde047', '#fca5a5', '#c084fc'
+];
+
+if (!validFontColors.includes(settings.fontColor)) {
+  settings.fontColor = '#ecfdf5';
+}
+
+document.getElementById('font-color-select').value = settings.fontColor;
 
   applyThemeSettings();
 }
