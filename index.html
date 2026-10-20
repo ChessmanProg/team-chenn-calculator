@@ -1805,14 +1805,21 @@ function previewBulkCoachingImport() {
     const endTime = parseBulkCoachingTime(times[1]);
     const agent = cols[1].trim();
 
-    // Supports Markdown links and ordinary pasted URLs.
-    const markdownLink = cols.slice(2).join(' ').match(/\]\((https?:\/\/[^)]+)\)/i);
-    const plainUrl = cols.slice(2).join(' ').match(/https?:\/\/\S+/i);
+    
+    // Supports Markdown links, full URLs, and Google Meet links copied as plain text.
+    const linkText = cols.slice(2).join(' ').trim();
+    const markdownLink = linkText.match(/\]\((https?:\/\/[^)]+)\)/i);
+    const plainUrl = linkText.match(/https?:\/\/[^\s)]+/i);
+    const bareMeetLink = linkText.match(/(?:www\.)?meet\.google\.com\/[a-z0-9-]+/i);
+
     const link = markdownLink
       ? markdownLink[1].trim()
       : plainUrl
-        ? plainUrl[0].replace(/[)\],]+$/, '')
-        : cols[2].replace(/^\[|\]$/g, '').trim();
+        ? plainUrl[0].replace(/[)\],|]+$/, '')
+        : bareMeetLink
+          ? 'https://' + bareMeetLink[0].replace(/^www\./i, '')
+          : linkText.replace(/^\[|\]$/g, '').trim();
+
 
     if (!startTime || !endTime) {
       errors.push(`Row ${index + 1}: Invalid time range. Example: 12:00 – 12:30.`);
