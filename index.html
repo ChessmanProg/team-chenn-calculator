@@ -3849,6 +3849,349 @@ try {
   }
 }
 
+/* ============ TEAM CHENN ANNOUNCEMENTS FUNCTIONALITY ============ */
+
+let teamAnnouncementsCache = [];
+let announcementCurrentUser = null;
+
+function escapeAnnouncementHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[character]);
+}
+
+function announcementDate(value) {
+  if (!value) return 'Date unavailable';
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Date unavailable';
+
+  return date.toLocaleString([], {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+}
+
+function announcementMessage(message, isError = false) {
+  const element = document.getElementById('announcement-message');
+  if (!element) return;
+
+  element.textContent = message;
+  element.style.color = isError ? '#fca5a5' : '#fde68a';
+}
+
+async function getAnnouncementUser() {
+  if (!db) return null;
+
+  const { data, error } = await db.auth.getUser();
+
+  if (error) {
+    console.error('Announcement user check failed:', error);
+    return null;
+  }
+
+  return data?.user ?? null;
+}
+
+async function refreshAnnouncementUnreadCount() {
+  const badge = document.getElementById('team-announcement-unread-count');
+  if (!badge) return;
+
+  try {
+    if (!db) {
+      badge.textContent = '0';
+      badge.classList.remove('has-unread');
+      return;
+    }
+
+    const user = await getAnnouncementUser();
+    announcementCurrentUser = user;
+
+    // Unread counts are personal, so don't show a shared count to signed-out users.
+    if (!user) {
+      badge.textContent = '0';
+      badge.classList.remove('has-unread');
+      return;
+    }
+
+    const { data: announcements, error: announcementError } = await db
+      .from('team_announcements')
+      .select('id')
+      .order('created_at', { ascending: false });
+
+    if (announcementError) throw announcementError;
+
+    const { data: reads, error: readError } = await db
+      .from('team_announcement_reads')
+      .select('announcement_id')
+      .eq('user_id', user.id);
+
+    if (readError) throw readError;
+
+    const readIds = new Set((reads || []).map(row => row.announcement_id));
+    const unread = (announcements || []).filter(row => !readIds.has(row.id)).length;
+
+    badge.textContent = unread > 99 ? '99+' : String(unread);
+    badge.classList.toggle('has-unread', unread > 0);
+    badge.setAttribute('aria-label', `${unread} unread announcements`);
+  } catch (error) {
+    console.error('Announcement unread-count refresh failed:', error);
+  }
+}
+
+async function toggleAnnouncementsPanel() {
+  const panel = document.getElementById('team-announcements-panel');
+  const button = document.getElementById('team-announcements-bubble');
+
+  if (!panel || !button) return;
+
+  const opening = panel.classList.contains('hidden');
+
+  panel.classList.toggle('hidden', !opening);
+  button.setAttribute('aria-expanded', String(opening));
+
+  if (opening) {
+    await loadTeamAnnouncements();
+  }
+}
+
+async function loadTeamAnnouncements() {
+  const panel = document.getElementById('team-announcements-panel');
+  if (!panel) return;
+
+  if (!db) {
+    panel.innerHTML = `
+      <h2 style="font-size:20px;font-weight:800;">📢 Team Announcements</h2>
+      <p style="margin-top:12px;">Announcements are temporarily unavailable because the database connection is missing.</p>
+    `;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <h2 style="font-size:20px;font-weight:800;">📢 Team Announcements</h2>
+      <button type="button" class="announcement-action"
+        onclick="toggleAnnouncementsPanel()" aria-label="Close announcements">✕</button>
+    </div>
+    <p class="announcement-muted" style="margin-top:6px;">Important updates from Team Chenn</p>
+    <p style="margin-top:14px;">Loading announcements…</p>
+  `;
+
+  try {
+    const user = await getAnnouncementUser();
+    announcementCurrentUser = user;
+
+    const { data: announcements, error } = await db
+      .from('team_announcements')
+      .select('id,title,body,created_at,created_by')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    teamAnnouncementsCache = announcements || [];
+
+    let readIds = new Set();
+
+    if (user) {
+      const { data: reads, error: readError } = await db
+        .from('team_announcement_reads')
+        .select('announcement_id')
+        .eq('user_id', user.id);
+
+      if (readError) throw readError;
+
+      readIds = new Set((reads || []).map(row => row.announcement_id));
+    }
+
+    const adminForm = isTeamChennAdmin ? `
+      <form id="announcement-publish-form"
+        onsubmit="publishTeamAnnouncement(event)"
+        style="margin-top:18px;padding:14px;border:1px solid rgba(253,224,71,.25);border-radius:14px;background:rgba(255,255,255,.04);">
+        <h3 style="font-weight:800;margin-bottom:10px;">✍️ Publish an announcement</h3>
+        <label for="announcement-title" style="display:block;font-size:13px;">Title</label>
+        <input id="announcement-title" class="announcement-field"
+          maxlength="150" required placeholder="Announcement title">
+
+        <label for="announcement-body" style="display:block;font-size:13px;margin-top:12px;">Message</label>
+        <textarea id="announcement-body" class="announcement-field"
+          maxlength="5000" rows="4" required
+          placeholder="Write your team update…"></textarea>
+
+        <button type="submit" class="announcement-action" style="margin-top:12px;">
+          Publish announcement
+        </button>
+        <p id="announcement-message" role="status" style="margin-top:10px;font-size:13px;"></p>
+      </form>
+    ` : '';
+
+    const signInNote = !user ? `
+      <p class="announcement-muted" style="margin-top:14px;">
+        Sign in to track which announcements you have read.
+      </p>
+    ` : '';
+
+    const cards = teamAnnouncementsCache.map(item => {
+      const isRead = user ? readIds.has(item.id) : false;
+      const title = escapeAnnouncementHtml(item.title);
+      const body = escapeAnnouncementHtml(item.body);
+      const date = escapeAnnouncementHtml(announcementDate(item.created_at));
+      const id = escapeAnnouncementHtml(item.id);
+
+      return `
+        <article class="announcement-card">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+            <h3 style="font-size:16px;font-weight:800;">${title}</h3>
+            ${user && !isRead
+              ? '<span style="flex-shrink:0;padding:3px 7px;border-radius:99px;background:#fef08a;color:#451a03;font-size:11px;font-weight:800;">NEW</span>'
+              : ''}
+          </div>
+          <p class="announcement-muted" style="margin-top:5px;">${date}</p>
+          <p style="margin-top:10px;white-space:pre-wrap;line-height:1.55;">${body}</p>
+          ${user && !isRead
+            ? `<button type="button" class="announcement-action"
+                 style="margin-top:12px;"
+                 onclick="markAnnouncementRead('${id}')">Mark as read ✓</button>`
+            : ''}
+          ${user && isRead
+            ? '<p class="announcement-muted" style="margin-top:10px;">✓ Read</p>'
+            : ''}
+        </article>
+      `;
+    }).join('');
+
+    panel.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <h2 style="font-size:20px;font-weight:800;">📢 Team Announcements</h2>
+        <button type="button" class="announcement-action"
+          onclick="toggleAnnouncementsPanel()" aria-label="Close announcements">✕</button>
+      </div>
+      <p class="announcement-muted" style="margin-top:6px;">Important updates from Team Chenn</p>
+      ${adminForm}
+      ${signInNote}
+      ${cards || '<p style="margin-top:18px;">No announcements yet. Check back later! 🌱</p>'}
+    `;
+
+    await refreshAnnouncementUnreadCount();
+  } catch (error) {
+    console.error('Could not load Team Chenn announcements:', error);
+    panel.innerHTML = `
+      <h2 style="font-size:20px;font-weight:800;">📢 Team Announcements</h2>
+      <p style="margin-top:12px;color:#fca5a5;">
+        Could not load announcements. Please check the database connection and permissions.
+      </p>
+      <button type="button" class="announcement-action"
+        style="margin-top:12px;" onclick="loadTeamAnnouncements()">Try again</button>
+    `;
+  }
+}
+
+async function markAnnouncementRead(announcementId) {
+  if (!db) return;
+
+  try {
+    const user = await getAnnouncementUser();
+
+    if (!user) {
+      announcementMessage('Please sign in to mark announcements as read.', true);
+      return;
+    }
+
+    const { error } = await db
+      .from('team_announcement_reads')
+      .upsert(
+        {
+          announcement_id: announcementId,
+          user_id: user.id
+        },
+        { onConflict: 'announcement_id,user_id' }
+      );
+
+    if (error) throw error;
+
+    await refreshAnnouncementUnreadCount();
+    await loadTeamAnnouncements();
+  } catch (error) {
+    console.error('Could not mark announcement as read:', error);
+    announcementMessage('Could not mark this announcement as read. Please try again.', true);
+  }
+}
+
+async function publishTeamAnnouncement(event) {
+  if (event) event.preventDefault();
+
+  if (!db) {
+    announcementMessage('Database connection is unavailable.', true);
+    return;
+  }
+
+  if (!isTeamChennAdmin) {
+    announcementMessage('Only approved admins can publish announcements.', true);
+    return;
+  }
+
+  const titleInput = document.getElementById('announcement-title');
+  const bodyInput = document.getElementById('announcement-body');
+  const form = document.getElementById('announcement-publish-form');
+  const submitButton = form?.querySelector('button[type="submit"]');
+
+  const title = titleInput?.value.trim();
+  const body = bodyInput?.value.trim();
+
+  if (!title || !body) {
+    announcementMessage('Please enter both a title and message.', true);
+    return;
+  }
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Publishing…';
+  }
+
+  try {
+    const user = await getAnnouncementUser();
+
+    if (!user) {
+      throw new Error('Please sign in again before publishing.');
+    }
+
+    const { error } = await db
+      .from('team_announcements')
+      .insert({
+        title,
+        body,
+        created_by: user.id
+      });
+
+    if (error) throw error;
+
+    await refreshAnnouncementUnreadCount();
+    await loadTeamAnnouncements();
+
+    announcementMessage('Announcement published successfully! 📢');
+  } catch (error) {
+    console.error('Announcement publishing failed:', error);
+    announcementMessage(error.message || 'Could not publish the announcement.', true);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Publish announcement';
+    }
+  }
+}
+
+// Initial load and periodic refresh; existing Team Questions polling remains untouched.
+refreshAnnouncementUnreadCount();
+setInterval(refreshAnnouncementUnreadCount, 30000);
+
+/* ============ END TEAM CHENN ANNOUNCEMENTS FUNCTIONALITY ============ */
+
 async function refreshQuestionCount() {
   try {
     await getTeamQuestions();
