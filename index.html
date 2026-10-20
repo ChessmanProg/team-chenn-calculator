@@ -1745,6 +1745,7 @@ function closeMeetingReminder() {
   pendingMeetingUrl = '';
 }
 
+
 function proceedToMeeting() {
   if (!/^https?:\/\//i.test(pendingMeetingUrl || '')) {
     showBanner('This meeting link is invalid.');
@@ -1755,15 +1756,17 @@ function proceedToMeeting() {
   const url = pendingMeetingUrl;
   closeMeetingReminder();
 
-  const meetingWindow = window.open(
-    url,
-    '_blank',
-    'noopener,noreferrer'
-  );
+  // Open the meeting in a new tab.
+  // Avoid the "noopener" feature here because it can make
+  // window.open() return null even when the tab opens.
+  const meetingWindow = window.open(url, '_blank');
 
-  if (!meetingWindow) {
+  if (meetingWindow) {
+    // Prevent the opened page from controlling this page.
+    meetingWindow.opener = null;
+  } else {
     showBanner(
-      'The meeting tab may have been blocked. Please allow pop-ups and try again.'
+      'The meeting tab was blocked. Please allow pop-ups and try again.'
     );
   }
 }
