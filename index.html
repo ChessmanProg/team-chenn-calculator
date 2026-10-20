@@ -1739,6 +1739,7 @@ function parseBulkCoachingTime(value) {
 
 
 
+
 function previewBulkCoachingImport() {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to import coaching schedules.');
@@ -1764,30 +1765,36 @@ function previewBulkCoachingImport() {
   const errors = [];
 
   lines.forEach((line, index) => {
-    // Read Markdown table rows such as:
-    // | 12:00 – 12:30 | Agent Name | [meet.google.com/abc](http://meet.google.com/abc) |
-    if (!line.includes('|')) {
-      errors.push(`Row ${index + 1}: Expected a Markdown table row with | separators.`);
-      return;
+    let cols;
+
+    // Accept Markdown table rows or direct Google Sheets tab-separated rows.
+    if (line.includes('|')) {
+      cols = line.trim()
+        .replace(/^\|/, '')
+        .replace(/\|$/, '')
+        .split('|')
+        .map(value => value.trim());
+
+      // Ignore Markdown separator rows.
+      if (cols.every(value => /^:?-{3,}:?$/.test(value.replace(/\s/g, '')))) {
+        return;
+      }
+    } else {
+      cols = line.split('\t').map(value => value.trim());
     }
 
-    const cols = line.trim().replace(/^\|/, '').replace(/\|$/, '')
-      .split('|').map(v => v.trim());
-
-    // Ignore the header and Markdown separator rows.
-    if (
-      /time/i.test(cols[0] || '') ||
-      cols.every(v => /^:?-{3,}:?$/.test(v.replace(/\s/g, '')))
-    ) {
+    // Ignore a header row if one is included.
+    if (/time/i.test(cols[0] || '') && /agent|name/i.test(cols[1] || '')) {
       return;
     }
 
     if (cols.length < 3) {
-      errors.push(`Row ${index + 1}: Expected Time Range, Agent Name, and Google Meet Link.`);
+      errors.push(`Row ${index + 1}: Expected three columns — time range, agent name, and meeting link.`);
       return;
     }
 
-    const times = cols[0].replace(/[–—]/g, '-').split('-').map(v => v.trim());
+    const timeRange = cols[0].replace(/[–—]/g, '-');
+    const times = timeRange.split('-').map(value => value.trim());
 
     if (times.length !== 2) {
       errors.push(`Row ${index + 1}: Use a time range like 12:00 – 12:30.`);
@@ -1796,15 +1803,19 @@ function previewBulkCoachingImport() {
 
     const startTime = parseBulkCoachingTime(times[0]);
     const endTime = parseBulkCoachingTime(times[1]);
-    const agent = cols[1];
+    const agent = cols[1].trim();
 
-    const markdownLink = cols[2].match(/\]\((https?:\/\/[^)]+)\)/i);
+    // Supports Markdown links and ordinary pasted URLs.
+    const markdownLink = cols.slice(2).join(' ').match(/\]\((https?:\/\/[^)]+)\)/i);
+    const plainUrl = cols.slice(2).join(' ').match(/https?:\/\/\S+/i);
     const link = markdownLink
       ? markdownLink[1].trim()
-      : cols[2].replace(/^\[|\]$/g, '').trim();
+      : plainUrl
+        ? plainUrl[0].replace(/[)\],]+$/, '')
+        : cols[2].replace(/^\[|\]$/g, '').trim();
 
     if (!startTime || !endTime) {
-      errors.push(`Row ${index + 1}: Invalid time range. Use 24-hour times, e.g. 12:00 – 12:30.`);
+      errors.push(`Row ${index + 1}: Invalid time range. Example: 12:00 – 12:30.`);
       return;
     }
 
@@ -1864,7 +1875,7 @@ function previewBulkCoachingImport() {
     ${errors.length ? `
       <div class="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
         <p class="mb-2 font-bold">Rows needing attention</p>
-        <ul class="list-disc pl-5">${errors.map(e => `<li>${esc(e)}</li>`).join('')}</ul>
+        <ul class="list-disc pl-5">${errors.map(error => `<li>${esc(error)}</li>`).join('')}</ul>
       </div>` : ''}
     <div class="overflow-x-auto rounded-xl border border-slate-200">
       <table class="w-full text-left text-sm">
@@ -1897,11 +1908,10 @@ function previewBulkCoachingImport() {
     </div>`;
 
   showBulkImportStatus(
-    `${unique.length} valid row(s) found. Existing schedules will be checked before saving.`
+    `${unique.length} valid row(s) found. Existing schedules will be checked before saving.`,
+    errors.length > 0
   );
 }
-
-
   async function importBulkCoachingSchedules() {
   if (!isTeamChennAdmin) {
     showBulkImportStatus(
