@@ -607,9 +607,20 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
     </div>
 
 <div class="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-  <p class="font-bold">Required column order</p>
-  <p class="mt-1">Date · Time · Agent Name · Google Meet Link</p>
-  <p class="mt-2">Copy the rows from your spreadsheet, then paste them below. Keep the header row if you have one.</p>
+  <p class="font-bold">Step 1: Choose the coaching date</p>
+
+  <label for="bulk-coaching-date" class="mt-3 block font-semibold">
+    Schedule date (Eastern Time)
+  </label>
+  <input
+    type="date"
+    id="bulk-coaching-date"
+    required
+    class="mt-1 w-full rounded-xl border border-emerald-300 bg-white p-3 text-slate-800 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100">
+
+  <p class="mt-4 font-bold">Step 2: Paste your spreadsheet rows</p>
+  <p class="mt-1">Required column order: Time · Agent Name · Google Meet Link</p>
+  <p class="mt-2">Choose the date above, then paste the rows copied from Excel or Google Sheets. All pasted rows will use the selected date. Keep the header row if you have one.</p>
 </div>
 
     <label for="bulk-coaching-input" class="mt-5 block text-sm font-bold text-slate-700">
