@@ -158,16 +158,10 @@ button.bg-indigo-600:hover {
   
 /* ============ PENDING QUESTIONS FLOATING BUBBLE ============ */
 #pending-questions-bubble {
-  position: fixed !important;
-top: auto !important;
-left: auto !important;
-right: 24px !important;
-bottom: 24px !important;
-transform: none !important;
-animation: none !important;
+  position: fixed;
   right: 24px;
   bottom: 24px;
-  z-index: 10000 !important;
+  z-index: 1000;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -311,41 +305,6 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   background: rgba(5, 32, 24, 0.42) !important;
   border: none !important;
 }
- /* Ensure inactive tabs stay hidden */
-#tab-dashboard.hidden,
-#tab-productivity.hidden,
-#tab-ic-log.hidden,
-#tab-important-links.hidden {
-  display: none !important;
-} 
-/* Improve readability only in the Productivity tab */
-#tab-productivity .text-gray-500,
-#tab-productivity .text-gray-700,
-#tab-productivity .text-gray-800 {
-  color: #ecfdf5 !important;
-}
-
-#tab-productivity .text-emerald-800 {
-  color: #a7f3d0 !important;
-}
-
-#tab-productivity .text-emerald-900 {
-  color: #d1fae5 !important;
-}
-
-#tab-productivity .bg-emerald-50,
-#tab-productivity .bg-amber-50 {
-  background-color: rgba(6, 78, 59, 0.9) !important;
-}
-
-#tab-productivity input {
-  color: #ffffff !important;
-}
-
-#tab-productivity input::placeholder {
-  color: #d1d5db !important;
-}
-
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-base">
@@ -389,7 +348,6 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   </div>
   <div class="max-w-7xl mx-auto px-6 flex gap-3 pt-3 overflow-x-auto">  
 <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-5 py-3 text-sm sm:text-base font-semibold rounded-xl whitespace-nowrap transition-all duration-200">📊 Dashboard & Calculator</button>
-<button onclick="switchTab('productivity')" id="btn-productivity" class="px-5 py-3 text-sm sm:text-base font-semibold rounded-xl whitespace-nowrap transition-all duration-200">🔒 Private PPH Tracker</button>
 <button onclick="switchTab('ic-log')" id="btn-ic-log" class="px-5 py-3 text-sm sm:text-base font-semibold rounded-xl whitespace-nowrap transition-all duration-200">📝 Today's IC Extension Record</button>
 <button onclick="switchTab('important-links')" id="btn-important-links" class="px-5 py-3 text-sm sm:text-base font-semibold rounded-xl whitespace-nowrap transition-all duration-200">🔗 Important Links</button>
   </div>
@@ -454,9 +412,8 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   <!-- DASHBOARD -->
   <div id="tab-dashboard" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <section class="lg:col-span-2 space-y-6">
-      <
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div class="flex flex-wrap justify-between items-center mb-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
           <h2 class="text-xl font-bold text-slate-900">📊 PPH & Exemption Pace Calculator</h2>
           <span class="text-sm text-slate-500">Live Target Adjustment</span>
         </div>
@@ -485,16 +442,9 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
     </section>
 
     <div class="space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">    
-<div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-4 border-b border-slate-100">
-          <h2 class="text-lg font-bold text-slate-900">📅 Coaching Schedules</h2>      
-<input
-  id="coaching-date-picker"
-  type="date"
-  aria-label="Choose coaching schedule date"
-  onchange="render('coaching')"
-  class="hidden rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold"
-/>
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+          <h2 class="text-lg font-bold text-slate-900">📅 Coaching Schedules</h2>
           <button onclick="openModal('coaching')" class="text-sm text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition shadow-sm">+ Add Schedule</button>
         </div>
         <div class="overflow-x-auto">
@@ -516,84 +466,45 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
     </div>
   </div>
 
-<!-- PRIVATE PPH TRACKER -->
- <!-- PRIVATE PPH TRACKER -->
-  <div id="tab-productivity" class="tab-content hidden space-y-6">
-    <div class="rounded-2xl bg-gradient-to-r from-emerald-900 to-green-700 p-6 text-white shadow-lg">
-      <p class="text-sm font-semibold uppercase tracking-wider text-emerald-200">Team Chenn • Secure Portal</p>
-      <h2 class="mt-2 text-2xl font-bold">🔒 Private PPH Tracker</h2>
-      <p class="mt-2 text-sm text-emerald-50">Enter your production records. Protected by Supabase Row Level Security (RLS) so only you can view your data.</p>
-    </div>
-
-    <!-- Login Warning Notice -->
-    <div id="pph-auth-notice" class="hidden rounded-2xl border border-amber-300 bg-amber-50 p-5 text-amber-900 shadow-sm">
-      <p class="font-bold">⚠️ Authentication Required</p>
-      <p class="text-sm mt-1">Please log in using the Admin/Auth section at the top of the page to view and save your private PPH records.</p>
-    </div>
-
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-gray-500">Cumulative Production Lines</p>
-        <p id="pph-total-lines" class="mt-2 text-3xl font-bold text-emerald-800">0</p>
-      </div>
-      <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-gray-500">Total Production Time</p>
-        <p id="pph-total-time" class="mt-2 text-3xl font-bold text-gray-800">0.00 hrs</p>
-      </div>
-      <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-        <p class="text-sm text-gray-500">Overall PPH</p>
-        <p id="pph-overall" class="mt-2 text-3xl font-bold text-indigo-600">0.0</p>
-      </div>
-    </div>
-
-    <!-- Add Record Form -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 class="text-lg font-bold text-gray-800">➕ Add Private PPH Entry</h3>
-      <p class="mt-1 text-sm text-gray-500">Enter your completed production lines and precise production time (minutes and seconds).</p>
-      <form id="pph-form" class="mt-5 space-y-4">
+  <!-- IC LOG -->
+  <div id="tab-ic-log" class="hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 gap-4">
         <div>
-          <label for="pph-lines-input" class="mb-1 block text-sm font-semibold text-gray-700">Production Lines</label>
-          <input id="pph-lines-input" type="number" min="1" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 150" />
+          <h2 class="text-xl font-bold text-slate-900">📝 Today's InContact (IC) Extension Record</h2>
+          <p class="text-sm text-slate-500">Log and track IC extension activities for today's shift.</p>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label for="pph-minutes-input" class="mb-1 block text-sm font-semibold text-gray-700">Minutes</label>
-            <input id="pph-minutes-input" type="number" min="0" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 13" />
-          </div>
-          <div>
-            <label for="pph-seconds-input" class="mb-1 block text-sm font-semibold text-gray-700">Seconds (0–59)</label>
-            <input id="pph-seconds-input" type="number" min="0" max="59" step="1" required class="w-full rounded-xl border border-gray-300 p-3" placeholder="e.g. 42" />
-          </div>
-        </div>
-        <button type="submit" class="w-full rounded-xl bg-emerald-700 px-4 py-3 font-bold text-white transition hover:bg-emerald-800">Save Private Record</button>
-      </form>
-    </div>
-
-    <!-- Personal History Table -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <h3 class="text-lg font-bold text-gray-800">📋 Your Personal PPH History</h3>
-        <button type="button" onclick="loadPrivatePphRecords()" class="rounded-xl border border-slate-300 px-3 py-1.5 text-sm font-semibold hover:bg-slate-50">↻ Refresh</button>
+        <button onclick="openModal('ic')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow transition">+ Add New IC Log</button>
       </div>
-      <div class="mt-4 overflow-x-auto">
-        <table class="w-full min-w-[500px] text-left text-sm">
-          <thead class="bg-emerald-50 text-emerald-900">
-            <tr>
-              <th class="p-3">Date</th>
-              <th class="p-3">Lines</th>
-              <th class="p-3">Time</th>
-              <th class="p-3">PPH</th>
-              <th class="p-3 text-right">Action</th>
-            </tr>
+      
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+  <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+    <p class="text-sm font-semibold text-emerald-700">Reported</p>
+    <p id="ic-reported-count" class="mt-2 text-3xl font-bold text-emerald-800">0</p>
+    <p class="mt-1 text-xs text-emerald-600">Extensions reported</p>
+  </div>
+  <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+    <p class="text-sm font-semibold text-amber-700">Not Reported</p>
+    <p id="ic-not-reported-count" class="mt-2 text-3xl font-bold text-amber-800">0</p>
+    <p class="mt-1 text-xs text-amber-600">Awaiting report</p>
+  </div>
+  <div class="rounded-2xl border border-sky-200 bg-sky-50 p-5 shadow-sm">
+    <p class="text-sm font-semibold text-sky-700">Willing to extend</p>
+    <p id="ic-willing-count" class="mt-2 text-3xl font-bold text-sky-800">0</p>
+    <p class="mt-1 text-xs text-sky-600">Available to extend</p>
+  </div>
+</div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-sm">
+            <tr><th class="p-4">Agent Name</th><th class="p-4">IC Extension / Minutes</th><th class="p-4">Status</th><th class="p-4 text-right">Action</th></tr>
           </thead>
-          <tbody id="pph-history-body">
-            <tr><td colspan="5" class="p-4 text-center text-gray-500">Sign in to view your private records.</td></tr>
-          </tbody>
+          <tbody id="ic-table-body" class="divide-y divide-slate-100"></tbody>
         </table>
       </div>
     </div>
   </div>
+
   <!-- IMPORTANT LINKS -->
   <div id="tab-important-links" class="hidden">
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
@@ -634,13 +545,7 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
 const SUPABASE_URL = 'https://jlidwcpklcnpphologhy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaWR3Y3BrbGNucHBob2xvZ2h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MTcsImV4cCI6MjEwNzU4NjgxN30.mVcq6eVSby1lBWnZrQhTnvdHSPBAu_NL1E62AoEQfb0';
 const useDb = !SUPABASE_URL.startsWith('YOUR_') && window.supabase;
-const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
-}) : null;
+const db = useDb ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 /* ============ ADMIN AUTHENTICATION ============ */
 let isTeamChennAdmin = false;
@@ -687,18 +592,7 @@ async function refreshAuthState() {
   updateAdminControls();
   ['coaching', 'ic', 'link'].forEach(render);
 }
-// Allow pressing Enter in login fields to submit
-['login-email', 'login-password'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) {
-    el.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        adminLogin();
-      }
-    });
-  }
-});
+
 async function adminLogin() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
@@ -1027,42 +921,6 @@ async function deleteRow(key, id) {
   await render(key);
 }
 
-async function markCoachingDone(id) {
-  if (!isTeamChennAdmin) {
-    showBanner('Admin access is required to mark coaching as Done.');
-    return;
-  }
-
-  if (db) {
-    const { error } = await db
-      .from('coaching_schedules')
-      .update({ is_done: true })
-      .eq('id', id);
-
-    if (error) {
-      showBanner('Could not mark coaching as Done: ' + error.message);
-      return;
-    }
-  } else {
-    const rows = await loadRows('coaching');
-    const updatedRows = rows.map(r =>
-      String(r.id) === String(id) ? { ...r, is_done: true } : r
-    );
-
-    try {
-      localStorage.setItem(
-        TABLES.coaching.name,
-        JSON.stringify(updatedRows)
-      );
-    } catch {
-      showBanner('Could not save the Done status locally.');
-      return;
-    }
-  }
-
-  await render('coaching');
-}
-
 function showBanner(msg) {
   const banner = document.getElementById('db-banner');
   banner.textContent = msg;
@@ -1104,29 +962,12 @@ async function render(key) {
 
  
 
-
 if (key === 'coaching') {
   const today = getEasternDate();
-  const datePicker = document.getElementById('coaching-date-picker');
-
-  if (datePicker) {
-    datePicker.classList.toggle('hidden', !isTeamChennAdmin);
-    datePicker.disabled = !isTeamChennAdmin;
-
-    if (!datePicker.value || !isTeamChennAdmin) {
-      datePicker.value = today;
-    }
-  }
-
-  const selectedDate =
-    isTeamChennAdmin && datePicker && datePicker.value
-      ? datePicker.value
-      : today;
 
   const todaysRows = rows
-    .filter(r => r.schedule_date === selectedDate)
+    .filter(r => r.schedule_date === today)
     .sort((a, b) => (a.time_slot || '').localeCompare(b.time_slot || ''));
-
 
   body.innerHTML = todaysRows.length
     ? todaysRows.map(r => {
@@ -1135,9 +976,9 @@ if (key === 'coaching') {
           : '';
 
         return `<tr>
-          <td class="p-2 whitespace-nowrap">${esc(r.schedule_date || '')}</td>
-          <td class="p-2 whitespace-nowrap">${fmtTime(r.time_slot)}</td>       
-          <td class="p-2">${esc(r.agent_name)}</td>
+          <td class="p-3 whitespace-nowrap">${esc(r.schedule_date || '')}</td>
+          <td class="p-3 whitespace-nowrap">${fmtTime(r.time_slot)}</td>
+          <td class="p-3">${esc(r.agent_name)}</td>
           <td class="p-3">
             ${meetLink
               ? `<a href="${meetLink}" target="_blank" rel="noopener noreferrer"
@@ -1148,16 +989,7 @@ if (key === 'coaching') {
                 </a>`
               : '<span class="text-sm text-slate-400">No link added</span>'}
           </td>
-          
-<td class="p-3 text-right whitespace-nowrap">
-  ${r.is_done
-    ? '<span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">✓ Done</span>'
-    : isTeamChennAdmin
-      ? `<button onclick="markCoachingDone('${esc(r.id)}')" class="mr-3 rounded-full bg-emerald-600 px-3 py-1.5 text-sm font-bold text-white hover:bg-emerald-700">Mark Done</button>`
-      : '<span class="text-sm text-slate-500">Not completed</span>'}
-  ${delBtn(key, r.id)}
-</td>
-
+          <td class="p-3 text-right">${delBtn(key, r.id)}</td>
         </tr>`;
       }).join('')
     : empty(5, 'No coaching scheduled for today.');
@@ -1320,7 +1152,7 @@ document.getElementById('modal').addEventListener('click', e => {
 });
 
 /* ============ 5. TABS ============ */
-const TABS = ['dashboard', 'productivity', 'ic-log', 'important-links'];
+const TABS = ['dashboard', 'ic-log', 'important-links'];
 
 function switchTab(name) {
   localStorage.setItem('teamChennActiveTab', name);
@@ -1335,134 +1167,6 @@ document.getElementById('btn-' + tab).className =
   });
 }
 
-/* ============ PRODUCTIVITY TRACKER ============ */
-/* ============ PRIVATE PPH TRACKER ============ */
-async function loadPrivatePphRecords() {
-  const historyBody = document.getElementById('pph-history-body');
-  const authNotice = document.getElementById('pph-auth-notice');
-  
-  if (!db) {
-    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Database connection unavailable.</td></tr>';
-    return;
-  }
-
-  const { data: { session }, error: sessionError } = await db.auth.getSession();
-  if (sessionError || !session) {
-    authNotice.classList.remove('hidden');
-    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Please sign in above to view your private PPH records.</td></tr>';
-    document.getElementById('pph-total-lines').textContent = '0';
-    document.getElementById('pph-total-time').textContent = '0.00 hrs';
-    document.getElementById('pph-overall').textContent = '0.0';
-    return;
-  }
-
-  authNotice.classList.add('hidden');
-
-  const { data: records, error } = await db
-    .from('agent_pph_records')
-    .select('*')
-    .order('entry_date', { ascending: false });
-
-  if (error) {
-    console.error('Error loading PPH records:', error);
-    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Could not load records: ' + esc(error.message) + '</td></tr>';
-    return;
-  }
-
-  if (!records || records.length === 0) {
-    historyBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">No private PPH records found. Add your first entry above!</td></tr>';
-    document.getElementById('pph-total-lines').textContent = '0';
-    document.getElementById('pph-total-time').textContent = '0.00 hrs';
-    document.getElementById('pph-overall').textContent = '0.0';
-    return;
-  }
-
-  let totalLines = 0;
-  let totalTimeHours = 0;
-
-  historyBody.innerHTML = records.map(r => {
-    const lines = Number(r.production_lines || 0);
-    const timeHours = Number(r.production_time || 0);
-    const totalSeconds = Math.round(timeHours * 3600);
-    const mins = Math.floor(totalSeconds / 60);
-    const secs = totalSeconds % 60;
-    const timeFormatted = `${mins}m ${secs}s`;
-
-    totalLines += lines;
-    totalTimeHours += timeHours;
-
-    return `<tr class="border-b border-gray-100">
-      <td class="p-3">${esc(r.entry_date)}</td>
-      <td class="p-3 font-semibold">${lines.toLocaleString()}</td>
-      <td class="p-3">${timeFormatted}</td>
-      <td class="p-3 font-semibold text-emerald-700">${Number(r.pph).toFixed(1)}</td>
-      <td class="p-3 text-right">
-        <button type="button" onclick="deletePrivatePphRecord('${esc(r.id)}')" class="rounded-lg px-3 py-1 font-semibold text-red-600 hover:bg-red-50">Delete</button>
-      </td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('pph-total-lines').textContent = totalLines.toLocaleString();
-  document.getElementById('pph-total-time').textContent = totalTimeHours.toFixed(2) + ' hrs';
-  document.getElementById('pph-overall').textContent = totalTimeHours > 0 ? (totalLines / totalTimeHours).toFixed(1) : '0.0';
-}
-
-async function deletePrivatePphRecord(id) {
-  if (!confirm('Are you sure you want to delete this private record?')) return;
-
-  const { error } = await db
-    .from('agent_pph_records')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    alert('Could not delete record: ' + error.message);
-    return;
-  }
-
-  await loadPrivatePphRecords();
-}
-
-document.getElementById('pph-form').addEventListener('submit', async function (event) {
-  event.preventDefault();
-
-  const lines = Number(document.getElementById('pph-lines-input').value);
-  const minutes = Number(document.getElementById('pph-minutes-input').value);
-  const seconds = Number(document.getElementById('pph-seconds-input').value);
-
-  if (lines <= 0 || (minutes === 0 && seconds === 0) || seconds < 0 || seconds > 59) {
-    alert('Please enter valid production lines and a time greater than zero (with seconds between 0 and 59).');
-    return;
-  }
-
-  const totalSeconds = (minutes * 60) + seconds;
-  const timeHours = totalSeconds / 3600;
-  const pph = lines / timeHours;
-
-  const { data: { session }, error: sessionError } = await db.auth.getSession();
-  if (sessionError || !session) {
-    alert('You must be logged in to save private PPH records.');
-    return;
-  }
-
-  const { error } = await db
-    .from('agent_pph_records')
-    .insert({
-      user_id: session.user.id,
-      production_lines: lines,
-      production_time: timeHours,
-      pph: pph
-    });
-
-  if (error) {
-    alert('Could not save record: ' + error.message);
-    return;
-  }
-
-  document.getElementById('pph-form').reset();
-  await loadPrivatePphRecords();
-});
-  
 /* ============ 6. CALCULATOR ============ */
 const num = id => Math.max(0, parseFloat(document.getElementById(id).value) || 0);
 
@@ -1572,44 +1276,12 @@ tick();
 if (!useDb) {
   showBanner('Database connection is unavailable. Check the Supabase URL and public key in the script.');
 }
-// Ensure everything runs only after the page DOM is fully loaded
-// Ensure everything runs only after the page DOM is fully loaded
-document.addEventListener('DOMContentLoaded', async () => {
-  loadThemeSettings();
-
-  const savedTab = localStorage.getItem('teamChennActiveTab');
-  if (TABS.includes(savedTab)) {
-    switchTab(savedTab);
-  } else {
-    switchTab('dashboard');
-  }
-
-  calculate();
-
-  // Handle password recovery link if present in URL
-  handlePasswordRecovery();
-
-  // Render public team tables immediately for everyone
-  ['coaching', 'ic', 'link'].forEach(render);
-
-  // Check auth state for admin privileges and private records
-  if (db) {
-    const { data: { session } } = await db.auth.getSession();
-    await refreshAuthState();
-    if (session) {
-      loadPrivatePphRecords();
-    }
-
-    // Real-time auth state listener for subsequent logins/logouts
-    db.auth.onAuthStateChange(async (event, session) => {
-      await refreshAuthState();
-      ['coaching', 'ic', 'link'].forEach(render);
-      if (session) {
-        loadPrivatePphRecords();
-      }
-    });
-  }
-});
+loadThemeSettings();
+const savedTab = localStorage.getItem('teamChennActiveTab');
+switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
+calculate();
+['coaching', 'ic', 'link'].forEach(render);
+refreshAuthState().then(handlePasswordRecovery);
 </script>
   
 <!-- PENDING QUESTIONS FLOATING BUBBLE -->
