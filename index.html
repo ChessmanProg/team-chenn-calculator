@@ -1639,6 +1639,11 @@ function applyThemeSettings() {
     '--team-accent',
     accentColors[accent] || accentColors.slate
   );
+  
+  document.documentElement.style.setProperty(
+  '--team-font-color',
+  fontColor
+);
 
   // Save preferences on this device, not in the shared database.
   try {
