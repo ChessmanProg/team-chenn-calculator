@@ -1049,17 +1049,17 @@ async function loadRows(key) {
       }));
     }
 
-    const { data, error } = await db
-      .from(tableName)
-      .select('*')
-      .order('id');
+const { data: tableData, error: tableError } = await db
+  .from(tableName)
+  .select('*')
+  .order('id');
 
-    if (error) {
-      showBanner('Could not load ' + tableName + ': ' + error.message);
-      return [];
-    }
+if (tableError) {
+  showBanner('Could not load ' + tableName + ': ' + tableError.message);
+  return [];
+}
 
-    return data || [];
+return tableData || [];
   }
 
   try {
