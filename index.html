@@ -1738,6 +1738,7 @@ function parseBulkCoachingTime(value) {
 }
 
 
+
 function previewBulkCoachingImport() {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to import coaching schedules.');
@@ -1763,23 +1764,52 @@ function previewBulkCoachingImport() {
   const errors = [];
 
   lines.forEach((line, index) => {
-    const cols = line.split('\t').map(v => v.trim());
+    // Read Markdown table rows such as:
+    // | 12:00 – 12:30 | Agent Name | [meet.google.com/abc](http://meet.google.com/abc) |
+    if (!line.includes('|')) {
+      errors.push(`Row ${index + 1}: Expected a Markdown table row with | separators.`);
+      return;
+    }
 
-    if (index === 0 && /time/i.test(cols[0] || '') && /agent/i.test(line)) {
+    const cols = line.trim().replace(/^\|/, '').replace(/\|$/, '')
+      .split('|').map(v => v.trim());
+
+    // Ignore the header and Markdown separator rows.
+    if (
+      /time/i.test(cols[0] || '') ||
+      cols.every(v => /^:?-{3,}:?$/.test(v.replace(/\s/g, '')))
+    ) {
       return;
     }
 
     if (cols.length < 3) {
-      errors.push(`Row ${index + 1}: Expected 3 columns: Time, Agent Name, Google Meet Link.`);
+      errors.push(`Row ${index + 1}: Expected Time Range, Agent Name, and Google Meet Link.`);
       return;
     }
 
-    const time = parseBulkCoachingTime(cols[0]);
-    const agent = cols[1];
-    const link = cols[2];
+    const times = cols[0].replace(/[–—]/g, '-').split('-').map(v => v.trim());
 
-    if (!time) {
-      errors.push(`Row ${index + 1}: Invalid time. Use 09:00 AM or 09:00.`);
+    if (times.length !== 2) {
+      errors.push(`Row ${index + 1}: Use a time range like 12:00 – 12:30.`);
+      return;
+    }
+
+    const startTime = parseBulkCoachingTime(times[0]);
+    const endTime = parseBulkCoachingTime(times[1]);
+    const agent = cols[1];
+
+    const markdownLink = cols[2].match(/\]\((https?:\/\/[^)]+)\)/i);
+    const link = markdownLink
+      ? markdownLink[1].trim()
+      : cols[2].replace(/^\[|\]$/g, '').trim();
+
+    if (!startTime || !endTime) {
+      errors.push(`Row ${index + 1}: Invalid time range. Use 24-hour times, e.g. 12:00 – 12:30.`);
+      return;
+    }
+
+    if (endTime <= startTime) {
+      errors.push(`Row ${index + 1}: End time must be later than start time.`);
       return;
     }
 
@@ -1795,7 +1825,8 @@ function previewBulkCoachingImport() {
 
     parsed.push({
       schedule_date: selectedDate,
-      time_slot: time,
+      time_slot: startTime,
+      end_time: endTime,
       agent_name: agent,
       meet_link: link,
       completed: false
@@ -1840,7 +1871,7 @@ function previewBulkCoachingImport() {
         <thead class="bg-slate-50">
           <tr>
             <th class="p-2">Date</th>
-            <th class="p-2">Time</th>
+            <th class="p-2">Time Range</th>
             <th class="p-2">Agent</th>
             <th class="p-2">Meeting Link</th>
           </tr>
@@ -1849,7 +1880,7 @@ function previewBulkCoachingImport() {
           ${unique.map(row => `
             <tr class="border-t border-slate-100">
               <td class="p-2 whitespace-nowrap">${esc(row.schedule_date)}</td>
-              <td class="p-2 whitespace-nowrap">${esc(row.time_slot)}</td>
+              <td class="p-2 whitespace-nowrap">${esc(row.time_slot)} – ${esc(row.end_time)}</td>
               <td class="p-2">${esc(row.agent_name)}</td>
               <td class="p-2 break-all">${row.meet_link ? esc(row.meet_link) : '—'}</td>
             </tr>`).join('')}
@@ -1869,6 +1900,7 @@ function previewBulkCoachingImport() {
     `${unique.length} valid row(s) found. Existing schedules will be checked before saving.`
   );
 }
+
 
   async function importBulkCoachingSchedules() {
   if (!isTeamChennAdmin) {
