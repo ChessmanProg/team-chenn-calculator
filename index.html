@@ -1577,13 +1577,22 @@ const savedTab = localStorage.getItem('teamChennActiveTab');
 switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
 calculate();
 
-// Initialize auth state and restore session before rendering tables
-refreshAuthState()
-  .then(() => handlePasswordRecovery())
-  .then(() => {
+// Handle password recovery link if present in URL
+handlePasswordRecovery();
+
+// Supabase automatically triggers onAuthStateChange on load when it restores a session from storage.
+// This single listener handles both initial load AND future auth changes without race conditions!
+if (db) {
+  db.auth.onAuthStateChange(async (event, session) => {
+    await refreshAuthState();
     ['coaching', 'ic', 'link'].forEach(render);
-    loadPrivatePphRecords();
+    if (session) {
+      loadPrivatePphRecords();
+    }
   });
+} else {
+  ['coaching', 'ic', 'link'].forEach(render);
+}
 </script>
   
 <!-- PENDING QUESTIONS FLOATING BUBBLE -->
