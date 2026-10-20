@@ -1065,13 +1065,24 @@ if (key === 'coaching') {
     document.getElementById('ic-willing-count').textContent =
       countByStatus('Willing to extend');
        body.innerHTML = rows.length
-      ? rows.map(r => `<tr>
-          <td class="p-4">${esc(r.agent_name)}</td>
-          <td class="p-4">${esc(r.extension_queue)}</td>
-          <td class="p-4">${badge(r.status)}</td>
-          <td class="p-4 text-right">${delBtn(key, r.id)}</td>
-        </tr>`).join('')
-      : empty(4, 'No IC logs yet. Select "Add New IC Log" to start.');
+  ? rows.map(r => `<tr>
+      <td class="p-4">${esc(r.agent_name)}</td>
+      <td class="p-4">${esc(r.extension_queue)}</td>
+      <td class="p-4">
+        <div class="flex items-center gap-2 flex-wrap">
+          ${badge(r.status)}
+          ${isTeamChennAdmin ? `
+            <button
+              onclick="editICStatus('${esc(r.id)}', '${esc(r.status || '')}')"
+              class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold">
+              ✏️ Edit
+            </button>
+          ` : ''}
+        </div>
+      </td>
+      <td class="p-4 text-right">${delBtn(key, r.id)}</td>
+    </tr>`).join('')
+  : empty(4, 'No IC logs yet. Select "Add New IC Log" to start.');
   } else {
     body.innerHTML = rows.length
       ? rows.map(r => {
