@@ -1069,10 +1069,46 @@ async function loadRows(key) {
 }
 
 
+
 async function insertRow(key, row) {
   const tableName = TABLES[key].name;
 
   if (db) {
+    if (key === 'coaching') {
+      const meetLink = String(row.meet_link || '').trim();
+
+      // Keep the original required column populated without storing
+      // the real meeting URL in the public schedule record.
+      const safeRow = {
+        ...row,
+        meet_link: 'PROTECTED'
+      };
+
+      const { data, error } = await db
+        .from(tableName)
+        .insert(safeRow)
+        .select('id')
+        .single();
+
+      if (error) return error;
+
+      const { error: linkError } = await db.rpc(
+        'save_team_chenn_meeting_link',
+        {
+          p_schedule_id: data.id,
+          p_meet_link: meetLink
+        }
+      );
+
+      if (linkError) {
+        // Avoid leaving a schedule behind if its link could not be saved.
+        await db.from(tableName).delete().eq('id', data.id);
+        return linkError;
+      }
+
+      return null;
+    }
+
     const { error } = await db.from(tableName).insert(row);
     return error;
   }
@@ -1086,6 +1122,7 @@ async function insertRow(key, row) {
 
   return null;
 }
+
 async function markCoachingDone(id) {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to complete a coaching schedule.');
