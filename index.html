@@ -115,6 +115,19 @@ body.dark .text-slate-500 {
 body.dark .text-slate-400 {
   color: #b4b4b4 !important;
 }
+  /* Apply the selected font color to muted text and calculator values */
+body {
+  --team-font-color: #ecfdf5;
+}
+
+body.dark .text-slate-500,
+body.dark .text-slate-400,
+body.dark .text-slate-600,
+body.dark .text-slate-700,
+body.dark .text-slate-800,
+body.dark .text-slate-900 {
+  color: var(--team-font-color) !important;
+}
 
 /* Borders */
 body.dark .border-slate-100,
