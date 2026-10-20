@@ -1648,6 +1648,26 @@ function closeModal() {
   currentKey = null;
 }
 
+function openBulkCoachingImport() {
+  if (!isTeamChennAdmin) {
+    showBanner('Admin access is required to import coaching schedules.');
+    return;
+  }
+
+  document.getElementById('bulk-coaching-input').value = '';
+  document.getElementById('bulk-coaching-preview').innerHTML = '';
+  document.getElementById('bulk-coaching-preview').classList.add('hidden');
+
+  const status = document.getElementById('bulk-coaching-status');
+  status.textContent = '';
+  status.classList.add('hidden');
+
+  document.getElementById('bulk-coaching-modal').classList.remove('hidden');
+}
+
+function closeBulkCoachingImport() {
+  document.getElementById('bulk-coaching-modal').classList.add('hidden');
+}
 async function saveModal() {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to save records.');
