@@ -1668,6 +1668,197 @@ function openBulkCoachingImport() {
 function closeBulkCoachingImport() {
   document.getElementById('bulk-coaching-modal').classList.add('hidden');
 }
+
+let bulkCoachingRows = [];
+
+function showBulkImportStatus(message, isError = false) {
+  const status = document.getElementById('bulk-coaching-status');
+  status.textContent = message;
+  status.className = 'mt-4 rounded-xl p-3 text-sm ' +
+    (isError
+      ? 'bg-red-50 text-red-800 border border-red-200'
+      : 'bg-emerald-50 text-emerald-800 border border-emerald-200');
+}
+
+function parseBulkCoachingDate(value) {
+  const v = value.trim();
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+    const d = new Date(v + 'T12:00:00');
+    return !Number.isNaN(d.getTime()) &&
+      d.toISOString().slice(0, 10) === v ? v : '';
+  }
+
+  const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    const month = Number(m[1]);
+    const day = Number(m[2]);
+    const year = Number(m[3]);
+    const d = new Date(Date.UTC(year, month - 1, day));
+
+    if (d.getUTCFullYear() === year &&
+        d.getUTCMonth() === month - 1 &&
+        d.getUTCDate() === day) {
+      return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+  }
+
+  return '';
+}
+
+function parseBulkCoachingTime(value) {
+  const v = value.trim();
+  let m = v.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+
+  if (m) {
+    let hour = Number(m[1]);
+    const minute = Number(m[2]);
+    if (hour < 1 || hour > 12 || minute > 59) return '';
+    hour = hour % 12 + (/PM/i.test(m[3]) ? 12 : 0);
+    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+  }
+
+  m = v.match(/^([01]?\d|2[0-3]):([0-5]\d)$/);
+  if (m) {
+    return `${String(Number(m[1])).padStart(2, '0')}:${m[2]}`;
+  }
+
+  return '';
+}
+
+function previewBulkCoachingImport() {
+  if (!isTeamChennAdmin) {
+    showBanner('Admin access is required to import coaching schedules.');
+    return;
+  }
+
+  const input = document.getElementById('bulk-coaching-input').value.trim();
+  const preview = document.getElementById('bulk-coaching-preview');
+
+  if (!input) {
+    showBulkImportStatus('Paste your spreadsheet rows first.', true);
+    return;
+  }
+
+  const lines = input.split(/\r?\n/).filter(line => line.trim());
+  const parsed = [];
+  const errors = [];
+
+  lines.forEach((line, index) => {
+    const cols = line.split('\t').map(v => v.trim());
+
+    if (index === 0 &&
+        /date/i.test(cols[0] || '') &&
+        /agent/i.test(line)) {
+      return;
+    }
+
+    if (cols.length < 5) {
+      errors.push(`Row ${index + 1}: Expected 5 columns.`);
+      return;
+    }
+
+    const date = parseBulkCoachingDate(cols[0]);
+    const start = parseBulkCoachingTime(cols[1]);
+    const end = parseBulkCoachingTime(cols[2]);
+    const agent = cols[3];
+    const link = cols[4];
+
+    if (!date) {
+      errors.push(`Row ${index + 1}: Invalid date. Use YYYY-MM-DD or MM/DD/YYYY.`);
+      return;
+    }
+
+    if (!start || !end || start >= end) {
+      errors.push(`Row ${index + 1}: Invalid start or end time.`);
+      return;
+    }
+
+    if (!agent) {
+      errors.push(`Row ${index + 1}: Agent name is missing.`);
+      return;
+    }
+
+    if (link && !/^https?:\/\//i.test(link)) {
+      errors.push(`Row ${index + 1}: Meeting link must start with http:// or https://.`);
+      return;
+    }
+
+    parsed.push({
+      schedule_date: date,
+      time_slot: `${start}-${end}`,
+      agent_name: agent,
+      meet_link: link,
+      completed: false
+    });
+  });
+
+  const seen = new Set();
+  const unique = [];
+
+  parsed.forEach(row => {
+    const key = [
+      row.schedule_date,
+      row.time_slot,
+      row.agent_name.trim().toLowerCase()
+    ].join('|');
+
+    if (seen.has(key)) {
+      errors.push(`Duplicate in pasted rows: ${row.schedule_date}, ${row.time_slot}, ${row.agent_name}`);
+      return;
+    }
+
+    seen.add(key);
+    unique.push(row);
+  });
+
+  bulkCoachingRows = unique;
+  preview.classList.remove('hidden');
+
+  preview.innerHTML = `
+    <h3 class="mb-3 text-lg font-bold text-slate-900">Import Preview</h3>
+    <p class="mb-3 text-sm text-slate-600">
+      ${unique.length} valid row(s) ready for duplicate checking and import.
+    </p>
+    ${errors.length ? `
+      <div class="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p class="mb-2 font-bold">Rows needing attention</p>
+        <ul class="list-disc pl-5">${errors.map(e => `<li>${esc(e)}</li>`).join('')}</ul>
+      </div>` : ''}
+    <div class="overflow-x-auto rounded-xl border border-slate-200">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="p-2">Date</th>
+            <th class="p-2">Time</th>
+            <th class="p-2">Agent</th>
+            <th class="p-2">Meeting Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${unique.map(row => `
+            <tr class="border-t border-slate-100">
+              <td class="p-2 whitespace-nowrap">${esc(row.schedule_date)}</td>
+              <td class="p-2 whitespace-nowrap">${esc(row.time_slot)}</td>
+              <td class="p-2">${esc(row.agent_name)}</td>
+              <td class="p-2 break-all">${row.meet_link ? esc(row.meet_link) : '—'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 flex justify-end">
+      <button type="button"
+        onclick="importBulkCoachingSchedules()"
+        ${unique.length ? '' : 'disabled'}
+        class="rounded-xl bg-emerald-700 px-5 py-3 font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50">
+        Save Valid Schedules
+      </button>
+    </div>`;
+
+  showBulkImportStatus(
+    `${unique.length} valid row(s) found. Existing schedules will be checked before saving.`
+  );
+}
 async function saveModal() {
   if (!isTeamChennAdmin) {
     showBanner('Admin access is required to save records.');
