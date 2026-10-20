@@ -1573,15 +1573,18 @@ if (!useDb) {
   showBanner('Database connection is unavailable. Check the Supabase URL and public key in the script.');
 }
 loadThemeSettings();
+
 const savedTab = localStorage.getItem('teamChennActiveTab');
-switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
+if (document.getElementById('btn-' + (TABS.includes(savedTab) ? savedTab : 'dashboard'))) {
+  switchTab(TABS.includes(savedTab) ? savedTab : 'dashboard');
+}
+
 calculate();
 
 // Handle password recovery link if present in URL
 handlePasswordRecovery();
 
-// Supabase automatically triggers onAuthStateChange on load when it restores a session from storage.
-// This single listener handles both initial load AND future auth changes without race conditions!
+// Supabase session handling and real-time auth listener
 if (db) {
   db.auth.onAuthStateChange(async (event, session) => {
     await refreshAuthState();
