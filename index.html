@@ -4140,6 +4140,186 @@ async function loadTeamAnnouncements() {
   }
 }
 
+async function editTeamAnnouncement(announcementId) {
+  if (!isTeamChennAdmin) {
+    alert('Only approved admins can edit announcements.');
+    return;
+  }
+
+  const item = teamAnnouncementsCache.find(row => row.id === announcementId);
+
+  if (!item) {
+    alert('Announcement not found. Please refresh and try again.');
+    return;
+  }
+
+  const newTitle = prompt('Edit announcement title:', item.title);
+  if (newTitle === null) return;
+
+  const newBody = prompt('Edit announcement message:', item.body);
+  if (newBody === null) return;
+
+  if (!newTitle.trim() || !newBody.trim()) {
+    alert('The title and message cannot be empty.');
+    return;
+  }
+
+  if (newTitle.trim().length > 150 || newBody.trim().length > 5000) {
+    alert('Title limit: 150 characters. Message limit: 5000 characters.');
+    return;
+  }
+
+  try {
+    const { error } = await db
+      .from('team_announcements')
+      .update({
+        title: newTitle.trim(),
+        body: newBody.trim()
+      })
+      .eq('id', announcementId);
+
+    if (error) throw error;
+
+    await loadTeamAnnouncements();
+    alert('Announcement updated successfully!');
+  } catch (error) {
+    console.error('Announcement edit failed:', error);
+    alert('Could not edit announcement: ' + error.message);
+  }
+}
+
+async function deleteTeamAnnouncement(announcementId) {
+  if (!isTeamChennAdmin) {
+    alert('Only approved admins can delete announcements.');
+    return;
+  }
+
+  if (!confirm('Delete this announcement permanently? This cannot be undone.')) {
+    return;
+  }
+
+  try {
+    const item = teamAnnouncementsCache.find(row => row.id === announcementId);
+
+    const { error } = await db
+      .from('team_announcements')
+      .delete()
+      .eq('id', announcementId);
+
+    if (error) throw error;
+
+    if (item?.image_path) {
+      const { error: imageError } = await db.storage
+        .from('team-announcement-images')
+        .remove([item.image_path]);
+
+      if (imageError) {
+        console.warn('Announcement deleted, but image cleanup failed:', imageError);
+      }
+    }
+
+    await refreshAnnouncementUnreadCount();
+    await loadTeamAnnouncements();
+
+    alert('Announcement deleted successfully!');
+  } catch (error) {
+    console.error('Announcement deletion failed:', error);
+    alert('Could not delete announcement: ' + error.message);
+  }
+}
+
+async function uploadTeamAnnouncementImage(announcementId) {
+  if (!isTeamChennAdmin) {
+    alert('Only approved admins can upload announcement images.');
+    return;
+  }
+
+  const item = teamAnnouncementsCache.find(row => row.id === announcementId);
+
+  if (!item) {
+    alert('Announcement not found. Please refresh and try again.');
+    return;
+  }
+
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/jpeg,image/png,image/webp,image/gif';
+
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/gif'
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert('Choose a JPG, PNG, WebP, or GIF image.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('The image must be 5 MB or smaller.');
+      return;
+    }
+
+    const extensionByType = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/webp': 'webp',
+      'image/gif': 'gif'
+    };
+
+    const extension = extensionByType[file.type];
+    const imagePath = `${announcementId}/${Date.now()}.${extension}`;
+
+    try {
+      const { error: uploadError } = await db.storage
+        .from('team-announcement-images')
+        .upload(imagePath, file, {
+          upsert: false,
+          contentType: file.type
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { error: updateError } = await db
+        .from('team_announcements')
+        .update({ image_path: imagePath })
+        .eq('id', announcementId);
+
+      if (updateError) {
+        await db.storage
+          .from('team-announcement-images')
+          .remove([imagePath]);
+
+        throw updateError;
+      }
+
+      if (item.image_path) {
+        const { error: cleanupError } = await db.storage
+          .from('team-announcement-images')
+          .remove([item.image_path]);
+
+        if (cleanupError) {
+          console.warn('Image saved, but old image cleanup failed:', cleanupError);
+        }
+      }
+
+      await loadTeamAnnouncements();
+      alert('Announcement image uploaded successfully!');
+    } catch (error) {
+      console.error('Announcement image upload failed:', error);
+      alert('Could not upload image: ' + error.message);
+    }
+  };
+
+  input.click();
+}
+
 async function markAnnouncementRead(announcementId) {
   if (!db) return;
 
