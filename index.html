@@ -680,7 +680,14 @@ body:not(.team-picker-active) #team-selection { display: none !important; }
   transform: translateY(-4px);
   border-color: rgba(167,243,208,.7);
   box-shadow: 0 22px 52px rgba(0,0,0,.3), 0 0 22px rgba(52,211,153,.1);
-  outline: none;
+}
+.team-card:focus-visible {
+  outline: 3px solid #a7f3d0;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .team-card { transition: none; }
+  .team-card:hover, .team-card:focus-visible { transform: none; }
 }
 .team-card-mark {
   display: grid;
