@@ -625,6 +625,11 @@ body.team-picker-active > footer,
 body.team-picker-active > section:not(#team-selection) {
   display: none !important;
 }
+/* Keep workspace-only floating tools off the team selection screen. */
+body.team-picker-active #pending-questions-bubble,
+body.team-picker-active #team-announcements-bubble {
+  display: none !important;
+}
 body.team-picker-active #team-selection {
   position: relative;
   z-index: 2;
