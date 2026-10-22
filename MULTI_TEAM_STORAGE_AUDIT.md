@@ -34,14 +34,14 @@ This is documentation, not SQL. No bucket configuration, storage object, policy,
 
 ## Dashboard policy inventory supplied by the user (2026-10-22)
 
-The Dashboard listing confirms these policy names, commands, and role scopes. The user has now supplied the exact expression for the announcement-image INSERT policy, but expressions for the remaining policies are still needed.
+The Dashboard listing confirms these policy names, commands, and role scopes. Exact expressions are recorded below when supplied; expressions for other policies are still needed.
 
 ### `team-announcement-images` (public bucket)
 
 | Policy name | Command | Applied to | Expression status |
 |---|---|---|---|
 | Team announcement admins upload images | INSERT | authenticated | Known; see below |
-| Team announcement admins update images | UPDATE | authenticated | Still needed |
+| Team announcement admins update images | UPDATE | authenticated | Known; USING and WITH CHECK supplied; see below |
 | Team announcement admins delete images | DELETE | authenticated | Still needed |
 
 **INSERT policy expression supplied by user:**
@@ -50,7 +50,19 @@ The Dashboard listing confirms these policy names, commands, and role scopes. Th
 ((bucket_id = 'team-announcement-images'::text) AND is_team_chenn_admin())
 ```
 
-This is explicitly Chenn-admin-only because it calls `is_team_chenn_admin()`. It does not yet authorize Team Lev or Team Gemma admins. It also does not verify that the first path segment identifies an existing announcement belonging to the same team as the uploader. The eventual replacement should bind authorization to the referenced announcement row and its team, rather than simply replacing the Chenn helper with a team role check.
+**UPDATE policy expressions supplied by user:**
+
+USING:
+```sql
+((bucket_id = 'team-announcement-images'::text) AND is_team_chenn_admin())
+```
+
+WITH CHECK:
+```sql
+((bucket_id = 'team-announcement-images'::text) AND is_team_chenn_admin())
+```
+
+These expressions are explicitly Chenn-admin-only because they call `is_team_chenn_admin()`. They do not authorize Team Lev or Team Gemma admins. They also do not verify that the first path segment identifies an existing announcement belonging to the same team as the uploader. The eventual replacement should bind authorization to the referenced announcement row and its team, rather than simply replacing the Chenn helper with a team role check.
 
 ### `team-question-photos` (private bucket)
 
