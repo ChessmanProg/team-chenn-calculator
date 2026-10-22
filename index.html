@@ -4661,7 +4661,8 @@ async function publishTeamAnnouncement(event) {
       const { error: imageUpdateError } = await db
         .from('team_announcements')
         .update({ image_path: uploadedImagePath })
-        .eq('id', announcement.id);
+        .eq('id', announcement.id)
+        .eq('team_key', oceanSelectedTeam || 'chenn');
 
       if (imageUpdateError) throw imageUpdateError;
     }
