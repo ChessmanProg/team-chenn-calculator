@@ -118,3 +118,27 @@ Frontend inspection of `index.html` confirms `submitTeamQuestion()` uploads `que
 - Failed question insert does not silently accumulate unlimited orphaned uploads; cleanup respects the approved retention window.
 
 No SQL was added or executed by this audit. Migration gate remains CLOSED.
+
+
+## Additional read-only policy and function inventory (2026-10-22)
+
+Queried `pg_policies` for the main team-scoped tables and inspected `pg_proc` security-definer flags plus EXECUTE privileges. This was read-only; no policies or functions were changed.
+
+### Policy findings requiring resolution
+
+- `coaching_schedules`, `ic_logs`, and `important_links` retain permissive Chenn-admin write policies and permissive `SELECT USING (true)` policies alongside restrictive policies. For authenticated users, the restrictive member-access policies require an enabled team and membership; writes require an enabled team and admin/owner. Anonymous roles have restrictive `false` policies. Keep the policy set intact until all operations and effective behavior are tested.
+- `team_questions` has legacy permissive `SELECT USING (true)` and permissive INSERT for `anon, authenticated`; restrictive policies block anon and constrain authenticated reads to team membership, but the SELECT restrictive predicate does not itself check `teams.is_enabled`. A membership in a disabled team may therefore still satisfy that specific gate. This must be tested and corrected in the migration design before enabling new teams.
+- `team_question_comments` has a permissive public SELECT plus restrictive anon block and team-member SELECT check. The restrictive SELECT checks membership against the comment's `team_key` but does not explicitly require the parent question's `team_key` to match; INSERT does check the parent question ID/team pair. Validate existing rows and ensure SELECT/UPDATE/DELETE predicates consistently bind comments to their parent question's team.
+- `team_question_comments` DELETE has a permissive own-comment policy and a restrictive team-membership policy; effective access allows a team member to delete comments in their team, not just their own comments. Confirm whether this moderation behavior is intended before migration.
+- `team_announcement_reads` has user-owned permissive policies and restrictive team-aware policies. INSERT verifies the referenced announcement ID and team_key match; SELECT/UPDATE/DELETE checks membership and ownership as applicable. UPDATE's restrictive predicate does not itself revalidate the announcement relationship, so test row mutation attempts and consider an explicit invariant.
+- `team_announcements` has legacy permissive public SELECT and permissive Chenn-admin write policies, with restrictive policies that block anon and require enabled-team membership for authenticated reads and team admin/owner for writes. Effective authenticated access is constrained by the restrictive policies, but legacy rules complicate review and should be consolidated carefully.
+- `team_chenn_questions` has legacy permissive user INSERT plus Chenn-admin policies and restrictive team-aware policies; inspect the exact column/team behavior and preserve compatibility for this legacy table.
+- `agent_pph_records` has a user-owned permissive policy and restrictive member access that requires enabled team plus team membership. Verify whether `user_id` ownership is meant to restrict reads/writes further or whether all team members are intended to access all records.
+
+### Security-definer function/grant findings
+
+The following functions are marked `SECURITY DEFINER` and are executable by `authenticated` but not `anon`: `private.is_team_chenn_admin()`, `public.delete_own_team_question(bigint,text)`, `public.get_team_chenn_meeting_links()`, `public.has_team_role(text,text[])`, `public.is_team_chenn_admin()`, `public.is_team_chenn_owner()`, `public.owner_grant_team_chenn_admin(uuid)`, `public.owner_revoke_team_chenn_admin(uuid)`, and `public.save_team_chenn_meeting_link(bigint,text)`. `public.rls_auto_enable()` is not executable by anon or authenticated. This query confirms effective role grants but does not establish that function bodies are safe. Before rollout, inspect function bodies, fixed `search_path` behavior, and owner-grant/revoke authorization. Meeting-link RPCs remain Chenn-specific and must validate the referenced schedule's team.
+
+### Current conclusion
+
+This read-only inventory identified specific migration blockers: disabled-team question access may not be explicitly blocked by the current question SELECT predicate; comment SELECT is not explicitly tied to the parent question team; and comment DELETE's effective rule appears broader than author-only deletion. Do not apply a policy rewrite until these are tested against intended behavior and existing data.
