@@ -4096,6 +4096,7 @@ async function refreshAnnouncementUnreadCount() {
     const { data: announcements, error: announcementError } = await db
       .from('team_announcements')
       .select('id')
+      .eq('team_key', oceanSelectedTeam || 'chenn')
       .order('created_at', { ascending: false });
 
     if (announcementError) throw announcementError;
@@ -4103,7 +4104,8 @@ async function refreshAnnouncementUnreadCount() {
     const { data: reads, error: readError } = await db
       .from('team_announcement_reads')
       .select('announcement_id')
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .eq('team_key', oceanSelectedTeam || 'chenn');
 
     if (readError) throw readError;
 
@@ -4162,7 +4164,8 @@ async function loadTeamAnnouncements() {
 
     const { data: announcements, error } = await db
       .from('team_announcements')
-      .select('id,title,body,created_at,created_by,image_path')
+      .select('id,title,body,created_at,created_by,image_path,team_key')
+      .eq('team_key', oceanSelectedTeam || 'chenn')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -4175,7 +4178,8 @@ async function loadTeamAnnouncements() {
       const { data: reads, error: readError } = await db
         .from('team_announcement_reads')
         .select('announcement_id')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('team_key', oceanSelectedTeam || 'chenn');
 
       if (readError) throw readError;
 
@@ -4522,7 +4526,8 @@ async function markAnnouncementRead(announcementId) {
       .upsert(
         {
           announcement_id: announcementId,
-          user_id: user.id
+          user_id: user.id,
+          team_key: teamAnnouncementsCache.find(item => item.id === announcementId)?.team_key || oceanSelectedTeam || 'chenn'
         },
         { onConflict: 'announcement_id,user_id' }
       );
@@ -4608,7 +4613,8 @@ async function publishTeamAnnouncement(event) {
       .insert({
         title,
         body,
-        created_by: user.id
+        created_by: user.id,
+        team_key: oceanSelectedTeam || 'chenn'
       })
       .select('id')
       .single();
