@@ -560,6 +560,21 @@ body.auth-logged-out #login-form button[type="submit"] {
   background: linear-gradient(100deg, #0284c7, #2563eb) !important;
   box-shadow: 0 8px 22px rgba(14,165,233,.25);
 }
+/* Ocean login button interaction polish */
+body.auth-logged-out #login-form button[type="submit"]:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 10px 26px rgba(14,165,233,.34);
+}
+body.auth-logged-out #login-form button[type="submit"]:focus-visible {
+  outline: 3px solid rgba(186,230,253,.95);
+  outline-offset: 3px;
+}
+body.auth-logged-out #login-form button[type="submit"]:active {
+  filter: brightness(.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  body.auth-logged-out #login-form button[type="submit"] { transition: none !important; }
+}
 body.auth-logged-out #login-form button[type="button"] {
   background: transparent !important;
   color: #bae6fd !important;
