@@ -490,6 +490,20 @@ body.auth-logged-out #auth-portal h2 {
   letter-spacing: -.04em;
   margin-bottom: 8px;
 }
+.login-password-wrap { display: flex; flex-direction: column; align-items: stretch; gap: 6px; width: 100%; }
+body.auth-logged-out .login-password-wrap input { width: 100%; box-sizing: border-box; }
+body.auth-logged-out .login-password-toggle {
+  align-self: flex-end;
+  padding: 2px 0;
+  color: #bae6fd;
+  background: transparent;
+  border: 0;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+body.auth-logged-out .login-password-toggle:hover { color: #ffffff; text-decoration: underline; }
+
 body.auth-logged-out #auth-portal #auth-status {
   color: #bae6fd !important;
   text-align: center;
@@ -748,7 +762,10 @@ body:not(.team-picker-active) #team-selection { display: none !important; }
       </div>
       <form id="login-form" class="flex flex-col sm:flex-row gap-2" onsubmit="event.preventDefault(); adminLogin();">
         <input id="login-email" type="email" autocomplete="username" placeholder="Admin email" class="px-3 py-2 border border-slate-300 rounded-lg">
-        <input id="login-password" type="password" autocomplete="current-password" placeholder="Password" class="px-3 py-2 border border-slate-300 rounded-lg">
+        <div class="login-password-wrap">
+          <input id="login-password" type="password" autocomplete="current-password" placeholder="Password" class="px-3 py-2 border border-slate-300 rounded-lg">
+          <button type="button" id="toggle-login-password" class="login-password-toggle" onclick="toggleLoginPassword()" aria-controls="login-password" aria-pressed="false">Show password</button>
+        </div>
         <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg">Log In</button>
 <button type="button" onclick="requestPasswordReset()" class="px-4 py-2 text-sm text-indigo-600 hover:underline font-semibold">
   Forgot password?
@@ -1156,6 +1173,17 @@ function showTeamNotice(team) {
   if (!notice) return;
   const teamName = team === 'lev' ? 'Team Lev BC AI' : 'Team Gemma BC AI';
   notice.textContent = teamName + ' is not open yet. We’ll set up its separate member access and database policies before enabling it, so teams cannot see each other’s records.';
+}
+
+function toggleLoginPassword() {
+  const passwordInput = document.getElementById('login-password');
+  const toggleButton = document.getElementById('toggle-login-password');
+  if (!passwordInput || !toggleButton) return;
+
+  const showing = passwordInput.type === 'password';
+  passwordInput.type = showing ? 'text' : 'password';
+  toggleButton.textContent = showing ? 'Hide password' : 'Show password';
+  toggleButton.setAttribute('aria-pressed', String(showing));
 }
 
 async function adminLogin() {
