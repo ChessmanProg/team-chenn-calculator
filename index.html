@@ -3371,7 +3371,8 @@ async function getTeamQuestions() {
 
   const { data, error } = await db
     .from('team_questions')
-    .select('id,name,question,photo_url,answer,status,created_at')
+    .select('id,name,question,photo_url,answer,status,created_at,team_key')
+    .eq('team_key', oceanSelectedTeam || 'chenn')
     .order('created_at', { ascending: false })
     .limit(50);
 
