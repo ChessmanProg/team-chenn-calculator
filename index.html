@@ -1657,7 +1657,8 @@ async function editICStatus(id, currentStatus) {
       const { error } = await db
         .from(TABLES.ic.name)
         .update({ status })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('team_key', oceanSelectedTeam || 'chenn');
 
       if (error) {
         overlay.remove();
