@@ -1340,7 +1340,8 @@ async function markCoachingDone(id) {
     const { error } = await db
       .from(TABLES.coaching.name)
       .update({ completed: true })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('team_key', oceanSelectedTeam || 'chenn');
 
     if (error) {
       showBanner('Could not mark as done: ' + error.message);
@@ -1697,7 +1698,9 @@ async function deleteRow(key, id) {
   const tableName = TABLES[key].name;
 
   if (db) {
-    const { error } = await db.from(tableName).delete().eq('id', id);
+    const { error } = await db.from(tableName).delete()
+      .eq('id', id)
+      .eq('team_key', oceanSelectedTeam || 'chenn');
     if (error) {
       showBanner('Delete failed: ' + error.message);
       return;
@@ -3699,7 +3702,8 @@ async function setupQuestionDiscussion(questionId, host) {
                 .from('team_question_comments')
                 .update({ comment_text: editedText })
                 .eq('id', comment.id)
-                .eq('user_id', user.id);
+                .eq('user_id', user.id)
+                .eq('team_key', oceanSelectedTeam || 'chenn');
 
               if (error) throw error;
 
@@ -3726,7 +3730,8 @@ async function setupQuestionDiscussion(questionId, host) {
                 .from('team_question_comments')
                 .delete()
                 .eq('id', comment.id)
-                .eq('user_id', user.id);
+                .eq('user_id', user.id)
+                .eq('team_key', oceanSelectedTeam || 'chenn');
 
               if (error) throw error;
 
