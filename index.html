@@ -724,6 +724,13 @@ body:not(.team-picker-active) #team-selection { display: none !important; }
 .team-card-pending { border-style: dashed; background: linear-gradient(145deg, rgba(8,42,32,.78), rgba(3,24,20,.78)); }
 .team-card-pending .team-card-action { color: #d1d5c7; }
 .team-card-pending .team-card-mark { color: #cbd5c0; background: rgba(148,163,139,.08); border-color: rgba(203,213,192,.2); }
+.team-card-pending { cursor: not-allowed; }
+.team-card-pending:hover, .team-card-pending:focus-visible {
+  transform: none;
+  border-color: rgba(203,213,192,.28);
+  box-shadow: 0 18px 45px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.06);
+}
+.team-card-pending:focus-visible { outline: 2px solid rgba(203,213,192,.45); outline-offset: 3px; }
 #team-selection-notice { min-height: 24px; margin-top: 20px; color: #fde68a; }
 @media (max-width: 800px) {
   .team-card-grid { grid-template-columns: 1fr; }
