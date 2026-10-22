@@ -561,6 +561,16 @@ body.auth-logged-out #password-reset-form button {
 }
 
 body:not(.auth-logged-out) #auth-portal { display: none !important; }
+
+/* Keep hidden authentication controls hidden even when layout styles are applied. */
+.team-logout.hidden { display: none !important; }
+body.auth-logged-out #password-reset-form.hidden { display: none !important; }
+
+/* Floating signed-in widgets must not appear on the logged-out portal. */
+body.auth-logged-out #pending-questions-bubble,
+body.auth-logged-out #team-announcements-bubble {
+  display: none !important;
+}
 .team-logout {
   position: fixed;
   z-index: 20;
