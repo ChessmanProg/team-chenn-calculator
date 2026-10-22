@@ -42,7 +42,7 @@ The Dashboard listing confirms these policy names, commands, and role scopes. Ex
 |---|---|---|---|
 | Team announcement admins upload images | INSERT | authenticated | Known; see below |
 | Team announcement admins update images | UPDATE | authenticated | Known; USING and WITH CHECK supplied; see below |
-| Team announcement admins delete images | DELETE | authenticated | Still needed |
+| Team announcement admins delete images | DELETE | authenticated | Known; see below |
 
 **INSERT policy expression supplied by user:**
 
@@ -64,14 +64,32 @@ WITH CHECK:
 
 These expressions are explicitly Chenn-admin-only because they call `is_team_chenn_admin()`. They do not authorize Team Lev or Team Gemma admins. They also do not verify that the first path segment identifies an existing announcement belonging to the same team as the uploader. The eventual replacement should bind authorization to the referenced announcement row and its team, rather than simply replacing the Chenn helper with a team role check.
 
+**DELETE policy expression supplied by user (USING):**
+```sql
+((bucket_id = 'team-announcement-images'::text) AND is_team_chenn_admin())
+```
+This is likewise Chenn-admin-only and does not validate the announcement row/team referenced by the object path.
+
 ### `team-question-photos` (private bucket)
 
 | Policy name | Command | Applied to | Expression status |
 |---|---|---|---|
-| View linked team question photos | SELECT | authenticated | Still needed |
-| Upload team question photos | INSERT | authenticated | Still needed |
+| View linked team question photos | SELECT | authenticated | Known; see below |
+| Upload team question photos | INSERT | authenticated | Known; see below |
 
-The policy names and role scope alone are not sufficient to validate authorization. For UPDATE, both `USING` and `WITH CHECK` must be reviewed. The exact expressions are still needed to determine whether each policy is Chenn-only, correctly team-scoped, and safe against cross-team object references. The user may provide the policy detail panel's full expressions or an authorized policy export; no SQL bypass is needed.
+**SELECT policy expression supplied by user:**
+```sql
+((bucket_id = 'team-question-photos'::text) AND (EXISTS ( SELECT 1
+   FROM team_questions q
+  WHERE ((q.photo_url = objects.name) AND has_team_role(q.team_key, ARRAY['member'::text, 'admin'::text, 'owner'::text])))))
+```
+This links object reads to the question row and checks membership for that row's `team_key`. Confirm that `has_team_role()` and `team_questions` RLS/grants are secure; this policy alone is not the whole authorization model.
+
+**INSERT policy expression supplied by user:**
+```sql
+((bucket_id = 'team-question-photos'::text) AND (lower(storage.extension(name)) = ANY (ARRAY['jpg'::text, 'jpeg'::text, 'png'::text, 'webp'::text])) AND (auth.uid() IS NOT NULL) AND has_team_role('chenn'::text, ARRAY['member'::text, 'admin'::text, 'owner'::text]))
+```
+This allows only users with a Chenn role to upload, despite accepting common image extensions. It is not ready for Lev/Gemma. The frontend currently uploads `question-photos/<random-uuid>.<extension>` before inserting the `team_questions` row with `team_key = oceanSelectedTeam || 'chenn'`. Since the intended question row does not exist at upload time, a future design must securely establish the intended team before upload (for example, a server-controlled team-scoped upload path or a server-side upload flow) and prevent cross-team path/object references. Keep extension validation and existing objects; design orphan cleanup separately.
 
 ## Gate remains closed
 
