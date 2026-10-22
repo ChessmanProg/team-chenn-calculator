@@ -3789,6 +3789,13 @@ async function submitTeamQuestion(event) {
     return;
   }
 
+  // Require an authenticated session before any photo upload or submission.
+  const { data: { user }, error: userError } = await db.auth.getUser();
+  if (userError || !user) {
+    questionMessage('Please sign in with an approved Team Chenn account before submitting a question.', true);
+    return;
+  }
+
   if (!name || !question) {
     questionMessage('Enter your name and question.', true);
     return;
@@ -3837,6 +3844,8 @@ const ownerTokenHash = await questionTokenHash(ownerToken);
 const { data: insertedQuestion, error } = await db
   .from('team_questions')
   .insert({
+    user_id: user.id,
+    team_key: 'chenn',
     name: name,
     question: question,
     photo_url: photoPath,
