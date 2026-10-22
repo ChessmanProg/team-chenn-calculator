@@ -20,13 +20,12 @@ The current coaching, IC-log, and important-link tables have Chenn-specific perm
 - The website currently rejects opening Lev/Gemma.
 - Frontend queries for schedules, IC logs, important links, questions, and announcements need explicit team context in addition to RLS.
 - Question comments must be scoped by the parent question's team.
-- Announcement receipts must be scoped by both user and team.
-- Storage policies have not yet been completely inspected.
+- Storage policy names and commands are now inventoried from the user's Dashboard listing, but the authorization expressions remain unavailable.
 
 ## Required migration work before any execution
 
 1. Export every policy for each relevant table with schema, command, permissive/restrictive mode, roles, USING, and WITH CHECK.
-2. Export Storage policies for both image buckets and verify public/private bucket behavior.
+2. Record and review Storage policy expressions for both image buckets; names and commands alone are not enough.
 3. Inventory table grants and EXECUTE grants for every SECURITY DEFINER RPC.
 4. Draft replacement policies table-by-table. Preserve intended Chenn behavior; restrict all reads/writes to enabled teams and authorized memberships.
 5. Replace Chenn-only meeting-link RPCs with team-aware versions that verify the schedule belongs to the requested team.
@@ -38,21 +37,27 @@ The current coaching, IC-log, and important-link tables have Chenn-specific perm
 
 This file is documentation only. Do not run it as SQL. No database policies, functions, grants, memberships, team enablement, or live-site deployment are changed by this draft.
 
-
 ## Updated audit status (2026-10-22)
 
 ### Confirmed
+
 - Comment DELETE currently requires the authenticated user's own `user_id` under the permissive policy plus team membership under the restrictive policy. No team-admin moderation exception appears in the focused policy listing. Preserve author-only deletion unless explicitly changed by product decision.
 - Comment UPDATE requires ownership and team membership; INSERT requires matching question/team and authenticated ownership.
 - Announcement image object names are `<announcement-id>/<timestamp>.<extension>`; question-photo object names are `question-photos/<random-uuid>.<extension>`.
 - Question-photo upload occurs before the question row insert; the frontend flow inspected does not show compensating object deletion if the insert fails, so orphan cleanup needs a separate safe design.
 - The owner-token question delete RPC verifies a SHA-256 token hash and signed-in session; changing it needs compatibility tests.
+- User-provided Dashboard policy inventory:
+  - Public bucket `team-announcement-images`: `Team announcement admins upload images` (INSERT), `Team announcement admins update images` (UPDATE), `Team announcement admins delete images` (DELETE), all applied to `authenticated`.
+  - Private bucket `team-question-photos`: `View linked team question photos` (SELECT), `Upload team question photos` (INSERT), applied to `authenticated`.
+- The policy list did not include the expressions, so it does not yet prove the rules are safely team-scoped.
 
 ### Still blocking an executable migration
-- The exact Storage policy expressions could not be retrieved through the SQL inspection path. Obtain the complete definitions through the Supabase Dashboard Storage Policies interface or another authorized supported export path.
+
+- Obtain the exact Storage policy expressions (`USING` and `WITH CHECK`, where applicable) from the policy detail panel or an authorized export.
 - Review all table policies and grants together, including legacy permissive policies, before authoring replacement SQL.
 - Prepare staging tests for existing Chenn behavior, enabled-team checks, disabled-team denial, meeting-link isolation, question-photo signed URLs, announcement image writes, and comment author/admin behavior.
 - Define rollback steps and verify a recoverable backup/snapshot before any production DDL.
 
 ### Explicit no-change statement
+
 This update is documentation only. No Supabase schema, policies, functions, grants, data, storage objects, team memberships, enabled-team flags, or live deployment was changed. The migration gate remains CLOSED.
