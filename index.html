@@ -410,8 +410,8 @@ body.ocean-portal::after { content:""; position:fixed; inset:-20%; z-index:-1; p
 @keyframes bubble-rise { to{transform:translateY(-120vh) translateX(35px);opacity:0} }
 #ocean-login-portal,#ocean-team-portal { position:relative;z-index:2; min-height:100vh; width:100%; display:none; align-items:center;justify-content:center;padding:28px 18px; }
 body.ocean-signed-out #ocean-login-portal, body.ocean-team-picker #ocean-team-portal { display:flex; }
-body.ocean-signed-out > header, body.ocean-signed-out > section, body.ocean-signed-out > main, body.ocean-signed-out > footer,
-body.ocean-team-picker > header, body.ocean-team-picker > section, body.ocean-team-picker > main, body.ocean-team-picker > footer { display:none !important; }
+body.ocean-signed-out > header, body.ocean-signed-out > section:not(#ocean-login-portal):not(#ocean-team-portal), body.ocean-signed-out > main, body.ocean-signed-out > footer,
+body.ocean-team-picker > header, body.ocean-team-picker > section:not(#ocean-login-portal):not(#ocean-team-portal), body.ocean-team-picker > main, body.ocean-team-picker > footer { display:none !important; }
 body.ocean-calculator > #ocean-login-portal, body.ocean-calculator > #ocean-team-portal { display:none !important; }
 .ocean-glass { width:min(100%,490px);padding:clamp(24px,4vw,42px);border:1px solid rgba(173,232,255,.24);border-radius:28px;background:linear-gradient(135deg,rgba(14,58,83,.78),rgba(4,24,44,.70));box-shadow:0 28px 90px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.13);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px); }
 .ocean-eyebrow { color:#73ddff;font-size:.72rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase; }
