@@ -618,8 +618,8 @@ body.auth-logged-out #password-reset-form button {
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2 class="font-bold text-emerald-50">Admin Access</h2>
-        <p id="auth-status" class="text-sm text-emerald-100">Sign in to manage Team Chenn records.</p>
+        <h2 class="font-bold text-emerald-50">Welcome to the Ocean</h2>
+        <p id="auth-status" class="text-sm text-emerald-100">Sign in to continue to your team workspace.</p>
       </div>
       <form id="login-form" class="flex flex-col sm:flex-row gap-2" onsubmit="event.preventDefault(); adminLogin();">
         <input id="login-email" type="email" autocomplete="username" placeholder="Admin email" class="px-3 py-2 border border-slate-300 rounded-lg">
@@ -955,7 +955,7 @@ async function refreshAuthState() {
     const { data: { session }, error } = await db.auth.getSession();
 
     if (error || !session) {
-      status.textContent = 'Sign in to manage Team Chenn records.';
+      status.textContent = 'Sign in to continue to your team workspace.';
       loginForm.classList.remove('hidden');
       logoutButton.classList.add('hidden');
     } else {
