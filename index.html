@@ -638,6 +638,14 @@ body.team-picker-active #team-selection {
   margin: auto;
   padding: 52px 0;
   color: #ecfdf5;
+  animation: team-selection-enter .35s ease-out both;
+}
+@keyframes team-selection-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.team-picker-active #team-selection { animation: none; }
 }
 body:not(.team-picker-active) #team-selection { display: none !important; }
 .team-picker-top {
