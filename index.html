@@ -398,9 +398,165 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   background: rgba(5, 32, 24, 0.42) !important;
   border: none !important;
 }
+
+/* ============ OCEAN LOGIN PORTAL ONLY ============ */
+body.auth-logged-out {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: #031b35 !important;
+  background-image:
+    linear-gradient(180deg, rgba(0, 18, 45, .18), rgba(0, 20, 55, .5)),
+    url('./ocean-background.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  color: #f0f9ff !important;
+}
+body.auth-logged-out::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(75, 190, 255, .24), transparent 55%),
+    linear-gradient(110deg, transparent 35%, rgba(95, 205, 255, .10) 48%, transparent 60%);
+  animation: portal-ocean-glow 12s ease-in-out infinite alternate;
+}
+body.auth-logged-out::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .4;
+  background-image:
+    radial-gradient(circle, rgba(220,248,255,.7) 1px, transparent 2px),
+    radial-gradient(circle, rgba(160,225,255,.45) 2px, transparent 3px);
+  background-size: 110px 150px, 180px 220px;
+  background-position: 15px 0, 80px 70px;
+  animation: portal-bubbles 18s linear infinite;
+}
+@keyframes portal-ocean-glow {
+  from { transform: translateX(-2%) translateY(0); }
+  to { transform: translateX(2%) translateY(2%); }
+}
+@keyframes portal-bubbles {
+  from { background-position: 15px 100vh, 80px 110vh; }
+  to { background-position: 45px -180px, 120px -220px; }
+}
+body.auth-logged-out > header,
+body.auth-logged-out > main,
+body.auth-logged-out > footer,
+body.auth-logged-out > section:not(#auth-portal),
+body.auth-logged-out > div {
+  display: none !important;
+}
+body.auth-logged-out #auth-portal {
+  position: relative;
+  z-index: 2;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 28px 18px;
+  box-sizing: border-box;
+  background: transparent !important;
+}
+body.auth-logged-out #auth-portal > div {
+  width: min(460px, 100%);
+  margin: 0 auto;
+  padding: 34px;
+  border: 1px solid rgba(186, 230, 253, .38);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(8, 38, 67, .78), rgba(4, 22, 45, .72));
+  box-shadow: 0 24px 80px rgba(0, 8, 25, .48), inset 0 1px 0 rgba(255,255,255,.12), 0 0 32px rgba(56,189,248,.12);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+body.auth-logged-out #auth-portal h2 {
+  color: #f0f9ff !important;
+  font-size: clamp(27px, 5vw, 36px);
+  line-height: 1.15;
+  text-align: center;
+  letter-spacing: -.04em;
+  margin-bottom: 8px;
+}
+body.auth-logged-out #auth-portal #auth-status {
+  color: #bae6fd !important;
+  text-align: center;
+  margin-bottom: 24px;
+}
+body.auth-logged-out #login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  width: 100%;
+}
+body.auth-logged-out #login-form input {
+  width: 100%;
+  min-height: 49px;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  border: 1px solid rgba(186,230,253,.28) !important;
+  border-radius: 13px;
+  background: rgba(2, 17, 37, .62) !important;
+  color: #f0f9ff !important;
+  outline: none;
+}
+body.auth-logged-out #login-form input::placeholder { color: #a7c8df; }
+body.auth-logged-out #login-form input:focus {
+  border-color: #7dd3fc !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,.15);
+}
+body.auth-logged-out #login-form button {
+  min-height: 46px;
+  border-radius: 13px;
+  font-weight: 700;
+}
+body.auth-logged-out #login-form button[type="submit"] {
+  margin-top: 4px;
+  background: linear-gradient(100deg, #0284c7, #2563eb) !important;
+  box-shadow: 0 8px 22px rgba(14,165,233,.25);
+}
+body.auth-logged-out #login-form button[type="button"] {
+  background: transparent !important;
+  color: #bae6fd !important;
+  padding: 8px;
+}
+body.auth-logged-out #login-form button[onclick="signUpUser()"] {
+  border: 1px solid rgba(125,211,252,.35);
+  background: rgba(14,116,144,.26) !important;
+}
+body.auth-logged-out #auth-error {
+  color: #fecaca !important;
+  overflow-wrap: anywhere;
+}
+body.auth-logged-out #password-reset-form {
+  color: #e0f2fe;
+}
+body.auth-logged-out #password-reset-form h3 { color: #f0f9ff !important; }
+body.auth-logged-out #password-reset-form input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(2,17,37,.62) !important;
+  color: #f0f9ff !important;
+}
+body.auth-logged-out #password-reset-form button {
+  border-radius: 12px;
+}
+@media (max-width: 520px) {
+  body.auth-logged-out #auth-portal > div { padding: 26px 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.auth-logged-out::before, body.auth-logged-out::after { animation: none; }
+}
+/* End ocean-only login styles */
+
 </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col text-base">
+<body class="auth-logged-out bg-slate-50 text-slate-800 min-h-screen flex flex-col text-base">
 
 <header class="text-white shadow-md">
   <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center">
@@ -457,8 +613,8 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   </div>
 </header>
 
-<!-- ADMIN LOGIN -->
-<section class="bg-transparent border-0 shadow-none">
+<!-- AUTH PORTAL: existing Supabase login actions retained -->
+<section id="auth-portal" class="auth-portal bg-transparent border-0 shadow-none">
   <div class="max-w-7xl mx-auto px-6 py-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
@@ -789,6 +945,7 @@ async function refreshAuthState() {
   const logoutButton = document.getElementById('logout-button');
 
   isTeamChennAdmin = false;
+  document.body.classList.add('auth-logged-out');
 
   if (!db) {
     status.textContent = 'Database connection is unavailable.';
@@ -807,6 +964,7 @@ async function refreshAuthState() {
 
       isTeamChennAdmin = !adminError && data === true;
 
+      document.body.classList.remove('auth-logged-out');
       status.textContent = isTeamChennAdmin
         ? 'Admin logged in. You can manage records.'
         : 'Signed in, but this account is not an admin.';
