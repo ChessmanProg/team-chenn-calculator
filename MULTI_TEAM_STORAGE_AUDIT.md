@@ -34,22 +34,30 @@ This is documentation, not SQL. No bucket configuration, storage object, policy,
 
 ## Dashboard policy inventory supplied by the user (2026-10-22)
 
-The Dashboard listing confirms the following policy names, commands, and role scopes, but the supplied listing did not include the actual `USING` or `WITH CHECK` expressions:
+The Dashboard listing confirms these policy names, commands, and role scopes. The user has now supplied the exact expression for the announcement-image INSERT policy, but expressions for the remaining policies are still needed.
 
 ### `team-announcement-images` (public bucket)
 
-| Policy name | Command | Applied to |
-|---|---|---|
-| Team announcement admins upload images | INSERT | authenticated |
-| Team announcement admins update images | UPDATE | authenticated |
-| Team announcement admins delete images | DELETE | authenticated |
+| Policy name | Command | Applied to | Expression status |
+|---|---|---|---|
+| Team announcement admins upload images | INSERT | authenticated | Known; see below |
+| Team announcement admins update images | UPDATE | authenticated | Still needed |
+| Team announcement admins delete images | DELETE | authenticated | Still needed |
+
+**INSERT policy expression supplied by user:**
+
+```sql
+((bucket_id = 'team-announcement-images'::text) AND is_team_chenn_admin())
+```
+
+This is explicitly Chenn-admin-only because it calls `is_team_chenn_admin()`. It does not yet authorize Team Lev or Team Gemma admins. It also does not verify that the first path segment identifies an existing announcement belonging to the same team as the uploader. The eventual replacement should bind authorization to the referenced announcement row and its team, rather than simply replacing the Chenn helper with a team role check.
 
 ### `team-question-photos` (private bucket)
 
-| Policy name | Command | Applied to |
-|---|---|---|
-| View linked team question photos | SELECT | authenticated |
-| Upload team question photos | INSERT | authenticated |
+| Policy name | Command | Applied to | Expression status |
+|---|---|---|---|
+| View linked team question photos | SELECT | authenticated | Still needed |
+| Upload team question photos | INSERT | authenticated | Still needed |
 
 The policy names and role scope alone are not sufficient to validate authorization. For UPDATE, both `USING` and `WITH CHECK` must be reviewed. The exact expressions are still needed to determine whether each policy is Chenn-only, correctly team-scoped, and safe against cross-team object references. The user may provide the policy detail panel's full expressions or an authorized policy export; no SQL bypass is needed.
 
