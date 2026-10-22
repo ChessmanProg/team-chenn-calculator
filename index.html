@@ -475,6 +475,13 @@ body.auth-logged-out #auth-portal > div {
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
 }
+body.auth-logged-out #auth-portal > div > div {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+body.auth-logged-out #auth-portal > div > div > div { width: 100%; }
 body.auth-logged-out #auth-portal h2 {
   color: #f0f9ff !important;
   font-size: clamp(27px, 5vw, 36px);
