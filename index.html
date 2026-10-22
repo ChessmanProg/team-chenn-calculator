@@ -3995,7 +3995,7 @@ const { data: insertedQuestion, error } = await db
   .from('team_questions')
   .insert({
     user_id: user.id,
-    team_key: 'chenn',
+    team_key: oceanSelectedTeam || 'chenn',
     name: name,
     question: question,
     photo_url: photoPath,
