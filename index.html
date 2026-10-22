@@ -21,10 +21,12 @@ body {
   font-family: 'Inter', sans-serif;
   transition: background-color 0.2s, color 0.2s;
 
+  background-color: #031525;
   background-image:
-    linear-gradient(rgba(2, 20, 14, 0.25), rgba(2, 20, 14, 0.40)),
-    url('./forest-background.png');
-  background-size: cover;
+    radial-gradient(ellipse at 15% 15%, rgba(0, 174, 219, 0.24), transparent 42%),
+    radial-gradient(ellipse at 85% 70%, rgba(0, 92, 160, 0.30), transparent 44%),
+    linear-gradient(145deg, #031525 0%, #064b70 52%, #021322 100%);
+  background-size: 140% 140%;
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -463,8 +465,8 @@ body.ocean-calculator > #ocean-login-portal, body.ocean-calculator > #ocean-team
     </div>
     <div class="ocean-team-grid">
       <button class="ocean-team-card" type="button" onclick="openOceanTeam('chenn')"><span class="ocean-team-icon">🎧</span><div class="ocean-team-name">Team Chenn BC AI</div><div class="ocean-team-desc">Open the current calculator and operational tools.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Open workspace →</div></button>
-      <button class="ocean-team-card" type="button" onclick="openOceanTeam('lev')"><span class="ocean-team-icon">🌊</span><div class="ocean-team-name">Team Lev BC AI</div><div class="ocean-team-desc">Team workspace selection.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Coming soon</div></button>
-      <button class="ocean-team-card" type="button" onclick="openOceanTeam('gemma')"><span class="ocean-team-icon">🐚</span><div class="ocean-team-name">Team Gemma BC AI</div><div class="ocean-team-desc">Team workspace selection.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Coming soon</div></button>
+      <button class="ocean-team-card" type="button" onclick="openOceanTeam('lev')"><span class="ocean-team-icon">🌊</span><div class="ocean-team-name">Team Lev BC AI</div><div class="ocean-team-desc">Separate workspace planned. Access stays disabled until its data permissions are verified.</div><div class="mt-5 text-sm font-bold" style="color:#9bd9ed">Protected rollout · not enabled</div></button>
+      <button class="ocean-team-card" type="button" onclick="openOceanTeam('gemma')"><span class="ocean-team-icon">🐚</span><div class="ocean-team-name">Team Gemma BC AI</div><div class="ocean-team-desc">Separate workspace planned. Access stays disabled until its data permissions are verified.</div><div class="mt-5 text-sm font-bold" style="color:#9bd9ed">Protected rollout · not enabled</div></button>
     </div>
     <p id="ocean-team-message" class="mt-5 text-sm" style="color:#b6d5e5" aria-live="polite"></p>
   </div>
