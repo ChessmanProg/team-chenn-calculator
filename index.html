@@ -1385,7 +1385,8 @@ async function markCoachingDone(id) {
     const { error } = await db
       .from(TABLES.coaching.name)
       .update({ completed: false })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('team_key', oceanSelectedTeam || 'chenn');
 
     if (error) {
       showBanner('Could not undo completion: ' + error.message);
