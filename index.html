@@ -1532,7 +1532,8 @@ async function editCoachingSchedule(id) {
       const { error } = await db
         .from(TABLES.coaching.name)
         .update(updated)
-        .eq('id', id);
+        .eq('id', id)
+        .eq('team_key', oceanSelectedTeam || 'chenn');
 
       if (error) {
         saveButton.disabled = false;
