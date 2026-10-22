@@ -67,3 +67,18 @@ The existing SECURITY DEFINER functions `get_team_chenn_meeting_links()` and `sa
 - No database DDL, policy, function, storage object, team enablement, or live deployment was changed during this review.
 - Team Lev and Team Gemma must remain disabled until policy and storage isolation tests pass.
 - Some storage-policy introspection queries were blocked by the database safety layer. Do not bypass that restriction; use supported dashboard exports or authorized policy review to obtain the missing definitions.
+
+
+### Question-photo and question-deletion findings
+
+The question-photo upload path currently uses `question-photos/<random-uuid>.<ext>` inside the private `team-question-photos` bucket. The database row stores that relative object path in `team_questions.photo_url`; the frontend requests a signed URL after loading the question. Storage policy design should resolve the stored path to a `team_questions` row and validate the row's team and the caller's role. Because the object path itself has no team key or question ID, avoid authorizing from path prefix alone. Confirm whether an upload can be orphaned when the question insert fails, and plan safe cleanup without deleting objects referenced by existing rows.
+
+The `public.delete_own_team_question(bigint,text)` SECURITY DEFINER function checks that a signed-in user supplies a sufficiently long owner token whose SHA-256 hash matches `team_questions.owner_token_hash`, then deletes that question. It does not currently check team membership or `teams.is_enabled`; the owner token is the primary authorization check. Before altering this behavior, test compatibility with questions posted from devices whose local ownership token is unavailable. Any team-aware replacement should preserve the intended “original poster can delete” flow while preventing cross-team side effects and ensuring the photo cleanup is safe.
+
+### Remaining audit items before executable migration
+
+1. Obtain the full Storage policy definitions using a supported dashboard/policy export route; database query attempts were blocked, and no replacement policy should be guessed.
+2. Verify the complete grants and function definitions for any RPCs called by the legacy question panel, including the owner-token delete RPC.
+3. Decide whether comments may be deleted by authors only or by team admins as well, and document the choice.
+4. Verify question-photo upload rollback/orphan cleanup and the relationship between each object path and its question row.
+5. Complete role-by-role effective-policy tests in a disposable/staging environment before any production migration.
