@@ -158,3 +158,24 @@ Gate stays CLOSED until all items pass:
 - [ ] Only after approval: enable Lev/Gemma separately, with a controlled test and rollback plan.
 
 No production database changes are authorized by this document.
+
+## Follow-up verification (2026-10-22)
+
+### Direct grants on `public.teams`
+
+A read-only `information_schema.role_table_grants` query found direct grants to `anon` and `authenticated` for SELECT, INSERT, UPDATE, DELETE, REFERENCES, TRIGGER, and TRUNCATE; `service_role` also has those grants. RLS is enabled and the Security Advisor reports no policies on this table. With no applicable policies, ordinary anon/authenticated row access is expected to be blocked by RLS, but the broad grants are still unnecessary exposure and should be reduced after dependency verification.
+
+Frontend inspection of the current feature-branch `index.html` did not find a direct `.from('teams')` or `.from("teams")` query, and `openOceanTeam()` remains the UI gate. Do not assume this proves there are no indirect RPC/database dependencies.
+
+Proposed review-only direction:
+- Confirm no client workflow relies on direct team-table writes (none should).
+- Grant only the minimum read privilege needed, if direct client reads are actually used; otherwise keep team metadata access function-mediated.
+- Revoke direct INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER from `anon` and `authenticated` only in a reviewed migration after checking existing function/frontend dependencies and testing rollback.
+- Do not add a broad RLS policy merely to silence the advisor.
+- Keep `service_role` handling separate; its elevated privileges are expected and it must never be exposed in the browser.
+
+This is a verified grant finding and remediation recommendation only. No grants or policies were changed.
+
+### Current deadline/status
+
+The remediation plan and audit documents are prepared on the feature branch, but the implementation is not complete until executable SQL is safely authored, tested in staging, and applied with approval. Production remains unchanged and the rollout gate remains CLOSED.
