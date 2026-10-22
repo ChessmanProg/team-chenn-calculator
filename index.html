@@ -23,7 +23,7 @@ body {
 
   background-image:
     linear-gradient(rgba(2, 20, 14, 0.25), rgba(2, 20, 14, 0.40)),
-    url('./ocean-background.png')
+    url('./forest-background.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -64,7 +64,7 @@ body.dark {
   background-color: #061a14 !important;
   background-image:
     linear-gradient(rgba(2, 20, 14, 0.35), rgba(2, 20, 14, 0.50)),
-    url('./ocean-background.png') !important;
+    url('./forest-background.png') !important;
   background-size: cover !important;
   background-position: center !important;
   background-attachment: fixed !important;
@@ -397,66 +397,6 @@ textarea {
 body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
   background: rgba(5, 32, 24, 0.42) !important;
   border: none !important;
-}
-  /* ============ UNDERWATER OCEAN ANIMATION ============ */
-body {
-  background-color: #031b35 !important;
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(0, 18, 45, 0.12),
-      rgba(0, 20, 55, 0.42)
-    ),
-    url('./ocean-background.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat !important;
-}
-
-/* Deep ocean blue glow */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -20%;
-  pointer-events: none;
-  z-index: -1;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(75, 190, 255, 0.22), transparent 55%),
-    linear-gradient(110deg, transparent 35%, rgba(95, 205, 255, 0.08) 48%, transparent 60%);
-  animation: ocean-light-drift 12s ease-in-out infinite alternate;
-}
-
-/* Floating bubbles */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.5;
-  background-image:
-    radial-gradient(circle, rgba(220, 248, 255, 0.7) 1px, transparent 2px),
-    radial-gradient(circle, rgba(160, 225, 255, 0.5) 2px, transparent 3px),
-    radial-gradient(circle, rgba(220, 248, 255, 0.35) 1px, transparent 2px);
-  background-size: 110px 150px, 180px 220px, 250px 190px;
-  background-position: 15px 0, 80px 70px, 130px 30px;
-  animation: ocean-bubbles 18s linear infinite;
-}
-
-@keyframes ocean-light-drift {
-  from { transform: translateX(-2%) translateY(0); }
-  to { transform: translateX(2%) translateY(2%); }
-}
-
-@keyframes ocean-bubbles {
-  from { background-position: 15px 100vh, 80px 110vh, 130px 105vh; }
-  to { background-position: 45px -180px, 120px -220px, 180px -190px; }
-}
-
-/* Keep website content above the decorative effects */
-body > * {
-  position: relative;
 }
 </style>
 </head>
