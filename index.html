@@ -2564,7 +2564,8 @@ async function importBulkCoachingSchedules() {
         await db
           .from(TABLES.coaching.name)
           .delete()
-          .eq('id', inserted.id);
+          .eq('id', inserted.id)
+          .eq('team_key', oceanSelectedTeam || 'chenn');
 
         failures.push(
           `${row.schedule_date} ${row.time_slot} — ${row.agent_name}: meeting link save failed — ${linkError.message}`
