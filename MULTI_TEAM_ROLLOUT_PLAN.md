@@ -48,3 +48,24 @@ Status: preparation only. This document does not change the live database or ena
 ## Release gate
 
 No team other than Chenn should be enabled until cross-team access tests pass. If a test fails, keep the new teams disabled and correct the policies before release.
+
+## Database audit update — 2026-10-22
+
+Read-only inspection confirmed the following live database state:
+
+- `public.teams` contains Chenn (enabled), Lev (disabled), and Gemma (disabled).
+- Existing data remains in Chenn's core tables: 15 coaching schedules, 4 IC logs, and 9 important links.
+- RLS is enabled on the core tables, but that alone does not guarantee isolation.
+- Legacy permissive SELECT policies with `USING (true)` remain on `coaching_schedules`, `ic_logs`, `important_links`, and `team_announcements`. These must be reconciled with the team-membership policies before any new workspace is enabled.
+- Existing admin policies and meeting-link RPC functions are Chenn-specific. Meeting links are stored in `private.coaching_meeting_links` and require a reviewed team-aware replacement that verifies the schedule's `team_key`.
+- The current frontend uses `isTeamChennAdmin`, and its loaders do not uniformly apply a selected-team filter. A database-only change would therefore be insufficient.
+- Supabase security advisors also flagged callable SECURITY DEFINER functions and disabled leaked-password protection. Function grants need to be reviewed individually; do not blanket-revoke functions the current site depends on.
+
+### Safe next implementation gate
+
+1. Build a table-by-table migration draft and review existing policy/function definitions.
+2. Update all affected frontend reads and writes on this feature branch.
+3. Apply database changes only after the draft and dependencies have been reviewed; then run advisors and cross-team access tests.
+4. Keep Lev and Gemma disabled until every test passes.
+
+No database schema, policies, memberships, team enablement, or existing data were changed during this audit.
