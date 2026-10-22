@@ -552,6 +552,106 @@ body.auth-logged-out #password-reset-form button {
 @media (prefers-reduced-motion: reduce) {
   body.auth-logged-out::before, body.auth-logged-out::after { animation: none; }
 }
+
+/* ============ TEAM PICKER (FOREST THEME) ============ */
+body.team-picker-active > header,
+body.team-picker-active > main,
+body.team-picker-active > footer,
+body.team-picker-active > section:not(#team-selection) {
+  display: none !important;
+}
+body.team-picker-active #team-selection {
+  position: relative;
+  z-index: 2;
+  display: block !important;
+  width: min(1160px, calc(100% - 36px));
+  margin: auto;
+  padding: 52px 0;
+  color: #ecfdf5;
+}
+body:not(.team-picker-active) #team-selection { display: none !important; }
+.team-picker-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.team-eyebrow {
+  margin: 0 0 8px;
+  color: #a7f3d0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .22em;
+}
+#team-selection-title {
+  margin: 0;
+  color: #f0fdf4;
+  font-size: clamp(30px, 5vw, 46px);
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+.team-subtitle { margin-top: 9px; color: #cbd5c0; }
+.team-logout {
+  border: 1px solid rgba(209,250,229,.28);
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: #ecfdf5;
+  background: rgba(6, 35, 26, .75);
+}
+.team-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.team-card {
+  display: flex;
+  min-height: 255px;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 25px;
+  border: 1px solid rgba(167,243,208,.26);
+  border-radius: 24px;
+  color: #ecfdf5;
+  background: linear-gradient(145deg, rgba(8,50,36,.91), rgba(3,25,20,.88));
+  box-shadow: 0 18px 45px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.06);
+  backdrop-filter: blur(14px);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.team-card:hover, .team-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(167,243,208,.7);
+  box-shadow: 0 22px 52px rgba(0,0,0,.3), 0 0 22px rgba(52,211,153,.1);
+  outline: none;
+}
+.team-card-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(167,243,208,.28);
+  border-radius: 15px;
+  color: #a7f3d0;
+  background: rgba(16,185,129,.12);
+  font-size: 26px;
+}
+.team-card-title { font-size: 21px; font-weight: 800; line-height: 1.3; }
+.team-card-description { margin-top: 10px; color: #cbd5c0; line-height: 1.55; }
+.team-card-action { display: flex; justify-content: space-between; gap: 12px; width: 100%; margin-top: auto; padding-top: 25px; color: #a7f3d0; font-size: 13px; font-weight: 800; }
+.team-card-pending { border-style: dashed; background: linear-gradient(145deg, rgba(8,42,32,.78), rgba(3,24,20,.78)); }
+#team-selection-notice { min-height: 24px; margin-top: 20px; color: #fde68a; }
+@media (max-width: 800px) {
+  .team-card-grid { grid-template-columns: 1fr; }
+  .team-card { min-height: 210px; }
+}
+@media (max-width: 520px) {
+  body.team-picker-active #team-selection { padding: 32px 0; }
+  .team-picker-top { flex-direction: column; }
+}
+
 /* End ocean-only login styles */
 
 </style>
@@ -632,7 +732,7 @@ body.auth-logged-out #password-reset-form button {
   Create Account
 </button>
       </form>
-      <button id="logout-button" onclick="adminLogout()" class="hidden px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg">Log Out</button>
+      
     </div>
     <p id="auth-error" class="hidden text-sm text-red-600 mt-2"></p>
     
@@ -664,6 +764,39 @@ body.auth-logged-out #password-reset-form button {
 </div>
 
   </div>
+
+</section>
+
+<section id="team-selection" aria-labelledby="team-selection-title">
+  <div class="team-picker-top">
+    <div>
+      <p class="team-eyebrow">YOUR WORKSPACE</p>
+      <h1 id="team-selection-title">Choose your team</h1>
+      <p class="team-subtitle">One sign-in, your team’s own space.</p>
+    </div>
+    <button id="logout-button" onclick="adminLogout()" class="hidden team-logout">Log Out</button>
+  </div>
+  <div class="team-card-grid">
+    <button type="button" class="team-card" onclick="openTeamWorkspace('chenn')">
+      <span class="team-card-mark" aria-hidden="true">♧</span>
+      <span class="team-card-title">Team Chenn BC AI</span>
+      <span class="team-card-description">Open the existing Team Chenn calculator and tools.</span>
+      <span class="team-card-action">Enter workspace <span aria-hidden="true">↗</span></span>
+    </button>
+    <button type="button" class="team-card team-card-pending" onclick="showTeamNotice('lev')">
+      <span class="team-card-mark" aria-hidden="true">✧</span>
+      <span class="team-card-title">Team Lev BC AI</span>
+      <span class="team-card-description">A separate team space with its own members and records.</span>
+      <span class="team-card-action">Workspace setup pending <span aria-hidden="true">→</span></span>
+    </button>
+    <button type="button" class="team-card team-card-pending" onclick="showTeamNotice('gemma')">
+      <span class="team-card-mark" aria-hidden="true">◇</span>
+      <span class="team-card-title">Team Gemma BC AI</span>
+      <span class="team-card-description">A separate team space with its own members and records.</span>
+      <span class="team-card-action">Workspace setup pending <span aria-hidden="true">→</span></span>
+    </button>
+  </div>
+  <p id="team-selection-notice" role="status" aria-live="polite"></p>
 </section>
 
 <main class="max-w-7xl w-full mx-auto px-6 py-8 flex-grow">
@@ -946,6 +1079,7 @@ async function refreshAuthState() {
 
   isTeamChennAdmin = false;
   document.body.classList.add('auth-logged-out');
+  document.body.classList.remove('team-picker-active', 'team-workspace-active');
 
   if (!db) {
     status.textContent = 'Database connection is unavailable.';
@@ -964,7 +1098,8 @@ async function refreshAuthState() {
 
       isTeamChennAdmin = !adminError && data === true;
 
-      document.body.classList.remove('auth-logged-out');
+      document.body.classList.remove('auth-logged-out', 'team-workspace-active');
+      document.body.classList.add('team-picker-active');
       status.textContent = isTeamChennAdmin
         ? 'Admin logged in. You can manage records.'
         : 'Signed in, but this account is not an admin.';
@@ -976,6 +1111,25 @@ async function refreshAuthState() {
 
   updateAdminControls();
   ['coaching', 'ic', 'link'].forEach(render);
+}
+
+
+function openTeamWorkspace(team) {
+  const notice = document.getElementById('team-selection-notice');
+  if (team !== 'chenn') {
+    showTeamNotice(team);
+    return;
+  }
+  document.body.classList.remove('team-picker-active');
+  document.body.classList.add('team-workspace-active');
+  if (notice) notice.textContent = '';
+}
+
+function showTeamNotice(team) {
+  const notice = document.getElementById('team-selection-notice');
+  if (!notice) return;
+  const teamName = team === 'lev' ? 'Team Lev BC AI' : 'Team Gemma BC AI';
+  notice.textContent = teamName + ' is not open yet. We’ll set up its separate member access and database policies before enabling it, so teams cannot see each other’s records.';
 }
 
 async function adminLogin() {
