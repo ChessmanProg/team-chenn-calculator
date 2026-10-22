@@ -3258,6 +3258,32 @@ async function getTeamQuestions() {
 async function renderQuestionPanel() {
   const panel = document.getElementById('question-panel');
 
+  if (!db) {
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <h2 style="font-size:20px;font-weight:800;margin:0;">💬 Team Questions</h2>
+        <button class="q-button" type="button" aria-label="Close questions panel"
+          onclick="toggleQuestionPanel()">✕</button>
+      </div>
+      <p class="q-muted" style="margin-top:12px;">Sign in with an approved Team Chenn account to view questions and discussions.</p>`;
+    return;
+  }
+
+  const { data: { session }, error: sessionError } = await db.auth.getSession();
+
+  if (sessionError || !session) {
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <h2 style="font-size:20px;font-weight:800;margin:0;">💬 Team Questions</h2>
+        <button class="q-button" type="button" aria-label="Close questions panel"
+          onclick="toggleQuestionPanel()">✕</button>
+      </div>
+      <p class="q-muted" style="margin-top:12px;">Please sign in to an approved Team Chenn account to view, submit, or discuss questions.</p>
+      <button class="q-button q-primary" type="button" style="width:100%;margin-top:12px;"
+        onclick="document.getElementById('login-email')?.scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('login-email')?.focus();">Go to sign in</button>`;
+    return;
+  }
+
   panel.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
       <div>
