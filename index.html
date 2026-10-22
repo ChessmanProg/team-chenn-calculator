@@ -1281,6 +1281,7 @@ async function insertRow(key, row) {
       // the real meeting URL in the public schedule record.
       const safeRow = {
         ...row,
+        team_key: oceanSelectedTeam || 'chenn',
         meet_link: 'PROTECTED'
       };
 
@@ -2528,6 +2529,7 @@ async function importBulkCoachingSchedules() {
 
       const safeRow = {
         ...row,
+        team_key: oceanSelectedTeam || 'chenn',
         meet_link: 'PROTECTED'
       };
 
