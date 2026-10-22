@@ -1303,7 +1303,7 @@ async function insertRow(key, row) {
 
       if (linkError) {
         // Avoid leaving a schedule behind if its link could not be saved.
-        await db.from(tableName).delete().eq('id', data.id);
+        await db.from(tableName).delete().eq('id', data.id).eq('team_key', oceanSelectedTeam || 'chenn');
         return linkError;
       }
 
