@@ -37,3 +37,22 @@ The current coaching, IC-log, and important-link tables have Chenn-specific perm
 ## Safety boundary
 
 This file is documentation only. Do not run it as SQL. No database policies, functions, grants, memberships, team enablement, or live-site deployment are changed by this draft.
+
+
+## Updated audit status (2026-10-22)
+
+### Confirmed
+- Comment DELETE currently requires the authenticated user's own `user_id` under the permissive policy plus team membership under the restrictive policy. No team-admin moderation exception appears in the focused policy listing. Preserve author-only deletion unless explicitly changed by product decision.
+- Comment UPDATE requires ownership and team membership; INSERT requires matching question/team and authenticated ownership.
+- Announcement image object names are `<announcement-id>/<timestamp>.<extension>`; question-photo object names are `question-photos/<random-uuid>.<extension>`.
+- Question-photo upload occurs before the question row insert; the frontend flow inspected does not show compensating object deletion if the insert fails, so orphan cleanup needs a separate safe design.
+- The owner-token question delete RPC verifies a SHA-256 token hash and signed-in session; changing it needs compatibility tests.
+
+### Still blocking an executable migration
+- The exact Storage policy expressions could not be retrieved through the SQL inspection path. Obtain the complete definitions through the Supabase Dashboard Storage Policies interface or another authorized supported export path.
+- Review all table policies and grants together, including legacy permissive policies, before authoring replacement SQL.
+- Prepare staging tests for existing Chenn behavior, enabled-team checks, disabled-team denial, meeting-link isolation, question-photo signed URLs, announcement image writes, and comment author/admin behavior.
+- Define rollback steps and verify a recoverable backup/snapshot before any production DDL.
+
+### Explicit no-change statement
+This update is documentation only. No Supabase schema, policies, functions, grants, data, storage objects, team memberships, enabled-team flags, or live deployment was changed. The migration gate remains CLOSED.
