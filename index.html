@@ -719,6 +719,12 @@ body:not(.team-picker-active) #team-selection { display: none !important; }
   font-size: 26px;
 }
 .team-card-title { font-size: 21px; font-weight: 800; line-height: 1.3; }
+.team-card-title { text-wrap: balance; }
+.team-card-description { max-width: 34ch; }
+.team-card-action { align-items: center; }
+@media (min-width: 801px) {
+  .team-card { min-height: 270px; }
+}
 .team-card-description { margin-top: 10px; color: #cbd5c0; line-height: 1.55; }
 .team-card-action { display: flex; justify-content: space-between; gap: 12px; width: 100%; margin-top: auto; padding-top: 25px; color: #a7f3d0; font-size: 13px; font-weight: 800; }
 .team-card-pending { border-style: dashed; background: linear-gradient(145deg, rgba(8,42,32,.78), rgba(3,24,20,.78)); }
