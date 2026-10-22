@@ -25,14 +25,34 @@ The current Storage policies are still partly Chenn-specific:
 
 This is documentation, not SQL. No bucket configuration, storage object, policy, database record, or live deployment was changed.
 
-
 ## Additional path verification (2026-10-22)
 
 - Announcement uploads use `<announcement-id>/<timestamp>.<extension>`. The path does not contain a team key. A safe replacement policy must look up `team_announcements` using the announcement ID represented by the first path segment and verify the row's team and caller role for upload/update/delete.
 - Question uploads use `question-photos/<random-uuid>.<extension>` in the private bucket. The database stores that relative object path in `team_questions.photo_url`; the frontend generates signed URLs only after loading the row. The object name alone does not identify the team, so policy authorization should join the object path to a question row and verify its team membership.
 - The frontend uploads a question photo before inserting the question row. If the row insert fails, the current visible flow does not show a compensating removal of the uploaded object. This may leave orphaned objects. A cleanup plan should be designed and tested separately; do not bulk-delete unreferenced objects without a reviewed retention window and backup.
-- Policy introspection through SQL was blocked by the safety layer for the Storage policy view. This document records the observed policy behavior from earlier inspection, but a complete authoritative export of the exact Storage policy expressions remains an open prerequisite. Obtain it through the Supabase Dashboard's Storage Policies UI or another authorized supported export method; do not guess or attempt to bypass the restriction.
+- Policy introspection through SQL was blocked by the safety layer for the Storage policy view. Do not bypass this restriction.
+
+## Dashboard policy inventory supplied by the user (2026-10-22)
+
+The Dashboard listing confirms the following policy names, commands, and role scopes, but the supplied listing did not include the actual `USING` or `WITH CHECK` expressions:
+
+### `team-announcement-images` (public bucket)
+
+| Policy name | Command | Applied to |
+|---|---|---|
+| Team announcement admins upload images | INSERT | authenticated |
+| Team announcement admins update images | UPDATE | authenticated |
+| Team announcement admins delete images | DELETE | authenticated |
+
+### `team-question-photos` (private bucket)
+
+| Policy name | Command | Applied to |
+|---|---|---|
+| View linked team question photos | SELECT | authenticated |
+| Upload team question photos | INSERT | authenticated |
+
+The policy names and role scope alone are not sufficient to validate authorization. For UPDATE, both `USING` and `WITH CHECK` must be reviewed. The exact expressions are still needed to determine whether each policy is Chenn-only, correctly team-scoped, and safe against cross-team object references. The user may provide the policy detail panel's full expressions or an authorized policy export; no SQL bypass is needed.
 
 ## Gate remains closed
 
-No Storage policies or bucket settings were changed. Do not enable Team Lev/Gemma until exact policy definitions are reviewed and upload, signed-URL read, update, and delete negative tests pass for each team.
+No Storage policies or bucket settings were changed. Do not enable Team Lev/Gemma until exact policy expressions are reviewed and upload, signed-URL read, update, and delete negative tests pass for each team.
