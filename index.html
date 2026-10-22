@@ -4494,7 +4494,8 @@ async function uploadTeamAnnouncementImage(announcementId) {
       const { error: updateError } = await db
         .from('team_announcements')
         .update({ image_path: imagePath })
-        .eq('id', announcementId);
+        .eq('id', announcementId)
+        .eq('team_key', oceanSelectedTeam || 'chenn');
 
       if (updateError) {
         await db.storage
