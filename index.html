@@ -560,6 +560,14 @@ body.auth-logged-out #password-reset-form button {
   body.auth-logged-out::before, body.auth-logged-out::after { animation: none; }
 }
 
+body:not(.auth-logged-out) #auth-portal { display: none !important; }
+.team-logout {
+  position: fixed;
+  z-index: 20;
+  top: 18px;
+  right: 22px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
 /* ============ TEAM PICKER (FOREST THEME) ============ */
 body.team-picker-active > header,
 body.team-picker-active > main,
@@ -781,7 +789,6 @@ body:not(.team-picker-active) #team-selection { display: none !important; }
       <h1 id="team-selection-title">Choose your team</h1>
       <p class="team-subtitle">One sign-in, your team’s own space.</p>
     </div>
-    <button id="logout-button" onclick="adminLogout()" class="hidden team-logout">Log Out</button>
   </div>
   <div class="team-card-grid">
     <button type="button" class="team-card" onclick="openTeamWorkspace('chenn')">
@@ -805,6 +812,8 @@ body:not(.team-picker-active) #team-selection { display: none !important; }
   </div>
   <p id="team-selection-notice" role="status" aria-live="polite"></p>
 </section>
+
+<button id="logout-button" onclick="adminLogout()" class="hidden team-logout">Log Out</button>
 
 <main class="max-w-7xl w-full mx-auto px-6 py-8 flex-grow">
   <div id="db-banner" class="hidden mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm"></div>
