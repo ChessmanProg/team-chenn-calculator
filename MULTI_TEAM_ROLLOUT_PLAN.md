@@ -69,3 +69,29 @@ Read-only inspection confirmed the following live database state:
 4. Keep Lev and Gemma disabled until every test passes.
 
 No database schema, policies, memberships, team enablement, or existing data were changed during this audit.
+
+## Follow-up function and RLS review — 2026-10-22
+
+Supabase documentation was reviewed before planning changes: https://supabase.com/docs/guides/database/postgres/row-level-security
+
+Read-only function inspection confirms:
+
+- `public.has_team_role(team_key, roles)` checks the authenticated user's row in `private.team_memberships`.
+- `get_team_chenn_meeting_links()` and `save_team_chenn_meeting_link(schedule_id, meet_link)` currently authorize Chenn admins/owners only.
+- The current meeting-link functions operate on schedule IDs but do not independently verify that the referenced schedule belongs to the authorized team.
+- `delete_own_team_question` is a SECURITY DEFINER function with an owner-token check; it should not be changed as part of a generic policy cleanup without a separate compatibility/security review.
+
+### Do not apply a broad policy rewrite yet
+
+The existing policies include both permissive and restrictive policy types. PostgreSQL combines permissive policies with OR and restrictive policies with AND, so reviewing only a policy's name or `USING` expression is not enough to determine the effective access. The migration must be tested against the full set of policies, including legacy tables and storage objects.
+
+Before any production migration:
+- Inventory all policies on every exposed table, including the legacy question table, question comments, announcements, announcement reads, and PPH records.
+- Inventory storage policies for announcement images and question photos.
+- Verify current role grants and function EXECUTE grants.
+- Prepare a rollback strategy and test the migration against a disposable/staging project if available.
+- Confirm the Chenn account can still read and write all intended data after the change.
+- Test that an account without a Lev/Gemma membership cannot read, write, or access meeting links for those teams.
+- Only then add approved memberships and enable each workspace.
+
+This follow-up was inspection and documentation only. No database policies, functions, grants, memberships, or team enablement were changed.
