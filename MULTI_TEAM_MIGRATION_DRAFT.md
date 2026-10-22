@@ -36,3 +36,34 @@ Target code branch: `feature/multi-team-workspaces`
 ## Why this is not executable SQL yet
 
 The full effective policy set, function bodies and EXECUTE grants, storage object path convention, and all frontend write paths must be verified together before authoring an executable migration. Applying a guessed policy rewrite could accidentally widen access or break the working Chenn site. This file is a gated implementation checklist, not a migration and has not been applied.
+
+
+## Additional read-only findings (2026-10-22)
+
+### Effective-policy risks to resolve
+
+The current public-schema policy inventory confirms legacy permissive policies remain alongside team-aware restrictive policies:
+
+- `team_announcements`: legacy permissive read policy uses `USING (true)`; older write policies call `is_team_chenn_admin()`. Team-aware restrictive policies exist, but the complete policy set must be evaluated together. Do not infer isolation from the newer policy names alone.
+- `team_questions`: legacy permissive SELECT uses `true`, and a legacy permissive INSERT policy allows anonymous/authenticated submission. Restrictive policies currently block anonymous access and require team membership for authenticated rows. Verify the resulting effective behavior for each role before removing or replacing any rule.
+- `team_question_comments`: legacy permissive SELECT uses `true`; legacy insert/update/delete policies coexist with restrictive team-aware policies. The current team-aware DELETE restriction checks team membership, not explicitly comment authorship, while a legacy permissive rule limits the user-owned path. Decide and test the intended policy: author-only deletion, team-admin deletion, or both.
+- `team_announcement_reads`: legacy permissive user-owned policies coexist with restrictive policies that bind receipts to a team membership. Keep the receipt's `announcement_id` and `team_key` tied to the same announcement row.
+
+### Storage object-path findings
+
+The current frontend builds announcement image paths as `<announcement-id>/<timestamp>.<extension>`. The path does not contain a team key. Therefore, storage policies should look up the associated announcement row and verify its `team_key` plus the caller's team role. Do not adopt a team-prefix policy without a coordinated path migration and preservation plan.
+
+Announcement image objects are served from the public `team-announcement-images` bucket using public URLs. Authorization on upload/update/delete does not make already-public image URLs private. This is acceptable only if the product owner intends announcement images to be publicly viewable.
+
+Question-photo upload and read policies must be reconciled against the exact frontend upload path and the `team_questions.photo_url` representation before drafting replacements. Preserve existing object names/URLs unless a migration explicitly updates references safely.
+
+### Meeting-link RPC requirements
+
+The existing SECURITY DEFINER functions `get_team_chenn_meeting_links()` and `save_team_chenn_meeting_link(p_schedule_id bigint, p_meet_link text)` authorize against Chenn roles. The saved link row is keyed by `schedule_id`, so every read/write must join to `public.coaching_schedules`, derive its `team_key`, verify that team is enabled, and verify the caller's allowed role for that same team. Keep old function signatures compatible until frontend call sites are switched and tested; do not revoke EXECUTE grants blindly.
+
+### Current safe rollout status
+
+- This file remains a planning draft, not executable SQL.
+- No database DDL, policy, function, storage object, team enablement, or live deployment was changed during this review.
+- Team Lev and Team Gemma must remain disabled until policy and storage isolation tests pass.
+- Some storage-policy introspection queries were blocked by the database safety layer. Do not bypass that restriction; use supported dashboard exports or authorized policy review to obtain the missing definitions.
