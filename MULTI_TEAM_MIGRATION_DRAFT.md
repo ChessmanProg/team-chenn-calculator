@@ -82,3 +82,15 @@ The `public.delete_own_team_question(bigint,text)` SECURITY DEFINER function che
 3. Decide whether comments may be deleted by authors only or by team admins as well, and document the choice.
 4. Verify question-photo upload rollback/orphan cleanup and the relationship between each object path and its question row.
 5. Complete role-by-role effective-policy tests in a disposable/staging environment before any production migration.
+
+
+### Comment deletion policy — focused re-check
+
+A fresh focused read of the effective `public.team_question_comments` policy definitions clarifies the delete behavior: the only permissive DELETE policy is `Users can delete their own comments` (`auth.uid() = user_id`), and the restrictive DELETE policy additionally requires the caller to have a role on that comment's team. Since permissive policies are ORed and restrictive policies are ANDed, a signed-in team member can delete **their own** comment, but this policy set does not grant members a general ability to delete other people's comments. No separate admin-delete exception is present in the listed policy set. Preserve this author-only behavior unless the product owner explicitly chooses to add team-admin moderation.
+
+The same focused policy read confirms:
+- Comment SELECT has a legacy permissive `USING (true)` but a restrictive policy denies anonymous reads and requires team membership for authenticated users.
+- Comment INSERT requires `user_id = auth.uid()`, valid name/comment lengths, membership on `team_key`, and a matching `team_questions` row with the same question ID and team key.
+- Comment UPDATE requires ownership in both the permissive policy and restrictive `WITH CHECK`, plus team membership.
+
+These are read-only policy findings; no policy was changed.
