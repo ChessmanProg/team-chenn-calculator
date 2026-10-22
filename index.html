@@ -63,15 +63,16 @@ body {
 /* Smooth, consistent dark theme */
 
 body.dark {
-  background-color: #061a14 !important;
+  background-color: #031525 !important;
   background-image:
-    linear-gradient(rgba(2, 20, 14, 0.35), rgba(2, 20, 14, 0.50)),
-    url('./forest-background.png') !important;
-  background-size: cover !important;
+    radial-gradient(ellipse at 15% 15%, rgba(0, 174, 219, 0.24), transparent 42%),
+    radial-gradient(ellipse at 85% 70%, rgba(0, 92, 160, 0.30), transparent 44%),
+    linear-gradient(145deg, #031525 0%, #064b70 52%, #021322 100%) !important;
+  background-size: 140% 140% !important;
   background-position: center !important;
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
-  color: #ececec !important;
+  color: #e8f7ff !important;
 }
 /* Main cards, panels, and modal */
 body.dark .bg-white,
