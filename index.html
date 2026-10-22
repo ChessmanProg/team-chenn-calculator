@@ -3164,6 +3164,18 @@ function questionTokenHash(token) {
 }
 
 async function deleteOwnTeamQuestion(questionId) {
+  if (!db) {
+    alert('Database connection is unavailable.');
+    return;
+  }
+
+  // Require a signed-in session before attempting the server-side delete.
+  const { data: { user }, error: userError } = await db.auth.getUser();
+  if (userError || !user) {
+    alert('Please sign in with an approved Team Chenn account before deleting a question.');
+    return;
+  }
+
   const storageKey = 'teamQuestionOwnerToken_' + questionId;
   const ownerToken = localStorage.getItem(storageKey);
 
