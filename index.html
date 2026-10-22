@@ -3483,6 +3483,17 @@ async function setupQuestionDiscussion(questionId, host) {
     try {
       const user = await getSignedInUser();
 
+      // Do not request or display discussion data for signed-out visitors.
+      if (!user) {
+        commentsList.replaceChildren();
+        notice.textContent =
+          'Please sign in with an approved Team Chenn account to view or participate in discussions.';
+        submitButton.disabled = true;
+        nameInput.disabled = true;
+        commentInput.disabled = true;
+        return;
+      }
+
       const { data, error } = await db
         .from('team_question_comments')
         .select('id,name,comment_text,created_at,user_id')
@@ -3493,14 +3504,9 @@ async function setupQuestionDiscussion(questionId, host) {
 
       commentsList.replaceChildren();
 
-      if (!user) {
-        notice.textContent =
-          'Please sign in to your Team Chenn account to post, edit, or delete comments.';
-      }
-
-      submitButton.disabled = !user;
-      nameInput.disabled = !user;
-      commentInput.disabled = !user;
+      submitButton.disabled = false;
+      nameInput.disabled = false;
+      commentInput.disabled = false;
 
       if (!data || data.length === 0) {
         const empty = document.createElement('p');
