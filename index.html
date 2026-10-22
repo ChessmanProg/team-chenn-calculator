@@ -906,10 +906,12 @@ async function refreshAuthState() {
     status.textContent = 'Database connection is unavailable.';
     loginForm.classList.remove('hidden');
     logoutButton.classList.add('hidden');
+    showOceanPortal('ocean-signed-out');
   } else {
     const { data: { session }, error } = await db.auth.getSession();
 
     if (error || !session) {
+      oceanSelectedTeam = null;
       status.textContent = 'Sign in to manage Team Chenn records.';
       loginForm.classList.remove('hidden');
       logoutButton.classList.add('hidden');
