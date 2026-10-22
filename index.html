@@ -3628,8 +3628,9 @@ async function setupQuestionDiscussion(questionId, host) {
 
       const { data, error } = await db
         .from('team_question_comments')
-        .select('id,name,comment_text,created_at,user_id')
+        .select('id,name,comment_text,created_at,user_id,team_key')
         .eq('question_id', questionId)
+        .eq('team_key', oceanSelectedTeam || 'chenn')
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -3783,7 +3784,8 @@ async function setupQuestionDiscussion(questionId, host) {
           question_id: questionId,
           name: name,
           comment_text: commentText,
-          user_id: user.id
+          user_id: user.id,
+          team_key: oceanSelectedTeam || 'chenn'
         });
 
       if (error) throw error;
@@ -4367,7 +4369,8 @@ async function editTeamAnnouncement(announcementId) {
         title: newTitle.trim(),
         body: newBody.trim()
       })
-      .eq('id', announcementId);
+      .eq('id', announcementId)
+      .eq('team_key', oceanSelectedTeam || 'chenn');
 
     if (error) throw error;
 
@@ -4395,7 +4398,8 @@ async function deleteTeamAnnouncement(announcementId) {
     const { error } = await db
       .from('team_announcements')
       .delete()
-      .eq('id', announcementId);
+      .eq('id', announcementId)
+      .eq('team_key', oceanSelectedTeam || 'chenn');
 
     if (error) throw error;
 
