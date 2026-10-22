@@ -94,3 +94,27 @@ The same focused policy read confirms:
 - Comment UPDATE requires ownership in both the permissive policy and restrictive `WITH CHECK`, plus team membership.
 
 These are read-only policy findings; no policy was changed.
+
+
+## Storage policy audit update (2026-10-22; documentation only)
+
+### `team-announcement-images` (public bucket)
+
+The supplied INSERT, UPDATE USING, UPDATE WITH CHECK, and DELETE USING expressions all require `is_team_chenn_admin()`. These are Chenn-specific. The object path convention is `<announcement-id>/<timestamp>.<extension>`, so a replacement must resolve the first path segment to the announcement row and validate the row's `team_key` plus the caller's role for that team. The bucket is public: mutation RLS does not make public object URLs private.
+
+### `team-question-photos` (private bucket)
+
+The supplied SELECT expression matches `objects.name` to `team_questions.photo_url` and checks `has_team_role(q.team_key, ['member','admin','owner'])`. The supplied INSERT expression restricts extensions to JPG/JPEG/PNG/WebP and checks a role for the literal team key `chenn`; it is therefore not ready for Lev/Gemma.
+
+Frontend inspection of `index.html` confirms `submitTeamQuestion()` uploads `question-photos/<random-uuid>.<extension>` before inserting the `team_questions` row. This means a policy that depends on the future question row cannot authorize that initial upload. The design must establish and validate the intended team at upload time (for example, a team-scoped object path enforced server-side or a server-side upload flow), and later verify that the question row references only an authorized object. Keep the current file type and 5 MB checks. A failed question insert may leave an orphan object; cleanup must be a separate, conservative task with a retention period and backup, not a bulk deletion during migration.
+
+### Required staging tests before opening the gate
+
+- Chenn member/admin can upload and view only photos linked to questions in teams they belong to.
+- Lev/Gemma members can upload only after their team is enabled and they have the intended role; they cannot reference a question or object belonging to another team.
+- Direct Storage requests cannot bypass the frontend checks.
+- Announcement image insert/update/delete is authorized against the announcement row's team, including attempts to change object paths or target another team's announcement ID.
+- Public announcement image URL visibility is explicitly accepted as a product decision.
+- Failed question insert does not silently accumulate unlimited orphaned uploads; cleanup respects the approved retention window.
+
+No SQL was added or executed by this audit. Migration gate remains CLOSED.
