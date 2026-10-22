@@ -3164,6 +3164,18 @@ function questionTokenHash(token) {
 }
 
 async function deleteOwnTeamQuestion(questionId) {
+  if (!db) {
+    alert('Database connection is unavailable.');
+    return;
+  }
+
+  // Require a signed-in session before attempting the server-side delete.
+  const { data: { user }, error: userError } = await db.auth.getUser();
+  if (userError || !user) {
+    alert('Please sign in with an approved Team Chenn account before deleting a question.');
+    return;
+  }
+
   const storageKey = 'teamQuestionOwnerToken_' + questionId;
   const ownerToken = localStorage.getItem(storageKey);
 
@@ -3257,6 +3269,32 @@ async function getTeamQuestions() {
 
 async function renderQuestionPanel() {
   const panel = document.getElementById('question-panel');
+
+  if (!db) {
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <h2 style="font-size:20px;font-weight:800;margin:0;">💬 Team Questions</h2>
+        <button class="q-button" type="button" aria-label="Close questions panel"
+          onclick="toggleQuestionPanel()">✕</button>
+      </div>
+      <p class="q-muted" style="margin-top:12px;">Sign in with an approved Team Chenn account to view questions and discussions.</p>`;
+    return;
+  }
+
+  const { data: { session }, error: sessionError } = await db.auth.getSession();
+
+  if (sessionError || !session) {
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <h2 style="font-size:20px;font-weight:800;margin:0;">💬 Team Questions</h2>
+        <button class="q-button" type="button" aria-label="Close questions panel"
+          onclick="toggleQuestionPanel()">✕</button>
+      </div>
+      <p class="q-muted" style="margin-top:12px;">Please sign in to an approved Team Chenn account to view, submit, or discuss questions.</p>
+      <button class="q-button q-primary" type="button" style="width:100%;margin-top:12px;"
+        onclick="document.getElementById('login-email')?.scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('login-email')?.focus();">Go to sign in</button>`;
+    return;
+  }
 
   panel.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
@@ -3457,6 +3495,17 @@ async function setupQuestionDiscussion(questionId, host) {
     try {
       const user = await getSignedInUser();
 
+      // Do not request or display discussion data for signed-out visitors.
+      if (!user) {
+        commentsList.replaceChildren();
+        notice.textContent =
+          'Please sign in with an approved Team Chenn account to view or participate in discussions.';
+        submitButton.disabled = true;
+        nameInput.disabled = true;
+        commentInput.disabled = true;
+        return;
+      }
+
       const { data, error } = await db
         .from('team_question_comments')
         .select('id,name,comment_text,created_at,user_id')
@@ -3467,14 +3516,9 @@ async function setupQuestionDiscussion(questionId, host) {
 
       commentsList.replaceChildren();
 
-      if (!user) {
-        notice.textContent =
-          'Please sign in to your Team Chenn account to post, edit, or delete comments.';
-      }
-
-      submitButton.disabled = !user;
-      nameInput.disabled = !user;
-      commentInput.disabled = !user;
+      submitButton.disabled = false;
+      nameInput.disabled = false;
+      commentInput.disabled = false;
 
       if (!data || data.length === 0) {
         const empty = document.createElement('p');
@@ -3763,6 +3807,13 @@ async function submitTeamQuestion(event) {
     return;
   }
 
+  // Require an authenticated session before any photo upload or submission.
+  const { data: { user }, error: userError } = await db.auth.getUser();
+  if (userError || !user) {
+    questionMessage('Please sign in with an approved Team Chenn account before submitting a question.', true);
+    return;
+  }
+
   if (!name || !question) {
     questionMessage('Enter your name and question.', true);
     return;
@@ -3811,6 +3862,8 @@ const ownerTokenHash = await questionTokenHash(ownerToken);
 const { data: insertedQuestion, error } = await db
   .from('team_questions')
   .insert({
+    user_id: user.id,
+    team_key: 'chenn',
     name: name,
     question: question,
     photo_url: photoPath,
