@@ -401,8 +401,14 @@ body.dark .bg-white.rounded-2xl.shadow-sm.border.border-slate-200 {
 
 /* OCEAN PORTAL REDESIGN */
 body.ocean-portal { background:#031525 !important; color:#e8f7ff; min-height:100vh; }
-body.ocean-portal::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg,rgba(1,12,28,.38),rgba(2,29,54,.84)), radial-gradient(ellipse at 18% 20%,rgba(0,174,219,.28),transparent 38%), radial-gradient(ellipse at 82% 68%,rgba(0,92,160,.34),transparent 42%), linear-gradient(145deg,#031525,#064b70 52%,#021322); }
-body.ocean-portal::after { content:""; position:fixed; inset:-20%; z-index:-1; pointer-events:none; opacity:.35; background:repeating-radial-gradient(ellipse at 45% 110%,transparent 0 38px,rgba(97,224,255,.10) 40px 42px,transparent 45px 80px); animation:ocean-drift 18s linear infinite; }
+body.ocean-portal::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(180deg,rgba(1,12,28,.28),rgba(2,20,42,.58) 45%,rgba(1,10,25,.92)),radial-gradient(ellipse at 18% 18%,rgba(0,196,235,.30),transparent 35%),radial-gradient(ellipse at 78% 60%,rgba(0,112,190,.38),transparent 43%),linear-gradient(145deg,#031525,#075078 48%,#021322); }
+body.ocean-portal::after { content:""; position:fixed; inset:-25%; z-index:-1; pointer-events:none; opacity:.42; background:repeating-conic-gradient(from 205deg at 52% -5%,transparent 0deg 8deg,rgba(115,225,255,.075) 9deg 10deg,transparent 12deg 19deg),repeating-radial-gradient(ellipse at 45% 110%,transparent 0 38px,rgba(97,224,255,.10) 40px 42px,transparent 45px 80px); animation:ocean-drift 22s ease-in-out infinite alternate; }
+.ocean-glass { position:relative; overflow:hidden; }
+.ocean-glass::before { content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(191,244,255,.8),transparent);pointer-events:none; }
+.ocean-password-wrap { position:relative;width:100%; }
+#ocean-login-portal .ocean-password-wrap #login-password { padding-right:76px; }
+#ocean-login-portal .ocean-password-toggle { position:absolute;right:8px;top:50%;transform:translateY(-50%);width:auto!important;padding:7px 9px!important;border:1px solid rgba(133,218,245,.2);border-radius:9px!important;background:rgba(255,255,255,.06);color:#aeeaff;font-size:.78rem;font-weight:700; }
+#ocean-login-portal .ocean-password-toggle:hover { background:rgba(77,202,239,.13); }
 @keyframes ocean-drift { from{transform:translate3d(-2%,1%,0) rotate(0deg)} to{transform:translate3d(2%,-1%,0) rotate(4deg)} }
 .ocean-bubbles { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
 .ocean-bubbles span { position:absolute; bottom:-80px; width:9px;height:9px;border:1px solid rgba(157,237,255,.38);border-radius:50%;background:rgba(90,210,255,.08);animation:bubble-rise 14s linear infinite; }
@@ -536,7 +542,10 @@ body.ocean-calculator > #ocean-login-portal, body.ocean-calculator > #ocean-team
       </div>
       <form id="login-form" class="flex flex-col sm:flex-row gap-2" onsubmit="event.preventDefault(); adminLogin();">
         <input id="login-email" type="email" autocomplete="username" placeholder="Admin email" class="px-3 py-2 border border-slate-300 rounded-lg">
-        <input id="login-password" type="password" autocomplete="current-password" placeholder="Password" class="px-3 py-2 border border-slate-300 rounded-lg">
+        <div class="ocean-password-wrap">
+          <input id="login-password" type="password" autocomplete="current-password" placeholder="Password" class="px-3 py-2 border border-slate-300 rounded-lg">
+          <button class="ocean-password-toggle" type="button" onclick="toggleLoginPassword()" aria-label="Show password" aria-pressed="false">Show</button>
+        </div>
         <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg">Log In</button>
 <button type="button" onclick="requestPasswordReset()" class="px-4 py-2 text-sm text-indigo-600 hover:underline font-semibold">
   Forgot password?
@@ -963,6 +972,17 @@ async function refreshAuthState() {
 
   updateAdminControls();
   ['coaching', 'ic', 'link'].forEach(render);
+}
+
+function toggleLoginPassword() {
+  const password = document.getElementById('login-password');
+  const toggle = document.querySelector('#ocean-login-portal .ocean-password-toggle');
+  if (!password || !toggle) return;
+  const showing = password.type === 'password';
+  password.type = showing ? 'text' : 'password';
+  toggle.textContent = showing ? 'Hide' : 'Show';
+  toggle.setAttribute('aria-label', showing ? 'Hide password' : 'Show password');
+  toggle.setAttribute('aria-pressed', String(showing));
 }
 
 async function adminLogin() {
