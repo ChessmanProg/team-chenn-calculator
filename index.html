@@ -463,8 +463,8 @@ body.ocean-calculator > #ocean-login-portal, body.ocean-calculator > #ocean-team
     </div>
     <div class="ocean-team-grid">
       <button class="ocean-team-card" type="button" onclick="openOceanTeam('chenn')"><span class="ocean-team-icon">🎧</span><div class="ocean-team-name">Team Chenn BC AI</div><div class="ocean-team-desc">Open the current calculator and operational tools.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Open workspace →</div></button>
-      <button class="ocean-team-card" type="button" onclick="openOceanTeam('lev')"><span class="ocean-team-icon">🌊</span><div class="ocean-team-name">Team Lev BC AI</div><div class="ocean-team-desc">Team workspace selection.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Coming soon</div></button>
-      <button class="ocean-team-card" type="button" onclick="openOceanTeam('gemma')"><span class="ocean-team-icon">🐚</span><div class="ocean-team-name">Team Gemma BC AI</div><div class="ocean-team-desc">Team workspace selection.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Coming soon</div></button>
+      <button class="ocean-team-card" type="button" onclick="openOceanTeam('lev')"><span class="ocean-team-icon">🌊</span><div class="ocean-team-name">Team Lev BC AI</div><div class="ocean-team-desc">Open the Team Lev BC AI workspace.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Open workspace →</div></button>
+      <button class="ocean-team-card" type="button" onclick="openOceanTeam('gemma')"><span class="ocean-team-icon">🐚</span><div class="ocean-team-name">Team Gemma BC AI</div><div class="ocean-team-desc">Open the Team Gemma BC AI workspace.</div><div class="mt-5 text-sm font-bold" style="color:#76e4ff">Open workspace →</div></button>
     </div>
     <p id="ocean-team-message" class="mt-5 text-sm" style="color:#b6d5e5" aria-live="polite"></p>
   </div>
@@ -854,13 +854,40 @@ function updateAdminControls() {
 
 
 let oceanSelectedTeam = null;
-function openOceanTeam(team) {
-  if (team !== 'chenn') {
-    const msg = document.getElementById('ocean-team-message');
-    if (msg) msg.textContent = 'This team workspace has not been connected yet. Team Chenn is available now.';
+async function openOceanTeam(team) {
+  const msg = document.getElementById('ocean-team-message');
+  if (!['chenn', 'lev', 'gemma'].includes(team)) {
+    if (msg) msg.textContent = 'Unknown workspace.';
     return;
   }
-  oceanSelectedTeam = 'chenn';
+  if (!db) {
+    if (msg) msg.textContent = 'Database connection is unavailable.';
+    return;
+  }
+  const { data: { session }, error: sessionError } = await db.auth.getSession();
+  if (sessionError || !session?.user) {
+    if (msg) msg.textContent = 'Please sign in again to open a workspace.';
+    showOceanPortal('ocean-signed-out');
+    return;
+  }
+  const { data: hasRole, error: roleError } = await db.rpc('has_team_role', {
+    p_team_key: team, p_allowed_roles: ['member', 'admin', 'owner']
+  });
+  if (roleError || hasRole !== true) {
+    if (msg) msg.textContent = 'Your account has not been granted access to this team yet.';
+    return;
+  }
+  const { data: enabled, error: enabledError } = await db.rpc('is_team_enabled', { p_team_key: team });
+  if (enabledError || enabled !== true) {
+    if (msg) msg.textContent = 'This workspace is not enabled yet. Please refresh and try again.';
+    return;
+  }
+  oceanSelectedTeam = team;
+  const { data: admin, error: adminError } = await db.rpc('has_team_role', {
+    p_team_key: team, p_allowed_roles: ['admin', 'owner']
+  });
+  isTeamChennAdmin = !adminError && admin === true;
+  if (msg) msg.textContent = '';
   document.body.classList.remove('ocean-signed-out','ocean-team-picker');
   document.body.classList.add('ocean-calculator');
   const header = document.querySelector('body > header');
@@ -869,6 +896,8 @@ function openOceanTeam(team) {
   if (header) header.style.display = '';
   if (authSection) authSection.style.display = '';
   if (main) main.style.display = '';
+  updateAdminControls();
+  ['coaching', 'ic', 'link'].forEach(render);
 }
 function showOceanPortal(mode) {
   document.body.classList.remove('ocean-signed-out','ocean-team-picker','ocean-calculator');
