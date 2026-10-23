@@ -1274,10 +1274,11 @@ async function loadRows(key) {
       }));
     }
 
-const { data: tableData, error: tableError } = await db
-  .from(tableName)
-  .select('*')
-  .order('id');
+let tableQuery = db.from(tableName).select('*');
+if (key === 'ic' && oceanSelectedTeam) {
+  tableQuery = tableQuery.eq('team_key', oceanSelectedTeam);
+}
+const { data: tableData, error: tableError } = await tableQuery.order('id');
 
 if (tableError) {
   showBanner('Could not load ' + tableName + ': ' + tableError.message);
@@ -1298,6 +1299,12 @@ return tableData || [];
 
 async function insertRow(key, row) {
   const tableName = TABLES[key].name;
+
+  // IC extension records must explicitly belong to the selected workspace.
+  // The database default is Team Chenn, which caused Lev/Gemma inserts to fail RLS.
+  if (key === 'ic' && oceanSelectedTeam) {
+    row.team_key = oceanSelectedTeam;
+  }
 
   if (db) {
     if (key === 'coaching') {
@@ -1679,7 +1686,8 @@ async function editICStatus(id, currentStatus) {
       const { error } = await db
         .from(TABLES.ic.name)
         .update({ status })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('team_key', oceanSelectedTeam || 'chenn');
 
       if (error) {
         overlay.remove();
@@ -1722,7 +1730,11 @@ async function deleteRow(key, id) {
   const tableName = TABLES[key].name;
 
   if (db) {
-    const { error } = await db.from(tableName).delete().eq('id', id);
+    let deleteQuery = db.from(tableName).delete().eq('id', id);
+    if (key === 'ic') {
+      deleteQuery = deleteQuery.eq('team_key', oceanSelectedTeam || 'chenn');
+    }
+    const { error } = await deleteQuery;
     if (error) {
       showBanner('Delete failed: ' + error.message);
       return;
