@@ -1362,7 +1362,22 @@ async function insertRow(key, row) {
       return null;
     }
 
-    const { error } = await db.from(tableName).insert(row);
+    let { error } = await db.from(tableName).insert(row);
+
+    // Older IC table schemas may not include the optional time_logged column.
+    // If that specific schema-cache/column error occurs, retry without only that
+    // optional field; keep team_key and all submitted record fields intact.
+    if (
+      key === 'ic' &&
+      error &&
+      /time_logged/i.test(error.message || '') &&
+      /(column|schema cache|does not exist|could not find)/i.test(error.message || '')
+    ) {
+      const { time_logged, ...compatibleRow } = row;
+      const retry = await db.from(tableName).insert(compatibleRow);
+      error = retry.error;
+    }
+
     return error;
   }
 
