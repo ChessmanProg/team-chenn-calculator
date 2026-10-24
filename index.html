@@ -4132,62 +4132,150 @@ function announcementMessage(message, isError = false) {
   element.style.color = isError ? '#fca5a5' : '#fde68a';
 }
 
+
 async function getAnnouncementUser() {
   if (!db) return null;
 
-  const { data, error } = await db.auth.getUser();
+  try {
+    // Check whether a session exists before requesting the user.
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await db.auth.getSession();
 
-  if (error) {
-    console.error('Announcement user check failed:', error);
+    if (sessionError) {
+      console.warn(
+        'Announcement session check failed:',
+        sessionError.message
+      );
+      return null;
+    }
+
+    const session = sessionData?.session;
+
+    // Signed-out visitors are expected.
+    if (!session?.user) {
+      return null;
+    }
+
+    // Verify the authenticated user with Supabase.
+    const {
+      data: userData,
+      error: userError
+    } = await db.auth.getUser();
+
+    if (userError) {
+      console.warn(
+        'Announcement user verification failed:',
+        userError.message
+      );
+      return null;
+    }
+
+    return userData?.user ?? null;
+
+  } catch (error) {
+    console.warn(
+      'Announcement user check could not complete:',
+      error?.message || error
+    );
     return null;
   }
-
-  return data?.user ?? null;
 }
 
 async function refreshAnnouncementUnreadCount() {
-  const badge = document.getElementById('team-announcement-unread-count');
+  const badge = document.getElementById(
+    'team-announcement-unread-count'
+  );
+
   if (!badge) return;
+
+  function resetAnnouncementBadge() {
+    badge.textContent = '0';
+    badge.classList.remove('has-unread');
+    badge.setAttribute(
+      'aria-label',
+      '0 unread announcements'
+    );
+  }
 
   try {
     if (!db) {
-      badge.textContent = '0';
-      badge.classList.remove('has-unread');
+      resetAnnouncementBadge();
+      announcementCurrentUser = null;
       return;
     }
 
     const user = await getAnnouncementUser();
     announcementCurrentUser = user;
 
-    // Unread counts are personal, so don't show a shared count to signed-out users.
+    // Unread counts are personal.
+    // Never show a shared count to signed-out visitors.
     if (!user) {
-      badge.textContent = '0';
-      badge.classList.remove('has-unread');
+      resetAnnouncementBadge();
       return;
     }
 
-    const { data: announcements, error: announcementError } = await db
+    const {
+      data: announcements,
+      error: announcementError
+    } = await db
       .from('team_announcements')
       .select('id')
       .order('created_at', { ascending: false });
 
-    if (announcementError) throw announcementError;
+    if (announcementError) {
+      throw announcementError;
+    }
 
-    const { data: reads, error: readError } = await db
+    const {
+      data: reads,
+      error: readError
+    } = await db
       .from('team_announcement_reads')
       .select('announcement_id')
       .eq('user_id', user.id);
 
-    if (readError) throw readError;
+    if (readError) {
+      throw readError;
+    }
 
-    const readIds = new Set((reads || []).map(row => row.announcement_id));
-    const unread = (announcements || []).filter(row => !readIds.has(row.id)).length;
+    // Confirm that the same user is still signed in.
+    const currentUser = await getAnnouncementUser();
 
-    badge.textContent = unread > 99 ? '99+' : String(unread);
-    badge.classList.toggle('has-unread', unread > 0);
-    badge.setAttribute('aria-label', `${unread} unread announcements`);
+    if (!currentUser || currentUser.id !== user.id) {
+      resetAnnouncementBadge();
+      announcementCurrentUser = currentUser;
+      return;
+    }
+
+    const readIds = new Set(
+      (reads || []).map(row => row.announcement_id)
+    );
+
+    const unread = (announcements || []).filter(
+      row => !readIds.has(row.id)
+    ).length;
+
+    badge.textContent = unread > 99
+      ? '99+'
+      : String(unread);
+
+    badge.classList.toggle(
+      'has-unread',
+      unread > 0
+    );
+
+    badge.setAttribute(
+      'aria-label',
+      `${unread} unread announcements`
+    );
+
   } catch (error) {
-    console.error('Announcement unread-count refresh failed:', error);
+    console.error(
+      'Announcement unread-count refresh failed:',
+      error
+    );
   }
 }
 
