@@ -1332,10 +1332,12 @@ async function insertRow(key, row) {
 
       // Keep the original required column populated without storing
       // the real meeting URL in the public schedule record.
-      const safeRow = {
-        ...row,
-        meet_link: 'PROTECTED'
-      };
+
+const safeRow = {
+  ...row,
+  team_key: 'chenn',
+  meet_link: 'PROTECTED'
+};
 
       const { data, error } = await db
         .from(tableName)
